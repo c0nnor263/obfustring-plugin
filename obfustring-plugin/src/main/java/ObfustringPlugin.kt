@@ -1,4 +1,6 @@
 import com.android.build.api.variant.ApplicationAndroidComponentsExtension
+import io.github.c0nnor263.obfustring_core.Obfustring
+import io.github.c0nnor263.obfustring_core.ObfustringEncoder
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.provider.Property

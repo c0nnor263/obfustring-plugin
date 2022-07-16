@@ -22,7 +22,7 @@ dependencies {
 }
 
 group = "io.github.c0nnor263"
-version = "1.1.0"
+version = "1.1.1"
 gradlePlugin {
 // Define the plugin
     plugins {
@@ -36,7 +36,7 @@ gradlePlugin {
 }
 
 pluginBundle {
-    website = "https://github.com/c0nnor263/Obfustring"
-    vcsUrl = "https://github.com/c0nnor263/Obfustring.git"
+    website = "https://github.com/c0nnor263/obfustring-plugin"
+    vcsUrl = "https://github.com/c0nnor263/obfustring-plugin.git"
     tags = listOf("obfuscation", "kotlin", "string")
 }

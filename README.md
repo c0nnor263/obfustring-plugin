@@ -8,7 +8,7 @@ You have to apply the Obfustring plugin to the project.
 DSL
 ```kotlin
 plugins {
-  id("io.github.c0nnor263.obfustring") version "1.0.2"
+  id("com.github.c0nnor263.obfustring-plugin") version "1.1.0"
 }
 
 ```
@@ -22,13 +22,13 @@ buildscript {
     }
   }
   dependencies {
-    classpath("io.github.c0nnor263:plugin:1.0.2")
+    classpath("com.github.c0nnor263:obfustring-plugin:1.1.0")
   }
 }
 
 plugins{
     id 'com.android.application'
-    id 'io.github.c0nnor263.obfustring'
+    id 'com.github.c0nnor263.obfustring-plugin'
 }
 ```
 

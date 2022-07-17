@@ -1,0 +1,138 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "io.github.c0nnor263",
+    "module": "plugin",
+    "version": "1.1.4",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "7.4.2"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 11,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api",
+        "org.jetbrains.kotlin.localToProject": "public",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "files": [
+        {
+          "name": "plugin-1.1.4.jar",
+          "url": "plugin-1.1.4.jar",
+          "size": 10592,
+          "sha512": "5cc13f73bbb94283f24d453da90598fa016154cc507e8c2818c4b90db7d017b443bba788d649569038282876302f1b23cd0e4855aaffcd0351e407e977d77b27",
+          "sha256": "e1511e34582ec61f63331b29f57081f8be20c62b5ea1ba82bb461877430a759d",
+          "sha1": "b0abbcd183ec7bd1d541debe1564bdc8f66cec70",
+          "md5": "a4b5ee9fdb6ce012afab896a9d25f1d1"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 11,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime",
+        "org.jetbrains.kotlin.localToProject": "public",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-bom",
+          "version": {
+            "requires": "1.5.31"
+          },
+          "attributes": {
+            "org.gradle.category": "platform"
+          },
+          "endorseStrictVersions": true
+        },
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib-jdk8",
+          "version": {
+            "requires": "1.5.31"
+          }
+        },
+        {
+          "group": "com.github.c0nnor263",
+          "module": "obfustring-core",
+          "version": {
+            "requires": "1.1.0"
+          }
+        },
+        {
+          "group": "com.android.tools.build",
+          "module": "gradle-api",
+          "version": {
+            "requires": "7.2.1"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "plugin-1.1.4.jar",
+          "url": "plugin-1.1.4.jar",
+          "size": 10592,
+          "sha512": "5cc13f73bbb94283f24d453da90598fa016154cc507e8c2818c4b90db7d017b443bba788d649569038282876302f1b23cd0e4855aaffcd0351e407e977d77b27",
+          "sha256": "e1511e34582ec61f63331b29f57081f8be20c62b5ea1ba82bb461877430a759d",
+          "sha1": "b0abbcd183ec7bd1d541debe1564bdc8f66cec70",
+          "md5": "a4b5ee9fdb6ce012afab896a9d25f1d1"
+        }
+      ]
+    },
+    {
+      "name": "javadocElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "javadoc",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "plugin-1.1.4-javadoc.jar",
+          "url": "plugin-1.1.4-javadoc.jar",
+          "size": 261,
+          "sha512": "d55d617879e196598776c7ef1a34b73142c683ae3def0eed4e172c690be2f5180f20982bae7518c4fc8a56600df870b49dad83a04c9526b7b06b92af99a1cfd5",
+          "sha256": "307ae3105fb8231e0e95ee26b7e0f627279cdc0f05e5959215fd0203c9751d8f",
+          "sha1": "ad361f927b3190d7243a6a54c8fbffd58f967057",
+          "md5": "98f424a49741e5bf84a8bbe2269f1f53"
+        }
+      ]
+    },
+    {
+      "name": "sourcesElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "plugin-1.1.4-sources.jar",
+          "url": "plugin-1.1.4-sources.jar",
+          "size": 2120,
+          "sha512": "a753d90cbc170ebd68b472351c000466f6f2b5241b381658dd92aa19062fd9c64fb9acf1ee83526d79c9cb2bb68bb72ab0b01c370840aafc9c4c7010eb62e545",
+          "sha256": "4fbe2c7a8a5724f1d26a14fb2ee29264fe4141520f23ec00e07bbe8f89fd7151",
+          "sha1": "d35007c78203d4587bcc20029248dd54eba30021",
+          "md5": "2cd68b4708bd9c5d29801d6e27c9ccb2"
+        }
+      ]
+    }
+  ]
+}

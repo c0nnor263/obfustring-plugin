@@ -8,10 +8,11 @@
         <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="gradleHome" value="C:/Gradle/gradle-7.4.2" />
+        <option name="gradleJvm" value="#JAVA_HOME" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/obfustring-plugin" />
+            <option value="$PROJECT_DIR$/plugin" />
           </set>
         </option>
       </GradleProjectSettings>

@@ -6,7 +6,7 @@ plugins {
     id("nu.studer.credentials") version "3.0"
 }
 group = "io.github.c0nnor263"
-version = "1.1.4"
+version = "1.2.6"
 
 repositories {
     mavenCentral()
@@ -19,8 +19,8 @@ repositories {
 dependencies {
     implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    implementation("com.github.c0nnor263:obfustring-core:1.1.0")
     implementation("com.android.tools.build:gradle-api:7.2.1")
+    implementation("com.github.c0nnor263:obfustring-core:1.1.2")
 }
 
 gradlePlugin {
@@ -37,4 +37,10 @@ pluginBundle {
     website = "https://github.com/c0nnor263/obfustring-plugin"
     vcsUrl = "https://github.com/c0nnor263/obfustring-plugin.git"
     tags = listOf("obfuscation", "kotlin", "string")
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+    kotlinOptions {
+        jvmTarget = "11"
+    }
 }

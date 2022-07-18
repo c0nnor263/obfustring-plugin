@@ -3,7 +3,7 @@
   "component": {
     "group": "io.github.c0nnor263",
     "module": "plugin",
-    "version": "1.1.4",
+    "version": "1.2.6",
     "attributes": {
       "org.gradle.status": "release"
     }
@@ -27,13 +27,13 @@
       },
       "files": [
         {
-          "name": "plugin-1.1.4.jar",
-          "url": "plugin-1.1.4.jar",
-          "size": 10592,
-          "sha512": "5cc13f73bbb94283f24d453da90598fa016154cc507e8c2818c4b90db7d017b443bba788d649569038282876302f1b23cd0e4855aaffcd0351e407e977d77b27",
-          "sha256": "e1511e34582ec61f63331b29f57081f8be20c62b5ea1ba82bb461877430a759d",
-          "sha1": "b0abbcd183ec7bd1d541debe1564bdc8f66cec70",
-          "md5": "a4b5ee9fdb6ce012afab896a9d25f1d1"
+          "name": "plugin-1.2.6.jar",
+          "url": "plugin-1.2.6.jar",
+          "size": 13558,
+          "sha512": "2acfa125732e6f3d89b3a778fe2922b7a5bb6a14572f487932774448286aadc68662376ca6f72de7142ed4993055b4694d99f3a1d264f508aa342dd90cf07281",
+          "sha256": "3687a6099bc42c978ad17e3f434526915bf2ba8e2b40ff9db1ec95c1ee831acf",
+          "sha1": "3e2fdf2eb24354df8c5107d730ce6d1ed816abe3",
+          "md5": "32b0e99673dc7462873be694f3475081"
         }
       ]
     },
@@ -68,29 +68,29 @@
           }
         },
         {
-          "group": "com.github.c0nnor263",
-          "module": "obfustring-core",
-          "version": {
-            "requires": "1.1.0"
-          }
-        },
-        {
           "group": "com.android.tools.build",
           "module": "gradle-api",
           "version": {
             "requires": "7.2.1"
           }
+        },
+        {
+          "group": "com.github.c0nnor263",
+          "module": "obfustring-core",
+          "version": {
+            "requires": "1.1.2"
+          }
         }
       ],
       "files": [
         {
-          "name": "plugin-1.1.4.jar",
-          "url": "plugin-1.1.4.jar",
-          "size": 10592,
-          "sha512": "5cc13f73bbb94283f24d453da90598fa016154cc507e8c2818c4b90db7d017b443bba788d649569038282876302f1b23cd0e4855aaffcd0351e407e977d77b27",
-          "sha256": "e1511e34582ec61f63331b29f57081f8be20c62b5ea1ba82bb461877430a759d",
-          "sha1": "b0abbcd183ec7bd1d541debe1564bdc8f66cec70",
-          "md5": "a4b5ee9fdb6ce012afab896a9d25f1d1"
+          "name": "plugin-1.2.6.jar",
+          "url": "plugin-1.2.6.jar",
+          "size": 13558,
+          "sha512": "2acfa125732e6f3d89b3a778fe2922b7a5bb6a14572f487932774448286aadc68662376ca6f72de7142ed4993055b4694d99f3a1d264f508aa342dd90cf07281",
+          "sha256": "3687a6099bc42c978ad17e3f434526915bf2ba8e2b40ff9db1ec95c1ee831acf",
+          "sha1": "3e2fdf2eb24354df8c5107d730ce6d1ed816abe3",
+          "md5": "32b0e99673dc7462873be694f3475081"
         }
       ]
     },
@@ -104,13 +104,13 @@
       },
       "files": [
         {
-          "name": "plugin-1.1.4-javadoc.jar",
-          "url": "plugin-1.1.4-javadoc.jar",
+          "name": "plugin-1.2.6-javadoc.jar",
+          "url": "plugin-1.2.6-javadoc.jar",
           "size": 261,
-          "sha512": "d55d617879e196598776c7ef1a34b73142c683ae3def0eed4e172c690be2f5180f20982bae7518c4fc8a56600df870b49dad83a04c9526b7b06b92af99a1cfd5",
-          "sha256": "307ae3105fb8231e0e95ee26b7e0f627279cdc0f05e5959215fd0203c9751d8f",
-          "sha1": "ad361f927b3190d7243a6a54c8fbffd58f967057",
-          "md5": "98f424a49741e5bf84a8bbe2269f1f53"
+          "sha512": "29c13f254d7d76f0b9c2459ed486b27e5dab9be045afacb918085d7f9353ac7903cf8e2ca61dfaa992c54b9cf86bf4bfede2bfd419a08b6fb72759fe6004bfa4",
+          "sha256": "92d784cf4d37967752aecaa38fae0e2b0bd49680bbe19cdbf35ab4a95549ca3e",
+          "sha1": "ce9bbd5227735b838992c4f3d37ae4b06bb0d782",
+          "md5": "049fd1d71ab95fccd787c1d2b176f280"
         }
       ]
     },
@@ -124,13 +124,13 @@
       },
       "files": [
         {
-          "name": "plugin-1.1.4-sources.jar",
-          "url": "plugin-1.1.4-sources.jar",
-          "size": 2120,
-          "sha512": "a753d90cbc170ebd68b472351c000466f6f2b5241b381658dd92aa19062fd9c64fb9acf1ee83526d79c9cb2bb68bb72ab0b01c370840aafc9c4c7010eb62e545",
-          "sha256": "4fbe2c7a8a5724f1d26a14fb2ee29264fe4141520f23ec00e07bbe8f89fd7151",
-          "sha1": "d35007c78203d4587bcc20029248dd54eba30021",
-          "md5": "2cd68b4708bd9c5d29801d6e27c9ccb2"
+          "name": "plugin-1.2.6-sources.jar",
+          "url": "plugin-1.2.6-sources.jar",
+          "size": 2493,
+          "sha512": "09bbc79d40a8fa4b3577da1fc38433f801d3b51993be97de43fe42aeb07b1b001329cb98f7de82d4a0fd5008bfa62d11f3c305d906d442b2b598a4903494ef1b",
+          "sha256": "222fb980e9b0e0126f565098d224ff1786df707a669b37b3682cc38d5e049a50",
+          "sha1": "3c5b9ad82c0904bd420ac5145f0c52b46daa66a3",
+          "md5": "5c218a6d4c6bb8cc06506cbe4eddc011"
         }
       ]
     }

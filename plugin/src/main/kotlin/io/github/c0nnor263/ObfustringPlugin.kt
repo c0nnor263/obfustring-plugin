@@ -125,12 +125,12 @@ class ObfustringPlugin : Plugin<Project> {
             "ObfustringEncoder(\""
         ) ||
                 line.indexOfFirst { it == '"' } < line.indexOf("const va") ||
-                (line.startsWith('@') && line.contains("(")) ||
-                line.startsWith("//")
+                (line.trimStart().startsWith('@') && line.contains("(")) ||
+                line.trimStart().startsWith("//")
     }
 
     private fun checkLineForLog(line: String, list: MutableList<String>): (() -> Unit)? {
-        if (line.contains("Log.")) {
+        if (line.startsWith("Log.")) {
             val startBracket = list.indexOf(line)
             val sb = StringBuilder(line)
             run searchBracket@{
@@ -146,7 +146,7 @@ class ObfustringPlugin : Plugin<Project> {
             return {
                 val newLine = "//@ | ${sb.trimStart()}"
                 if (list.any { it != newLine }) {
-                    if (list[currentLineIndex - 1].contains("//@")) {
+                    if (!list[currentLineIndex - 1].contains("//@")) {
                         list.removeAt(currentLineIndex - 1)
                     }
                     list.add(currentLineIndex, newLine)

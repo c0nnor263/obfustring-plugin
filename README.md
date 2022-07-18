@@ -17,7 +17,7 @@ buildscript {
     }
   }
   dependencies {
-      classpath 'io.github.c0nnor263:plugin:1.3.1'
+      classpath 'io.github.c0nnor263:plugin:1.3.9'
   }
 }
 
@@ -30,7 +30,7 @@ plugins{
 ##### build.gradle(Module)
 ```groovy
 dependencies {
-    implementation 'com.github.c0nnor263:obfustring-core:1.1.3'
+    implementation 'com.github.c0nnor263:obfustring-core:1.1.9'
 }
 ```
 
@@ -76,7 +76,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         ObfustringEncoder("comconboimyapplication").vigenere("LWFPG")
 //@ | Log.d("TAG", "onCreate: \n \" binding root ${binding.root} binding def $binding def ")
-        Log.d("TAG", ObfustringEncoder("comconboimyapplication").vigenere("mzWpqnsq: \n \" twpdtyv jmoa ${binding.root} tuabube pre $binding pwt "))
+        Log.d("TAG", ObfustringEncoder("comconboimyapplication").vigenere("mzWpqnsq: \n \" twpdtyv jmoa ¦${binding.root}¦ tuabube pre ¦$binding¦ pwt "))
     }
 
     override fun onMapReady(googleMap: GoogleMap) {

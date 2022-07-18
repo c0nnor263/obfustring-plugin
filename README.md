@@ -66,7 +66,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 ### Output:
 ```kotlin
 
-val TAG = ObfustringEncoder().vigenere("JufqfYqmyydizHNV")
+val TAG = ObfustringEncoder("comconboimyapplication").vigenere("JufqfYqmyydizHNV")
 
 @Obfustring
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {

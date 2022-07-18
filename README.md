@@ -30,9 +30,10 @@ plugins{
 ##### build.gradle(Module)
 ```groovy
 dependencies {
-	        implementation 'com.github.c0nnor263:obfustring-core:1.1.2'
+    implementation 'com.github.c0nnor263:obfustring-core:1.1.2'
 }
 ```
+
 
 Annotate classes with strings that need to be obfuscated with: 
 ```kotlin

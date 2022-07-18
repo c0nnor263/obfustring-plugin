@@ -15,8 +15,6 @@ class ObfustringPlugin : Plugin<Project> {
                 if (!isAlreadyStarted) {
                     println("> Obfustring")
                     val packageName = variant.applicationId.get()
-                    println("START $packageName")
-
                     beginWork(project, packageName)
                     isAlreadyStarted = true
                 }
@@ -28,7 +26,6 @@ class ObfustringPlugin : Plugin<Project> {
         val encoder = ObfustringEncoder(packageKey)
         val classesTree =
             project.fileTree("src/main/java").filter { it.isFile && it.extension == "kt" }.files
-        println(classesTree.toString())
         classesTree.forEach processClasses@{ file ->
             processFile(encoder, file, packageKey)
         }
@@ -36,7 +33,6 @@ class ObfustringPlugin : Plugin<Project> {
 
     private fun processFile(encoder: ObfustringEncoder, file: File, packageKey: String) {
         if (!file.readText().contains("@Obfustring")) return
-        println("Processing $file")
 
         val list = file.readLines().toMutableList()
 
@@ -50,15 +46,11 @@ class ObfustringPlugin : Plugin<Project> {
             if (line.contains("@Obfustring")) index else -1
         }.filter { it != -1 }
 
-        println(classIndexes.toString())
-
         classIndexes.forEach { classIndex ->
             var leftBracketCount = 0
             var rightBracketCount = 0
             list.forEachIndexed { listIndex, line ->
-                println("classIndexes list.forEach $listIndex")
                 if (listIndex >= classIndex) {
-                    println(line)
                     val leftBracketInLineCount = line.count { it == '{' }
                     val rightBracketInLineCount = line.count { it == '}' }
 

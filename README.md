@@ -17,7 +17,7 @@ buildscript {
     }
   }
   dependencies {
-      classpath 'io.github.c0nnor263:plugin:1.2.6'
+      classpath 'io.github.c0nnor263:plugin:1.2.8'
   }
 }
 
@@ -66,7 +66,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 ### Output:
 ```kotlin
 
-val TAG = ObfustringEncoder().vigenere("JufqfYqmyydizHNV")
+val TAG = ObfustringEncoder("comconboimyapplication").vigenere("JufqfYqmyydizHNV")
 
 @Obfustring
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {

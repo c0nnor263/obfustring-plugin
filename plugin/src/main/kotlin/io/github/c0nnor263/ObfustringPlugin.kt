@@ -38,8 +38,7 @@ class ObfustringPlugin : Plugin<Project> {
 
         val pendingLogCheck: MutableList<(() -> Unit)?> = mutableListOf(
             {
-                if (!file.readText()
-                        .contains("import io.github.c0nnor263.obfustring_core.ObfustringEncoder")
+                if (!file.readText().contains("import io.github.c0nnor263.obfustring_core.ObfustringEncoder")
                 ) {
                     list.add(2, "import io.github.c0nnor263.obfustring_core.ObfustringEncoder")
                 }
@@ -93,17 +92,18 @@ class ObfustringPlugin : Plugin<Project> {
                         if (firstIndex == -1 || secondIndex == -1) {
                             continue
                         }
-                        val foundString = line.substring(firstIndex, secondIndex + 1)
 
-                        val newValue =
-                            "${ObfustringEncoder::class.simpleName}(\"$packageKey\")" +
-                                    ".${ObfustringEncoder::vigenere.name}(${
-                                        encoder.vigenere(foundString, true)
-                                    })"
-                        println("> Processing $file")
 
-                        val edit = line.replace(foundString, newValue)
-                        list[index] = edit
+                            val foundString = line.substring(firstIndex, secondIndex + 1)
+
+                            val newValue =
+                                "${ObfustringEncoder::class.simpleName}(\"$packageKey\")" +
+                                        ".${ObfustringEncoder::vigenere.name}(${
+                                            encoder.vigenere(foundString, true)
+                                        })"
+
+                            val edit = line.replace(foundString, newValue)
+                            list[index] = edit
                     }
                     if (leftBracketCount > 0 && rightBracketCount > 0) {
                         if (leftBracketCount == rightBracketCount) return@forEach
@@ -117,6 +117,7 @@ class ObfustringPlugin : Plugin<Project> {
             it?.invoke()
         }
         pendingLogCheck.clear()
+        println("> Processing $file")
         File(file.absolutePath).writeText(list.joinToString("\n"))
     }
 
@@ -130,7 +131,7 @@ class ObfustringPlugin : Plugin<Project> {
     }
 
     private fun checkLineForLog(line: String, list: MutableList<String>): (() -> Unit)? {
-        if (line.startsWith("Log.")) {
+        if (line.trimStart().startsWith("Log.")) {
             val startBracket = list.indexOf(line)
             val sb = StringBuilder(line)
             run searchBracket@{
@@ -146,7 +147,7 @@ class ObfustringPlugin : Plugin<Project> {
             return {
                 val newLine = "//@ | ${sb.trimStart()}"
                 if (list.any { it != newLine }) {
-                    if (!list[currentLineIndex - 1].contains("//@")) {
+                    if (list[currentLineIndex - 1].contains("//@")) {
                         list.removeAt(currentLineIndex - 1)
                     }
                     list.add(currentLineIndex, newLine)

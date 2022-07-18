@@ -5,30 +5,32 @@ This plugin obfuscates your strings
 ### Setup
 You have to apply the Obfustring plugin to the project.
 
-DSL
-```kotlin
-plugins {
-   id "io.github.c0nnor263.obfustring-plugin" version "1.1.0"
-}
-
-```
-
-Legacy
+##### build.gradle(Project)
 ```groovy
 buildscript {
   repositories {
     maven {
-      url = uri("https://plugins.gradle.org/m2/")
+      url "https://plugins.gradle.org/m2/"
+    }
+    maven { 
+      url 'https://jitpack.io' 
     }
   }
   dependencies {
-    classpath("io.github.c0nnor263:obfustring-plugin:1.1.0")
+      classpath 'io.github.c0nnor263:plugin:1.2.6'
   }
 }
 
 plugins{
     id 'com.android.application'
-    id 'com.github.c0nnor263.obfustring-plugin'
+    id 'io.github.c0nnor263.obfustring-plugin'
+}
+```
+
+##### build.gradle(Module)
+```groovy
+dependencies {
+	        implementation 'com.github.c0nnor263:obfustring-core:1.1.2'
 }
 ```
 
@@ -43,10 +45,19 @@ Annotate classes with strings that need to be obfuscated with:
 val TAG = "FirstFragmentTAG"
 
 @Obfustring
-class FirstFragment : Fragment(R.layout.fragment_first) {
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        Log.d(TAG, "onViewCreated")
+class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        
+        "HELLO"
+        Log.d("TAG", "onCreate: \n \" binding root ${binding.root} binding def $binding def ")
+    }
+
+    override fun onMapReady(googleMap: GoogleMap) {
+        val sydney = LatLng(-34.0, 151.0)
+        "HI"
+        mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney 5"))
     }
 }
 ```
@@ -57,10 +68,20 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
 val TAG = ObfustringEncoder().vigenere("JufqfYqmyydizHNV")
 
 @Obfustring
-class FirstFragment : Fragment(R.layout.fragment_first) {
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        Log.d(TAG, ObfustringEncoder().vigenere("mzPgqjHdwmszj"))
+class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        ObfustringEncoder("comconboimyapplication").vigenere("LWFPG")
+//@ | Log.d("TAG", "onCreate: \n \" binding root ${binding.root} binding def $binding def ")
+        Log.d("TAG", ObfustringEncoder("comconboimyapplication").vigenere("mzWpqnsq: \n \" twpdtyv jmoa ${binding.root} tuabube pre $binding pwt "))
+    }
+
+    override fun onMapReady(googleMap: GoogleMap) {
+        val sydney = LatLng(-34.0, 151.0)
+        ObfustringEncoder("comconboimyapplication").vigenere("LA")
+        mMap.addMarker(MarkerOptions().position(sydney).title(ObfustringEncoder("comconboimyapplication").vigenere("Qmfiqe hz Qmfnpj 5")))
     }
 }
 

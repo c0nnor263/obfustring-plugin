@@ -98,7 +98,7 @@ class ObfustringPlugin : Plugin<Project> {
                         val newValue =
                             "${ObfustringEncoder::class.simpleName}(\"$packageKey\")" +
                                     ".${ObfustringEncoder::vigenere.name}(${
-                                        encoder.vigenere(foundString)
+                                        encoder.vigenere(foundString, true)
                                     })"
                         println("> Processing $file")
 

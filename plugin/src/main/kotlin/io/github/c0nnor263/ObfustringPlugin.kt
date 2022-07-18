@@ -38,7 +38,11 @@ class ObfustringPlugin : Plugin<Project> {
 
         val pendingLogCheck: MutableList<(() -> Unit)?> = mutableListOf(
             {
-                list.add(2, "import io.github.c0nnor263.obfustring_core.ObfustringEncoder")
+                if (!file.readText()
+                        .contains("import io.github.c0nnor263.obfustring_core.ObfustringEncoder")
+                ) {
+                    list.add(2, "import io.github.c0nnor263.obfustring_core.ObfustringEncoder")
+                }
             }
         )
 
@@ -118,8 +122,7 @@ class ObfustringPlugin : Plugin<Project> {
 
     private fun checkLineForCompatibility(line: String): Boolean {
         return line.contains(
-            "${ObfustringEncoder::class.simpleName}(\"" +
-                    ".${ObfustringEncoder::vigenere.name}(\""
+            "ObfustringEncoder(\""
         ) ||
                 line.indexOfFirst { it == '"' } < line.indexOf("const va") ||
                 (line.startsWith('@') && line.contains("(")) ||

@@ -6,7 +6,7 @@ plugins {
     id("nu.studer.credentials") version "3.0"
 }
 group = "io.github.c0nnor263"
-version = "1.2.7"
+version = "1.2.8"
 
 repositories {
     mavenCentral()

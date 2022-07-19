@@ -9,9 +9,6 @@ You have to apply the Obfustring plugin to the project.
 ```groovy
 buildscript {
   repositories {
-    maven {
-      url "https://plugins.gradle.org/m2/"
-    }
     maven { 
       url 'https://jitpack.io' 
     }

@@ -43,7 +43,6 @@ Annotate classes with strings that need to be obfuscated with:
 ### Example:
 
 ```kotlin
-val TAG = "FirstFragmentTAG"
 
 @Obfustring
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
@@ -65,8 +64,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
 ### Output:
 ```kotlin
-
-val TAG = ObfustringEncoder("comconboimyapplication").vigenere("JufqfYqmyydizHNV")
 
 @Obfustring
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {

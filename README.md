@@ -9,15 +9,12 @@ You have to apply the Obfustring plugin to the project.
 ```groovy
 buildscript {
   repositories {
-    maven {
-      url "https://plugins.gradle.org/m2/"
-    }
     maven { 
       url 'https://jitpack.io' 
     }
   }
   dependencies {
-      classpath 'io.github.c0nnor263:plugin:1.4.9'
+      classpath 'io.github.c0nnor263:plugin:1.5.1'
   }
 }
 
@@ -30,7 +27,7 @@ plugins{
 ##### build.gradle(Module)
 ```groovy
 dependencies {
-    implementation 'com.github.c0nnor263:obfustring-core:1.2.7'
+    implementation 'com.github.c0nnor263:obfustring-core:1.2.9'
 }
 ```
 
@@ -43,7 +40,6 @@ Annotate classes with strings that need to be obfuscated with:
 ### Example:
 
 ```kotlin
-val TAG = "FirstFragmentTAG"
 
 @Obfustring
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
@@ -65,8 +61,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
 ### Output:
 ```kotlin
-
-val TAG = ObfustringEncoder("comconboimyapplication").vigenere("JufqfYqmyydizHNV")
 
 @Obfustring
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {

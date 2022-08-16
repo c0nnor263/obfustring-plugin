@@ -14,7 +14,7 @@ buildscript {
     }
   }
   dependencies {
-      classpath 'io.github.c0nnor263:plugin:1.5.1'
+      classpath 'io.github.c0nnor263:plugin:1.5.2'
   }
 }
 
@@ -27,21 +27,21 @@ plugins{
 ##### build.gradle(Module)
 ```groovy
 dependencies {
-    implementation 'com.github.c0nnor263:obfustring-core:1.2.9'
+    implementation 'com.github.c0nnor263:obfustring-core:1.3.1'
 }
 ```
 
 
 Annotate classes with strings that need to be obfuscated with: 
 ```kotlin
-@Obfustring
+@ObfustringThis
 ```
 
 ### Example:
 
 ```kotlin
 
-@Obfustring
+@ObfustringThis
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,21 +62,21 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 ### Output:
 ```kotlin
 
-@Obfustring
+@ObfustringThis
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        ObfustringEncoder("comconboimyapplication").vigenere("LWFPG")
+        ObfStr("comconboimyapplication").v("LWFPG")
 //@ | Log.d("TAG", "onCreate: \n \" binding root ${binding.root} binding def $binding def ")
-        Log.d("TAG", ObfustringEncoder("comconboimyapplication").vigenere("mzWpqnsq: \n \" twpdtyv jmoa ¦${binding.root}¦ tuabube pre ¦$binding¦ pwt "))
+        Log.d("TAG", ObfStr("comconboimyapplication").v("mzWpqnsq: \n \" twpdtyv jmoa ¦${binding.root}¦ tuabube pre ¦$binding¦ pwt "))
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
         val sydney = LatLng(-34.0, 151.0)
-        ObfustringEncoder("comconboimyapplication").vigenere("LA")
-        mMap.addMarker(MarkerOptions().position(sydney).title(ObfustringEncoder("comconboimyapplication").vigenere("Qmfiqe hz Qmfnpj 5")))
+        ObfStr("comconboimyapplication").v("LA")
+        mMap.addMarker(MarkerOptions().position(sydney).title(ObfStr("comconboimyapplication").v("Qmfiqe hz Qmfnpj 5")))
     }
 }
 

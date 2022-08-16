@@ -14,7 +14,7 @@ buildscript {
     }
   }
   dependencies {
-      classpath 'io.github.c0nnor263:plugin:1.5.1'
+      classpath 'io.github.c0nnor263:plugin:1.5.2'
   }
 }
 
@@ -27,7 +27,7 @@ plugins{
 ##### build.gradle(Module)
 ```groovy
 dependencies {
-    implementation 'com.github.c0nnor263:obfustring-core:1.2.9'
+    implementation 'com.github.c0nnor263:obfustring-core:1.3.1'
 }
 ```
 

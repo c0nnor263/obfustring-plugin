@@ -77,16 +77,18 @@ abstract class ObfustringTask : DefaultTask() {
                     }
 
 
-
-                    for ((firstIndex, secondIndex) in mapOfLines) {
+                    var bufferLine = line
+                    for ((firstIndex, secondIndex) in mapOfLines.toSortedMap(reverseOrder())) {
                         if (firstIndex == -1 || secondIndex == -1) {
                             continue
                         }
 
-                        encodeValue(packageKey, line, firstIndex, secondIndex) { value ->
-                            listOfFileLines[indexOfCurrentLine] = value
+                        encodeValue(packageKey, bufferLine, firstIndex, secondIndex) { value ->
+                            bufferLine = value
                         }
                     }
+
+                    listOfFileLines[indexOfCurrentLine] = bufferLine
 
                     if (leftBracketCount > 0 &&
                         rightBracketCount > 0 &&
@@ -120,29 +122,10 @@ abstract class ObfustringTask : DefaultTask() {
 
 
     private fun checkForQuoteCount(line: String, callback: (Int, Int) -> Unit) {
-        var firstOccurIndex = -1
-        var secondOccurIndex = -1
-        var quotePair = 0
-
-        line.forEachIndexed loopLine@{ indexForQuote: Int, char: Char ->
-            val checkEscapeSymbolIndex =
-                if (indexForQuote - 1 >= 0) indexForQuote - 1 else 0
-
-            if (line[checkEscapeSymbolIndex] == '\\') return@loopLine
-
-            if (char == '"') {
-                when (quotePair) {
-                    0 -> firstOccurIndex = indexForQuote
-                    1 -> secondOccurIndex = indexForQuote
-                }
-                quotePair++
-                if (quotePair > 1) {
-
-                    quotePair = 0
-                    if(secondOccurIndex - firstOccurIndex <= 1) return@loopLine
-                    callback(firstOccurIndex, secondOccurIndex)
-                    return@loopLine
-                }
+        val listOfQuotes = line.getListOfQuotes()
+        listOfQuotes.forEachIndexed { index, char ->
+            if ((index + 1) % 2 == 0) {
+                callback(listOfQuotes[index - 1], char)
             }
         }
     }

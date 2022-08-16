@@ -25,3 +25,51 @@ internal class Templates {
         "//@ | ${sb.trimStart()}"
     }
 }
+
+internal fun CharSequence.getListOfQuotes(): List<Int> {
+    val input = '"'
+    val listForIndexes = mutableListOf<Int>()
+    var skipSymbolsCount = 0
+    var skipBracketCount = 0
+
+    forEachIndexed { index, c ->
+        if (skipSymbolsCount != 0) {
+            skipSymbolsCount--
+            return@forEachIndexed
+        }
+
+
+        val checkEscapeSymbolIndex = if (index - 1 >= 0) index - 1 else 0
+        if (get(checkEscapeSymbolIndex) == '\\') return@forEachIndexed
+
+
+        if (c == '\$' && get(index + 1) == '{') {
+            var lastIndexToSkip = -1
+
+            run findPairBracket@{
+                forEachIndexed { index2, c2 ->
+                    if (index2 > index + 1) {
+
+
+                        if (c2 == '{') {
+                            skipBracketCount++
+                        } else if (c2 == '}') {
+                            if (skipBracketCount > 0) {
+                                skipBracketCount--
+                            } else {
+                                lastIndexToSkip = index2
+                                return@findPairBracket
+                            }
+                        }
+                    }
+                }
+            }
+
+            skipSymbolsCount = lastIndexToSkip - index
+        }
+        if (c == input) {
+            listForIndexes.add(index)
+        }
+    }
+    return listForIndexes
+}

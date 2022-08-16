@@ -12,10 +12,18 @@ class ObfustringPlugin : Plugin<Project> {
                 if (variant.buildType == "release") {
 
                     project.tasks.create(
-                        "obfustring_${variant.buildType}",
+                        "obfustringRelease",
                         ObfustringTask::class.java
                     ) { task ->
-                        project.tasks.findByName("assembleRelease")?.dependsOn(task)
+                        project.tasks.whenTaskAdded { releaseTask ->
+                            if (
+                                releaseTask.name == "assembleRelease" ||
+                                releaseTask.name == "bundleRelease"
+                            ) {
+                                releaseTask.dependsOn(task)
+                            }
+                        }
+
                         val packageName = variant.applicationId.get()
                         task.packageKey = packageName.filter { it != '.' }
                     }

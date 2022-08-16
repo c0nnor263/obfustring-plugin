@@ -70,7 +70,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         ObfStr("comconboimyapplication").v("LWFPG")
 //@ | Log.d("TAG", "onCreate: \n \" binding root ${binding.root} binding def $binding def ")
-        Log.d("TAG", ObfStr("comconboimyapplication").v("mzWpqnsq: \n \" twpdtyv jmoa ¦${binding.root}¦ tuabube pre ¦$binding¦ pwt "))
+        Log.d(ObfStr("comconboimyapplication").v("PIM"), ObfStr("comconboimyapplication").v("mzWpqnsq: \n \" twpdtyv jmoa ¦${binding.root}¦ tuabube pre ¦$binding¦ pwt "))
     }
 
     override fun onMapReady(googleMap: GoogleMap) {

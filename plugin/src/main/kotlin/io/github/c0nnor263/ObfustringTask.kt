@@ -2,6 +2,7 @@ package io.github.c0nnor263
 
 import io.github.c0nnor263.obfustring_core.ObfStr
 import org.gradle.api.DefaultTask
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension
@@ -9,16 +10,15 @@ import java.io.File
 
 
 abstract class ObfustringTask : DefaultTask() {
-
-    @Input
-    var packageKey: String = "abc"
+    @get:Input
+    abstract val packageKey: Property<String>
 
     @TaskAction
     fun obfustring() {
         (project.extensions.getByName("kotlin") as KotlinAndroidProjectExtension)
             .sourceSets.getByName("main").kotlin
             .filter { it.isFile && it.extension == "kt" }.forEach { file ->
-                obfustringEncodeJavaFile(file, packageKey)
+                obfustringEncodeJavaFile(file, packageKey.get().filter { it != '.' })
             }
     }
 
@@ -116,10 +116,29 @@ abstract class ObfustringTask : DefaultTask() {
         val encoder = ObfStr(packageKey)
         val stringToEncode = line.substring(firstIndex, secondIndex + 1)
 
+        val countOfStringsToEncode = line.split(stringToEncode).size - 1
         val newValue = Templates().encodedValueTemp(packageKey, encoder, stringToEncode)
-        callback(line.replace(stringToEncode, newValue))
+
+        if (countOfStringsToEncode > 1) {
+            callback(line.replaceLast(stringToEncode, newValue))
+        } else {
+            callback(line.replace(stringToEncode, newValue))
+        }
     }
 
+    fun String.replaceLast(
+        delimiter: String,
+        replacement: String,
+        missingDelimiterValue: String = this
+    ): String {
+        val index = lastIndexOf(delimiter)
+        val lastSymbol = index + delimiter.lastIndex + 1
+        return if (index == -1) missingDelimiterValue else replaceRange(
+            index,
+            lastSymbol,
+            replacement
+        )
+    }
 
     private fun checkForQuoteCount(line: String, callback: (Int, Int) -> Unit) {
         val listOfQuotes = line.getListOfQuotes()
@@ -133,10 +152,11 @@ abstract class ObfustringTask : DefaultTask() {
     private fun checkLineForCompatibility(line: String): Boolean {
         val trimmedLine = line.trimStart()
         return line.contains(Templates().alreadyEncodedStringTemp) ||
-                line.indexOfFirst { it == '"' } < line.indexOf("const va") ||
+                trimmedLine.startsWith("const val") ||
+                trimmedLine.startsWith("private const val") ||
                 trimmedLine.startsWith("//") ||
                 trimmedLine.startsWith("/*") ||
-                trimmedLine.startsWith("*/") ||
+                trimmedLine.contains("*/") ||
                 (trimmedLine.startsWith('@') && line.contains("(")) ||
                 trimmedLine.isBlank()
 
@@ -182,6 +202,4 @@ abstract class ObfustringTask : DefaultTask() {
             }
         } else null
     }
-
-
 }

@@ -14,7 +14,7 @@ buildscript {
     }
   }
   dependencies {
-      classpath 'io.github.c0nnor263:plugin:1.5.2'
+      classpath 'io.github.c0nnor263:plugin:1.5.3'
   }
 }
 
@@ -26,8 +26,14 @@ plugins{
 
 ##### build.gradle(Module)
 ```groovy
-dependencies {
-    implementation 'com.github.c0nnor263:obfustring-core:1.3.1'
+obfustringConf{
+  packageKey = "com.conboi.myapplication"
+}
+
+android{
+  dependencies {
+     implementation 'com.github.c0nnor263:obfustring-core:1.3.1'
+  }
 }
 ```
 

@@ -1,12 +1,13 @@
 plugins {
     `java-gradle-plugin`
     `maven-publish`
+    `java`
     id("org.jetbrains.kotlin.jvm") version "1.5.31"
     id("com.gradle.plugin-publish") version "1.0.0"
     id("nu.studer.credentials") version "3.0"
 }
 group = "io.github.c0nnor263"
-version = "1.5.3"
+version = "1.5.4"
 
 repositories {
     mavenCentral()
@@ -42,4 +43,9 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions {
         jvmTarget = "11"
     }
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 }

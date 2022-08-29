@@ -14,7 +14,7 @@ buildscript {
     }
   }
   dependencies {
-      classpath 'io.github.c0nnor263:plugin:1.5.3'
+      classpath 'io.github.c0nnor263:plugin:1.5.4'
   }
 }
 

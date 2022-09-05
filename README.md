@@ -14,7 +14,7 @@ buildscript {
     }
   }
   dependencies {
-      classpath 'io.github.c0nnor263:plugin:1.5.4'
+      classpath 'io.github.c0nnor263:plugin:1.5.5'
   }
 }
 
@@ -32,7 +32,7 @@ obfustringConf{
 
 android{
   dependencies {
-     implementation 'com.github.c0nnor263:obfustring-core:1.3.1'
+     implementation 'com.github.c0nnor263:obfustring-core:1.3.2'
   }
 }
 ```

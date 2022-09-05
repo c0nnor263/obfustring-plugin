@@ -7,7 +7,7 @@ plugins {
     id("nu.studer.credentials") version "3.0"
 }
 group = "io.github.c0nnor263"
-version = "1.5.4"
+version = "1.5.5"
 
 repositories {
     mavenCentral()
@@ -20,7 +20,7 @@ repositories {
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.31")
     implementation("com.android.tools.build:gradle-api:7.2.1")
-    implementation("com.github.c0nnor263:obfustring-core:1.3.1")
+    implementation("com.github.c0nnor263:obfustring-core:1.3.2")
 }
 
 gradlePlugin {

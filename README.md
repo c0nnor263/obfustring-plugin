@@ -9,12 +9,10 @@ You have to apply the Obfustring plugin to the project.
 ```groovy
 buildscript {
   repositories {
-    maven { 
-      url 'https://jitpack.io' 
-    }
+    mavenCentral()
   }
   dependencies {
-      classpath 'io.github.c0nnor263:plugin:1.5.5'
+      classpath 'io.github.c0nnor263:plugin:1.5.6'
   }
 }
 
@@ -32,7 +30,7 @@ obfustringConf{
 
 android{
   dependencies {
-     implementation 'com.github.c0nnor263:obfustring-core:1.3.2'
+      implementation("io.github.c0nnor263:obfustring-core:1.3.3")
   }
 }
 ```

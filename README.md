@@ -8,14 +8,12 @@ You have to apply the Obfustring plugin to the project.
 ##### build.gradle(Project)
 ```groovy
 buildscript {
-  repositories {
-    maven { 
-      url 'https://jitpack.io' 
+    repositories {
+        mavenCentral()
     }
-  }
-  dependencies {
-      classpath 'io.github.c0nnor263:plugin:1.5.4'
-  }
+    dependencies {
+        classpath 'io.github.c0nnor263:plugin:1.5.7'
+    }
 }
 
 plugins{
@@ -27,18 +25,18 @@ plugins{
 ##### build.gradle(Module)
 ```groovy
 obfustringConf{
-  packageKey = "com.conboi.myapplication"
+    packageKey = "com.conboi.myapplication"
 }
 
 android{
-  dependencies {
-     implementation 'com.github.c0nnor263:obfustring-core:1.3.1'
-  }
+    dependencies {
+        implementation("io.github.c0nnor263:obfustring-core:1.5.7")
+    }
 }
 ```
 
 
-Annotate classes with strings that need to be obfuscated with: 
+Annotate classes with strings that need to be obfuscated with:
 ```kotlin
 @ObfustringThis
 ```
@@ -52,7 +50,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
+
         "HELLO"
         Log.d("TAG", "onCreate: \n \" binding root ${binding.root} binding def $binding def ")
     }

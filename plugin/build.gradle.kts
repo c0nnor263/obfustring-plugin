@@ -1,26 +1,16 @@
 plugins {
-    `java-gradle-plugin`
     `maven-publish`
-    `java`
-    id("org.jetbrains.kotlin.jvm") version "1.5.31"
+    kotlin("jvm")
     id("com.gradle.plugin-publish") version "1.0.0"
     id("nu.studer.credentials") version "3.0"
 }
-group = "io.github.c0nnor263"
-version = "1.5.5"
 
-repositories {
-    mavenCentral()
-    google()
-    maven {
-        url = uri("https://jitpack.io")
-    }
-}
+group = "io.github.c0nnor263"
+version = "1.5.7"
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.31")
-    implementation("com.android.tools.build:gradle-api:7.2.1")
-    implementation("com.github.c0nnor263:obfustring-core:1.3.2")
+    implementation("com.android.tools.build:gradle-api:7.2.2")
 }
 
 gradlePlugin {

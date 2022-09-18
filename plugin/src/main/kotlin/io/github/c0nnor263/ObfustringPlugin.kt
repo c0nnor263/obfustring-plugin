@@ -7,11 +7,10 @@ import org.gradle.api.Project
 class ObfustringPlugin : Plugin<Project> {
     override fun apply(pluginProject: Project) {
         pluginProject.rootProject.allprojects.forEach { childProject ->
+
             val extension = ObfustringExtension.getPluginExtension(childProject)
 
-            if (childProject.tasks
-                    .findByName(ObfustringExtension.obfustringTaskName) == null
-            ) {
+            if (childProject.tasks.findByName(ObfustringExtension.obfustringTaskName) == null) {
                 ObfustringExtension.createObfustringTask(childProject) { task ->
                     if (childProject != pluginProject.rootProject) {
 
@@ -30,8 +29,7 @@ class ObfustringPlugin : Plugin<Project> {
                                 }
                             }
                         }
-
-                        task.packageKey.set(extension.packageKey)
+                        task.key.set(extension.packageKey)
                     }
                 }
             }

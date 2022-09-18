@@ -1,6 +1,6 @@
 package io.github.c0nnor263
 
-import io.github.c0nnor263.obfustring_core.ObfStr
+import io.github.c0nnor263.core.ObfStr
 import org.gradle.api.DefaultTask
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
@@ -11,19 +11,26 @@ import java.io.File
 
 abstract class ObfustringTask : DefaultTask() {
     @get:Input
-    abstract val packageKey: Property<String>
+    abstract val key: Property<String>
 
     @TaskAction
     fun obfustring() {
+        val formatKey = key.get().map {
+            if (!it.isLetter()) {
+                (('A'..'Z') + ('a'..'z')).random()
+            } else it
+        }.joinToString("")
+
         (project.extensions.getByName("kotlin") as KotlinAndroidProjectExtension)
             .sourceSets.getByName("main").kotlin
-            .filter { it.isFile && it.extension == "kt" }.forEach { file ->
-                obfustringEncodeJavaFile(file, packageKey.get().filter { it != '.' })
+            .filter { it.isFile && it.extension == "kt" }
+            .forEach { file ->
+                obfustringEncodeSourceFile(file, formatKey)
             }
     }
 
 
-    private fun obfustringEncodeJavaFile(file: File, packageKey: String) {
+    private fun obfustringEncodeSourceFile(file: File, packageKey: String) {
         val fileText = file.readText()
         if (!fileText.contains(Templates().annotationTemp)) return
 
@@ -66,7 +73,15 @@ abstract class ObfustringTask : DefaultTask() {
                     if (leftBracketsInLine > 0) leftBracketCount += leftBracketsInLine
                     if (rightBracketsInLine > 0) rightBracketCount += rightBracketsInLine
 
-                    if (checkLineForCompatibility(line)) return@forEachIndexed
+                    val previousIndex = if (listIndex - 1 < 0) listIndex else listIndex - 1
+                    val nextIndex =
+                        if (listOfFileLines.size - 1 < listIndex + 1) listIndex else listIndex + 1
+                    if (checkLineForCompatibility(
+                            line = line,
+                            previousLine = listOfFileLines[previousIndex],
+                            nextLine = listOfFileLines[nextIndex]
+                        )
+                    ) return@forEachIndexed
 
                     // Check line for log existing
                     checkLineForLogExisting(line, listOfFileLines)?.let { pendingLogCheck.add(it) }
@@ -126,7 +141,7 @@ abstract class ObfustringTask : DefaultTask() {
         }
     }
 
-    fun String.replaceLast(
+    private fun String.replaceLast(
         delimiter: String,
         replacement: String,
         missingDelimiterValue: String = this
@@ -149,10 +164,20 @@ abstract class ObfustringTask : DefaultTask() {
         }
     }
 
-    private fun checkLineForCompatibility(line: String): Boolean {
+    private fun checkLineForCompatibility(
+        line: String,
+        previousLine: String,
+        nextLine: String
+    ): Boolean {
         val trimmedLine = line.trimStart()
+        val trimmedPreviousLine = previousLine.trimStart()
+        val trimmedNextLine = nextLine.trimStart()
         return line.contains(Templates().alreadyEncodedStringTemp) ||
                 trimmedLine.startsWith("const val") ||
+                (trimmedLine.startsWith('\"') && trimmedPreviousLine.startsWith("const val")) ||
+                (trimmedLine.startsWith('\"') && trimmedPreviousLine.startsWith("private const val")) ||
+                (trimmedLine.startsWith("const val") && trimmedNextLine.startsWith('\"')) ||
+                (trimmedLine.startsWith("private const val") && trimmedNextLine.startsWith('\"')) ||
                 trimmedLine.startsWith("private const val") ||
                 trimmedLine.startsWith("//") ||
                 trimmedLine.startsWith("/*") ||

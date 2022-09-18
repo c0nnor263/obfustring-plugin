@@ -1,13 +1,14 @@
 package io.github.c0nnor263
 
-import io.github.c0nnor263.obfustring_core.ObfStr
-import io.github.c0nnor263.obfustring_core.ObfustringThis
+import io.github.c0nnor263.core.ObfustringThis
+import io.github.c0nnor263.core.ObfStr
 
 internal class Templates {
     val alreadyEncodedLogTemp = "//@ | "
     val alreadyEncodedStringTemp = "${ObfStr::class.java.simpleName}(\""
     val annotationTemp = "@${ObfustringThis::class.java.simpleName}"
-    val importTemp = "import ${ObfStr::class.java.`package`.name}.${ObfStr::class.java.simpleName}"
+    val importTemp =
+        "import io.github.c0nnor263.obfustring.${ObfStr::class.java.simpleName}"
 
 
     val encodedValueTemp: (
@@ -18,7 +19,10 @@ internal class Templates {
 
         "${ObfStr::class.simpleName}(\"$packageKey\")." +
                 "${ObfStr::v.name}(" +
-                encoder.v(stringToEncode, true) +
+                encoder.v(
+                    string = stringToEncode,
+                    encrypt = true
+                ) +
                 ")"
     }
     val encodedLogTemp: (sb: StringBuilder) -> String = { sb ->

@@ -11,7 +11,7 @@ abstract class ObfustringExtension @Inject constructor(project: Project) {
     companion object {
 
 
-        const val obfustringConfName = "obfustringConf"
+        const val obfustringConfName = "obfustring"
         const val obfustringTaskName = "obfustringRelease"
 
         const val assembleTaskName = "assembleRelease"

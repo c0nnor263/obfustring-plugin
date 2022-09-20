@@ -25,7 +25,7 @@ plugins{
 ##### build.gradle(Module)
 ```groovy
 obfustring{
-    packageKey = "com.conboi.myapplication" // comDconboinmyapplicatio
+    packageKey = "com.conboi.myapplication" // comDconboinmyapplication
 }
 
 android{

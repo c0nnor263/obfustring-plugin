@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "io.github.c0nnor263"
-version = "10.05"
+version = "10.05.1"
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.31")

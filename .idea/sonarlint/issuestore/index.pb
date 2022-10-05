@@ -34,3 +34,19 @@ A
 settings.gradle,0\5\05efc8b1657769a27696d478ded1e95f38737233
 L
 obfustring-core/build.gradle,b\3\b3f7c6fce2aeb930af7e6793bbb8bd7e131a6f81
+\
+,obfustring-core/src/main/AndroidManifest.xml,a\0\a01611d30bf1753eb08af9689a2e3aca920efe36
+G
+plugin/build.gradle.kts,e\b\eb592fc14dde861a02b43162ff249725b5669f84
+¶
+…obfustring-core/src/androidTest/java/io/github/a26197993b77e31a4/o7b471d74a5346efb54aa326b892daf01d914ce99/ExampleInstrumentedTest.kt,4\3\43d976991947077e5068ce0f7500b7819caf96cd
+¦
+vobfustring-core/src/test/java/io/github/a26197993b77e31a4/o7b471d74a5346efb54aa326b892daf01d914ce99/ExampleUnitTest.kt,4\9\49e34e87e826c1c1daf8eaaf6d652ce345be9142
+q
+Aplugin/src/main/kotlin/io/github/a26197993b77e31a4/core/ObfStr.kt,1\d\1d8a2be2852f2951965feb6100a7321be75bb33e
+y
+Iplugin/src/main/kotlin/io/github/a26197993b77e31a4/ObfustringExtension.kt,2\f\2fd39a5c5df21bef54c7cd8de59176931f124a0b
+¥
+uobfustring-core/src/main/java/io/github/a26197993b77e31a4/o7b471d74a5346efb54aa326b892daf01d914ce99/ObfustringThis.kt,b\4\b41b4965cc20125eb7a3c23014e62b7ad5cce2a0
+y
+Iplugin/src/main/kotlin/io/github/a26197993b77e31a4/core/ObfustringThis.kt,c\9\c9559f2b2e90fc17cf23ea5a465a5e11568f7d6c

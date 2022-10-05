@@ -1,6 +1,6 @@
 ext {
     PUBLISH_GROUP_ID = 'io.github.c0nnor263'
-    PUBLISH_VERSION = '10.05'
+    PUBLISH_VERSION = '10.05.1'
     PUBLISH_ARTIFACT_ID = 'obfustring-core'
     PUBLISH_DESCRIPTION = 'Core dependency for stable work "obfustring-plugin"'
     PUBLISH_URL = 'https://github.com/c0nnor263/obfustring-core'

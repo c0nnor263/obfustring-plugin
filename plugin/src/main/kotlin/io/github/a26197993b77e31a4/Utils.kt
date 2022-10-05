@@ -8,7 +8,7 @@ internal class Templates {
     val alreadyEncodedStringTemp = "${ObfStr::class.java.simpleName}(\""
     val annotationTemp = "@${ObfustringThis::class.java.simpleName}"
     val importTemp =
-        "import io.github.c0nnor263.obfustring.${ObfStr::class.java.simpleName}"
+        "import io.github.a26197993b77e31a4.o7b471d74a5346efb54aa326b892daf01d914ce99.${ObfStr::class.java.simpleName}"
 
 
     val encodedValueTemp: (

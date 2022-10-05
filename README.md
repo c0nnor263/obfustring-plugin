@@ -24,8 +24,8 @@ plugins{
 
 ##### build.gradle(Module)
 ```groovy
-obfustringConf{
-    packageKey = "com.conboi.myapplication"
+obfustring{
+    packageKey = "com.conboi.myapplication" // comDconboinmyapplication
 }
 
 android{
@@ -72,15 +72,15 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        ObfStr("comconboimyapplication").v("LWFPG")
+        ObfStr("comDconboinmyapplication").v("LWFPG")
 //@ | Log.d("TAG", "onCreate: \n \" binding root ${binding.root} binding def $binding def ")
-        Log.d(ObfStr("comconboimyapplication").v("PIM"), ObfStr("comconboimyapplication").v("mzWpqnsq: \n \" twpdtyv jmoa ¦${binding.root}¦ tuabube pre ¦$binding¦ pwt "))
+        Log.d(ObfStr("comDconboinmyapplication").v("PIM"), ObfStr("comDconboinmyapplication").v("mzWpqnsq: \n \" twpdtyv jmoa ¦${binding.root}¦ tuabube pre ¦$binding¦ pwt "))
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
         val sydney = LatLng(-34.0, 151.0)
-        ObfStr("comconboimyapplication").v("LA")
-        mMap.addMarker(MarkerOptions().position(sydney).title(ObfStr("comconboimyapplication").v("Qmfiqe hz Qmfnpj 5")))
+        ObfStr("comDconboinmyapplication").v("LA")
+        mMap.addMarker(MarkerOptions().position(sydney).title(ObfStr("comDconboinmyapplication").v("Qmfiqe hz Qmfnpj 5")))
     }
 }
 

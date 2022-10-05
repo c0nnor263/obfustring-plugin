@@ -1,4 +1,4 @@
-package io.github.c0nnor263.core
+package io.github.a26197993b77e31a4.core
 
 
 @JvmInline

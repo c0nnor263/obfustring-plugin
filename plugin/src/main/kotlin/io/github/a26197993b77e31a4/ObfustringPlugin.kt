@@ -1,4 +1,4 @@
-package io.github.c0nnor263
+package io.github.a26197993b77e31a4
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project

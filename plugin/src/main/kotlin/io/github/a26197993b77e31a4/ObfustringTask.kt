@@ -1,6 +1,6 @@
-package io.github.c0nnor263
+package io.github.a26197993b77e31a4
 
-import io.github.c0nnor263.core.ObfStr
+import io.github.a26197993b77e31a4.core.ObfStr
 import org.gradle.api.DefaultTask
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
@@ -182,6 +182,7 @@ abstract class ObfustringTask : DefaultTask() {
                 trimmedLine.startsWith("//") ||
                 trimmedLine.startsWith("/*") ||
                 trimmedLine.contains("*/") ||
+                trimmedLine.contains('¦') ||
                 (trimmedLine.startsWith('@') && line.contains("(")) ||
                 trimmedLine.isBlank()
 

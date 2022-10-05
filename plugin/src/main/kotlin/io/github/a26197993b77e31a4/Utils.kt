@@ -1,7 +1,7 @@
-package io.github.c0nnor263
+package io.github.a26197993b77e31a4
 
-import io.github.c0nnor263.core.ObfustringThis
-import io.github.c0nnor263.core.ObfStr
+import io.github.a26197993b77e31a4.core.ObfustringThis
+import io.github.a26197993b77e31a4.core.ObfStr
 
 internal class Templates {
     val alreadyEncodedLogTemp = "//@ | "

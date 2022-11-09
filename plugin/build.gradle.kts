@@ -6,11 +6,11 @@ plugins {
 }
 
 group = "io.github.c0nnor263"
-version = "10.05.1"
+version = "11.09"
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.31")
-    implementation("com.android.tools.build:gradle-api:7.2.2")
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.20")
+    implementation("com.android.tools.build:gradle-api:7.3.1")
 }
 
 gradlePlugin {
@@ -19,7 +19,7 @@ gradlePlugin {
         id = "io.github.c0nnor263.obfustring-plugin"
         displayName = "Obfustring"
         description = "This plugin obfuscates your strings"
-        implementationClass = "io.github.a26197993b77e31a4.ObfustringPlugin"
+        implementationClass = "io.github.boiawidmb9mb12095n21b50215b16132.ObfustringPlugin"
     }
 }
 

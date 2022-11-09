@@ -1,4 +1,4 @@
-package io.github.a26197993b77e31a4
+package io.github.boiawidmb9mb12095n21b50215b16132
 
 import org.gradle.api.Project
 import org.gradle.api.provider.Property
@@ -8,10 +8,11 @@ import javax.inject.Inject
 abstract class ObfustringExtension @Inject constructor(project: Project) {
     val packageKey: Property<String> = project.objects.property(String::class.java)
 
+
     companion object {
 
 
-        const val obfustringConfName = "obfustring"
+        const val obfustringConfigurationName = "obfustring"
         const val obfustringTaskName = "obfustringRelease"
 
         const val assembleTaskName = "assembleRelease"
@@ -23,12 +24,12 @@ abstract class ObfustringExtension @Inject constructor(project: Project) {
             project
                 .extensions
                 .findByName(
-                    obfustringConfName
+                    obfustringConfigurationName
                 ) as ObfustringExtension?
                 ?: project
                     .extensions
                     .create(
-                        obfustringConfName,
+                        obfustringConfigurationName,
                         ObfustringExtension::class.java,
                         project
                     )

@@ -1,40 +1,86 @@
 plugins {
-    id 'com.android.library'
-    id 'org.jetbrains.kotlin.android'
+    id 'org.jetbrains.kotlin.jvm'
+    id 'maven-publish'
+    id 'signing'
 }
-apply from: "${rootProject.projectDir}/scripts/publish-module.gradle"
+apply from : "${rootDir}/obfustring-core/publish-scripts/extras.gradle"
 
-group PUBLISH_GROUP_ID
-version PUBLISH_VERSION
+group = PUBLISH_GROUP_ID
+version = PUBLISH_VERSION
 
-android {
-    namespace "io.github.boiawidmb9mb12095n21b50215b16132.b21nm01om5n1905mw0bdkb2b515"
-    compileSdk 33
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 
-    defaultConfig {
-        minSdk 24
-        targetSdk 33
-
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles "consumer-rules.pro"
-    }
-
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-    }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
-    }
     kotlinOptions {
         jvmTarget = '11'
     }
 }
 
-dependencies {
-    testImplementation 'junit:junit:4.13.2'
+
+ext["signing.keyId"] = rootProject.ext["signing.keyId"]
+ext["signing.password"] = rootProject.ext["signing.password"]
+ext["signing.secretKeyRingFile"] = rootProject.ext["signing.secretKeyRingFile"]
+
+signing {
+    sign publishing.publications
 }
 
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                groupId PUBLISH_GROUP_ID
+                artifactId PUBLISH_ARTIFACT_ID
+                version PUBLISH_VERSION
+
+                // the `aar` (or `jar`) and the sources
+                if (project.plugins.findPlugin("com.android.library")) {
+                    from components.release
+                } else {
+                    from components.java
+                }
+
+//                artifact androidSourcesJar
+
+                pom {
+                    name = PUBLISH_ARTIFACT_ID
+                    description = PUBLISH_DESCRIPTION
+                    url = PUBLISH_URL
+                    licenses {
+                        license {
+                            name = PUBLISH_LICENSE_NAME
+                            url = PUBLISH_LICENSE_URL
+                        }
+                    }
+                    developers {
+                        developer {
+                            id = PUBLISH_DEVELOPER_ID
+                            name = PUBLISH_DEVELOPER_NAME
+                            email = PUBLISH_DEVELOPER_EMAIL
+                        }
+                    }
+                    scm {
+                        connection = PUBLISH_SCM_CONNECTION
+                        developerConnection = PUBLISH_SCM_DEVELOPER_CONNECTION
+                        url = PUBLISH_SCM_URL
+                    }
+                }
+            }
+        }
+    }
+}
+//
+//task androidSourcesJar(type: Jar) {
+//    archiveClassifier.set('sources')
+//    if (project.plugins.findPlugin("com.android.library")) {
+//        from android.sourceSets.main.java.srcDirs
+//        from android.sourceSets.main.kotlin.srcDirs
+//    } else {
+//        from sourceSets.main.java.srcDirs
+//        from sourceSets.main.kotlin.srcDirs
+//    }
+//}
+//artifacts {
+//    archives androidSourcesJar
+//}

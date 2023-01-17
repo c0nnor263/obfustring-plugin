@@ -4,6 +4,13 @@ pluginManagement {
         google()
         mavenCentral()
     }
+    resolutionStrategy {
+        eachPlugin {
+            if (requested.id.id == "com.android.application") {
+                useModule("com.android.tools.build:gradle:7.3.1")
+            }
+        }
+    }
 }
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
@@ -11,7 +18,9 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
     }
+
 }
 rootProject.name = "Obfustring"
+include ':app'
 include ':obfustring-core'
 include ':plugin'

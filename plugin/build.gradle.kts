@@ -1,25 +1,25 @@
 plugins {
-    `maven-publish`
     kotlin("jvm")
     id("com.gradle.plugin-publish") version "1.0.0"
     id("nu.studer.credentials") version "3.0"
 }
 
 group = "io.github.c0nnor263"
-version = "11.09"
+version = "23.01.11"
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.20")
     implementation("com.android.tools.build:gradle-api:7.3.1")
+    implementation(project(":obfustring-core"))
+
 }
 
 gradlePlugin {
-    // Define the plugin
-    val obfustringPlugin by plugins.creating {
+    plugins.creating {
         id = "io.github.c0nnor263.obfustring-plugin"
         displayName = "Obfustring"
         description = "This plugin obfuscates your strings"
-        implementationClass = "io.github.boiawidmb9mb12095n21b50215b16132.ObfustringPlugin"
+        implementationClass = "io.github.l238e4e6fe89ed7f56e89fd28b0d75ac2ba9d72577d98a753a1c457.ObfustringPlugin"
     }
 }
 

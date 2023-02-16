@@ -12,7 +12,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'io.github.c0nnor263:plugin:23.01.11'
+        classpath 'io.github.c0nnor263:plugin:11.09'
     }
 }
 
@@ -30,7 +30,7 @@ obfustring{
 
 android{
     dependencies {
-        implementation("io.github.c0nnor263:obfustring-core:23.01.11")
+        implementation("io.github.c0nnor263:obfustring-core:11.09")
     }
 }
 ```

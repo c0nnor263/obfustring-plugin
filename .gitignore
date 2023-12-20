@@ -3,6 +3,7 @@
 .idea
 /.idea
 /local.properties
+/gradle.properties
 /.idea/caches
 /.idea/libraries
 /.idea/modules.xml
@@ -21,3 +22,6 @@ local.properties
 /obfustring-core/obfustring-core-publish-scripts/
 /app/
 /.idea/
+/com.conboi.myapplication
+/buildSrc/build/
+/com.conboi.examplekeystore

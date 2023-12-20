@@ -32,41 +32,23 @@
 * limitations under the License.
 */
 
-plugins {
-    kotlin("jvm")
-    id("com.gradle.plugin-publish") version versions.gradlePublish
-    id("nu.studer.credentials") version versions.nuStuderCredentials
-}
-
-group = ObfustringData.groupId
-version = versions.obfustringVersion
-
-kotlin {
-    jvmToolchain(ObfustringData.config.jvmTarget)
-}
-
-java {
-    sourceCompatibility = ObfustringData.config.sourceCompatibility
-    targetCompatibility = ObfustringData.config.targetCompatibility
-}
-
-dependencies {
-    implementation(project(":obfustring-core"))
-    implementation("com.android.tools.build:gradle-api:${versions.gradle}")
-
-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlin}")
-    implementation("org.ow2.asm:asm:${versions.asm}")
-    implementation("org.ow2.asm:asm-commons:${versions.asm}")
-    implementation("com.joom.grip:grip:${versions.joomGrip}")
-}
-
-gradlePlugin {
-    val obfustringPlugin by plugins.creating {
-        id = ObfustringData.plugin.id
-        displayName = ObfustringData.plugin.displayName
-        description = ObfustringData.plugin.description
-        implementationClass = ObfustringData.plugin.implementationClass
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        google()
+        mavenCentral()
+        mavenLocal()
     }
-    website.set(ObfustringData.plugin.website)
-    vcsUrl.set(ObfustringData.plugin.vcsUrl)
 }
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+        mavenLocal()
+    }
+}
+rootProject.name = "Obfustring"
+include(":obfustring-core")
+include(":plugin")
+include(":exampleapp")

@@ -1,6 +1,8 @@
 name: AI Commit Message Generator
 
-on: [push]
+on: 
+  push:
+  workflow_dispatch:
 
 jobs:
   ai_commit_message:

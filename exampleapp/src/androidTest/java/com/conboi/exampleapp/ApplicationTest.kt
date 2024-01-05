@@ -25,7 +25,6 @@ import org.junit.runner.RunWith
 class ApplicationTest {
     @Test
     fun testApplication_applicationWorkingCorrect() {
-        val activityScenario: ActivityScenario<MainActivity> =
             ActivityScenario.launch(MainActivity::class.java)
         assert(true)
     }

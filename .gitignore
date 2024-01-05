@@ -22,6 +22,5 @@ local.properties
 /obfustring-core/obfustring-core-publish-scripts/
 /app/
 /.idea/
-/com.conboi.myapplication
 /buildSrc/build/
-/com.conboi.examplekeystore
+/exampleapp/com.conboi.examplekeystore

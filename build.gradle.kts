@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Oleh Boichuk
+ * Copyright 2024 Oleh Boichuk
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,51 +26,54 @@ buildscript {
         gradlePluginPortal()
     }
     dependencies {
-        classpath("io.github.c0nnor263:plugin:${versions.obfustringVersion}")
+        classpath("io.github.c0nnor263:obfustring-plugin:${Versions.obfustringVersion}")
     }
 }
 plugins {
-    id("com.android.application") version versions.gradle apply false
-    id("com.android.library") version versions.gradle apply false
-    id("org.jetbrains.kotlin.android") version versions.kotlin apply false
-    id("org.jetbrains.kotlin.jvm") version versions.kotlin apply false
-    id("io.github.gradle-nexus.publish-plugin") version versions.nexusPublishPlugin
-    id("com.github.ben-manes.versions") version versions.benNamesVersions
+    id("com.android.application") version Versions.gradle apply false
+    id("com.android.library") version Versions.gradle apply false
+    id("org.jetbrains.kotlin.android") version Versions.kotlin apply false
+    id("org.jetbrains.kotlin.jvm") version Versions.kotlin apply false
+    id("io.github.gradle-nexus.publish-plugin") version Versions.nexusPublishPlugin
+    id("com.github.ben-manes.versions") version Versions.benNamesVersions
 }
 
 tasks.withType<DependencyUpdatesTask> {
     rejectVersionIf {
         val version = candidate.version
-        val stableKeyword = listOf("RELEASE", "FINAL", "GA").any {
-            version.uppercase(java.util.Locale.getDefault())
-                .contains(it)
-        }
+        val stableKeyword =
+            listOf("RELEASE", "FINAL", "GA").any {
+                version.uppercase(java.util.Locale.getDefault())
+                    .contains(it)
+            }
         val regex = "^[0-9,.v-]+(-r)?$".toRegex()
         val isStable = stableKeyword || regex.matches(version)
         isStable.not()
     }
 }
 
-val secretPropsFile = project.rootProject.file("gradle.properties")
-val mapOfFields = mutableMapOf<String, Any?>()
+var sonatypeStagingProfileId: String? = null
+var ossrhUsername: String? = null
+var ossrhPassword: String? = null
+val secretPropsFile: File = project.rootProject.file("gradle.properties")
 if (secretPropsFile.exists()) {
     val properties = Properties()
     FileInputStream(secretPropsFile).use { properties.load(it) }
-    properties.forEach { name, value ->
-        mapOfFields[name.toString()] = value
-    }
+    sonatypeStagingProfileId = properties.getProperty("sonatypeStagingProfileId")
+    ossrhUsername = properties.getProperty("ossrhUsername")
+    ossrhPassword = properties.getProperty("ossrhPassword")
 }
 
 // Set up Sonatype repository
 nexusPublishing {
     repositories {
         sonatype {
-            stagingProfileId.set(mapOfFields["sonatypeStagingProfileId"] as String)
-            username.set(mapOfFields["ossrhUsername"] as String)
-            password.set(mapOfFields["ossrhPassword"] as String)
+            stagingProfileId.set(sonatypeStagingProfileId)
+            username.set(ossrhUsername)
+            password.set(ossrhPassword)
             nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
             snapshotRepositoryUrl.set(
-                uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+                uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"),
             )
         }
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Oleh Boichuk
+ * Copyright 2024 Oleh Boichuk
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-@file:Suppress("SpellCheckingInspection", "ClassName") // ktlint-disable filename
+@file:Suppress("ClassName", "SpellCheckingInspection", "ktlint:standard:filename")
 
 import org.gradle.api.JavaVersion
 
+@Suppress("ktlint:standard:property-naming")
 object ObfustringData {
     private const val repositoryUrl = "github.com/c0nnor263/obfustring-plugin"
     const val groupId = "io.github.c0nnor263"
 
-    object config {
+    object exampleapp {
         const val namespace = "com.conboi.exampleapp"
         const val compileSdk = 34
         const val minSdk = 24
@@ -32,10 +33,9 @@ object ObfustringData {
     }
 
     object core {
-
         object common {
             const val artifactId = "obfustring-core"
-            const val description = "Core dependency for stable work \"obfustring-plugin\""
+            const val description = "Required core dependency for obfustring-plugin"
             const val url = "https://$repositoryUrl"
         }
 
@@ -58,13 +58,30 @@ object ObfustringData {
     }
 
     object plugin {
+        const val artifactId = "$groupId.obfustring-plugin"
+        const val website = "https://$repositoryUrl"
 
-        val id = "$groupId.obfustring-plugin"
+        const val vcsUrl = "https://$repositoryUrl.git"
+        const val displayName = "Obfustring"
+        const val description =
+            "This is a Android Gradle plugin that obfuscates strings in Kotlin classes"
+        const val implementationClass = "$groupId.obfustringplugin.ObfustringPlugin"
 
-        val website = "https://$repositoryUrl"
-        val vcsUrl = "https://$repositoryUrl.git"
-        val displayName = "Obfustring"
-        val description = "This plugin obfuscates your strings"
-        val implementationClass = "$groupId.plugin.ObfustringPlugin"
+        val tags: List<String> =
+            listOf(
+                "android",
+                "kotlin",
+                "security",
+                "obfuscation",
+                "android-development",
+                "obfuscator",
+                "string-manipulation",
+                "android-app",
+                "string-obfuscation",
+                "security-tools",
+                "obfustring",
+                "obfuscate",
+                "strings",
+            )
     }
 }

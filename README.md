@@ -1,93 +1,204 @@
 # Obfustring
 
-This plugin obfuscates your strings
+This is a Android Gradle plugin that obfuscates strings in Kotlin classes
 
-### Setup
+## Setup
+
 You have to apply the Obfustring plugin to the project.
 
+> [!WARNING]
+> Starting from JDK 9, string concatenation
+>
+uses [invokedynamic instruction](https://www.baeldung.com/java-string-concatenation-invoke-dynamic)
+> by default.
+> For this reason, the Obfustring plugin must use StringConcatFactory strategies, which use the old
+> method of string concatenation via StringBuilder.
+>
+> If you are developing a big project, you may encounter significant performance issues compared to
+> the optimized invokedynamic instruction
+
 ##### build.gradle(Project)
-```groovy
+
+```kotlin
 buildscript {
     repositories {
         mavenCentral()
     }
     dependencies {
-        classpath 'io.github.c0nnor263:plugin:11.09'
+        classpath("io.github.c0nnor263:obfustring-plugin:$version")
     }
-}
-
-plugins{
-    id 'com.android.application'
-    id 'io.github.c0nnor263.obfustring-plugin'
 }
 ```
 
 ##### build.gradle(Module)
-```groovy
-obfustring{
-    packageKey = "com.conboi.myapplication" // comDconboinmyapplication
+
+```kotlin
+plugins {
+    id("com.android.application")
+    id("io.github.c0nnor263.obfustring-plugin")
 }
 
-android{
-    dependencies {
-        implementation("io.github.c0nnor263:obfustring-core:11.09")
-    }
+obfustring {
+    /**
+     * Key used to obfuscate strings
+     */
+    key = "exampleKey"
+
+    /**
+     * Configure obfustring mode using [ObfustringMode]
+     */
+    mode = ObfustringMode.DEFAULT
+
+    /**
+     * Enable logging
+     */
+    loggingEnabled = true
+
+    /**
+     * Set JVM argument -Xstring-concat using [StringConcatStrategy]
+     */
+    stringConcatStrategy = StringConcatStrategy.INDY
 }
 ```
 
+> [!TIP]
+> For more information check source code of `ObfustringExtension`
 
-Annotate classes with strings that need to be obfuscated with:
+## Usage
+
+Annotation `@ObfustringThis` is used to mark classes and fields that should be obfuscated
+
 ```kotlin
 @ObfustringThis
+class MyApplication
 ```
 
-### Example:
+> [!NOTE]
+> If you want to obfuscate all classes you can edit the plugin configuration and
+> set `mode = Obfustring.FORCE`
+
+## Example:
 
 ```kotlin
 
 @ObfustringThis
-class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        "HELLO"
-        Log.d("TAG", "onCreate: \n \" binding root ${binding.root} binding def $binding def ")
+class MyApplication : Application() {
+    companion object {
+        private const val TAG = "MyApplication"
+        val username = "user#${Random.nextInt()}"
+        val onCreateMsg = "Hello world and $username!"
     }
 
-    override fun onMapReady(googleMap: GoogleMap) {
-        val sydney = LatLng(-34.0, 151.0)
-        "HI"
-        mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney 5"))
+    override fun onCreate() {
+        super.onCreate()
+        val userChecker = UserChecker()
+        val isValidUserMsg =
+            if (userChecker.isValidName(username)) {
+                onCreateMsg
+            } else {
+                "$username is not valid user name"
+            }
+
+        Log.i(
+            TAG,
+            "Application onCreate: $isValidUserMsg",
+        )
+    }
+}
+
+@Suppress("DEPRECATION")
+@ObfustringThis
+class UserChecker {
+    companion object {
+        @Deprecated("This is a deprecated list")
+        private val forbiddenNames = listOf("admin", "root", "user")
+    }
+
+    fun isValidName(name: String): Boolean {
+        return when {
+            name.isBlank() -> false
+            name.isEmpty() -> false
+            forbiddenNames.contains(name) -> false
+            else -> true
+        }.also { result ->
+            Log.i(
+                "TAG",
+                "\tisValidName: $name is $result\n" +
+                        "\tAll forbidden names: $forbiddenNames",
+            )
+        }
     }
 }
 ```
 
 ### Output:
-```kotlin
 
-@ObfustringThis
-class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
+```java
+public final class MyApplication extends Application {
+    public static final C0501a Companion = new Object();
+    private static final String TAG = "MyApplication";
+    private static final String onCreateMsg;
+    private static final String username;
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        ObfStr("comDconboinmyapplication").v("LWFPG")
-//@ | Log.d("TAG", "onCreate: \n \" binding root ${binding.root} binding def $binding def ")
-        Log.d(ObfStr("comDconboinmyapplication").v("PIM"), ObfStr("comDconboinmyapplication").v("mzWpqnsq: \n \" twpdtyv jmoa ¦${binding.root}¦ tuabube pre ¦$binding¦ pwt "))
+    static {
+        String m398a = AbstractC0520b.m398a("wgqs#");
+        AbstractC0700e.f1984a.getClass();
+        String str = m398a + AbstractC0700e.f1985b.mo0a().nextInt();
+        username = str;
+        onCreateMsg = AbstractC0520b.m398a("Dsxmq kbszl bra ") + str + AbstractC0520b.m398a("!");
     }
 
-    override fun onMapReady(googleMap: GoogleMap) {
-        val sydney = LatLng(-34.0, 151.0)
-        ObfStr("comDconboinmyapplication").v("LA")
-        mMap.addMarker(MarkerOptions().position(sydney).title(ObfStr("comDconboinmyapplication").v("Qmfiqe hz Qmfnpj 5")))
+    @Override // android.app.Application
+    public void onCreate() {
+        String str;
+        super.onCreate();
+        UserChecker userChecker = new UserChecker();
+        String str2 = username;
+        if (userChecker.isValidName(str2)) {
+            str = onCreateMsg;
+        } else {
+            str = str2 + AbstractC0520b.m398a(" kg zpv jnmwl vwbr zpxi");
+        }
+        Log.i(AbstractC0520b.m398a("ImGqrzvdobjsk"), AbstractC0520b.m398a("Wdbmkqnuwwo skWdtlxe: ") + str);
     }
 }
 
+public final class UserChecker {
+    public static final C0502b Companion = new Object();
+    private static final List<String> forbiddenNames;
+
+    static {
+        List<String> asList = Arrays.asList(AbstractC0520b.m398a("cryjp"), AbstractC0520b.m398a("tcau"), AbstractC0520b.m398a("wgqs"));
+        AbstractC0577a.m287k(asList, "asList(...)");
+        forbiddenNames = asList;
+    }
+
+    public final boolean isValidName(String str) {
+        AbstractC0577a.m286l(str, AbstractC0520b.m398a("poyf"));
+        boolean z = false;
+        if (!AbstractC0175d.m958Z(str) && str.length() != 0 && !forbiddenNames.contains(str)) {
+            z = true;
+        }
+        String m398a = AbstractC0520b.m398a("PIM");
+        String m398a2 = AbstractC0520b.m398a("\tkgBbnwqIouf: ");
+        String m398a3 = AbstractC0520b.m398a(" kg ");
+        String m398a4 = AbstractC0520b.m398a("\n\tWzx gqfojrlfr kaytd: ");
+        List<String> list = forbiddenNames;
+        Log.i(m398a, m398a2 + str + m398a3 + z + m398a4 + list);
+        return z;
+    }
+}
 ```
 
+### Feedback
+
+If you have any questions or suggestions, please feel free
+to [open an issue](https://github.com/c0nnor263/obfustring-plugin/issues/new).
+I will be happy to make your using of the plugin more comfortable and enjoyable.
+
 ### License
-    Copyright 2022 Boichuk Oleh
+
+    Copyright 2024 Boichuk Oleh
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.

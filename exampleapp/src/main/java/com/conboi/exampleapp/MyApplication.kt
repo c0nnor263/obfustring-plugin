@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Oleh Boichuk
+ * Copyright 2024 Oleh Boichuk
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,39 +18,54 @@ package com.conboi.exampleapp
 
 import android.app.Application
 import android.util.Log
-import io.github.c0nnor263.obfustring.core.ObfustringThis
+import io.github.c0nnor263.obfustringcore.ObfustringThis
 import kotlin.random.Random
 
 @ObfustringThis
 class MyApplication : Application() {
     companion object {
         private const val TAG = "MyApplication"
-        val user = "user#${Random.nextInt()}"
-        val onCreateMsg = "Hello world and $user!"
+        val username = "user#${Random.nextInt()}"
+        val onCreateMsg = "Hello world and $username!"
     }
 
     override fun onCreate() {
         super.onCreate()
-        val userChecker = UserChecker(user)
+        val userChecker = UserChecker()
+        val isValidUserMsg =
+            if (userChecker.isValidName(username)) {
+                onCreateMsg
+            } else {
+                "$username is not valid user name"
+            }
+
         Log.i(
             TAG,
-            "Application onCreate: ${
-                if (userChecker.isValidName()) onCreateMsg else "User is not valid"
-            }"
+            "Application onCreate: $isValidUserMsg",
         )
     }
 }
 
+@Suppress("DEPRECATION")
 @ObfustringThis
-class UserChecker(private val name: String) {
+class UserChecker {
     companion object {
         @Deprecated("This is a deprecated list")
-        val forbiddenNames = listOf("admin", "root", "user")
+        private val forbiddenNames = listOf("admin", "root", "user")
     }
 
-    fun isValidName(): Boolean {
-        return name.isNotBlank() && name.isNotEmpty() && !forbiddenNames.contains(name).also {
-            Log.i("TAG", "isValidName: $it $name $forbiddenNames")
+    fun isValidName(name: String): Boolean {
+        return when {
+            name.isBlank() -> false
+            name.isEmpty() -> false
+            forbiddenNames.contains(name) -> false
+            else -> true
+        }.also { result ->
+            Log.i(
+                "TAG",
+                "\tisValidName: $name is $result\n" +
+                    "\tAll forbidden names: $forbiddenNames",
+            )
         }
     }
 }

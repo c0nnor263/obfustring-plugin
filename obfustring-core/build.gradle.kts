@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Oleh Boichuk
+ * Copyright 2024 Oleh Boichuk
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,15 +21,34 @@ plugins {
 }
 
 group = ObfustringData.groupId
-version = versions.obfustringVersion
+version = Versions.obfustringVersion
 
 kotlin {
-    jvmToolchain(ObfustringData.config.jvmTarget)
+    jvmToolchain(ObfustringData.exampleapp.jvmTarget)
 }
 
 java {
-    sourceCompatibility = ObfustringData.config.sourceCompatibility
-    targetCompatibility = ObfustringData.config.targetCompatibility
+    sourceCompatibility = ObfustringData.exampleapp.sourceCompatibility
+    targetCompatibility = ObfustringData.exampleapp.targetCompatibility
+    withSourcesJar()
+    withJavadocJar()
+}
+
+dependencies {
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:${Versions.kotlin}")
+    testImplementation("org.junit.jupiter:junit-jupiter:${Versions.Tooling.jupiter}")
+    testImplementation("junit:junit:${Versions.Tooling.junit}")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+}
+
+tasks.named<Test>("test") {
+    useJUnitPlatform()
+
+    maxHeapSize = "1G"
+
+    testLogging {
+        events("passed")
+    }
 }
 
 afterEvaluate {
@@ -38,7 +57,7 @@ afterEvaluate {
             create<MavenPublication>("obfustring-core-release") {
                 groupId = ObfustringData.groupId
                 artifactId = ObfustringData.core.common.artifactId
-                version = versions.obfustringVersion
+                version = Versions.obfustringVersion
 
                 if (plugins.hasPlugin("com.android.library")) {
                     from(components["release"])
@@ -69,7 +88,7 @@ afterEvaluate {
                     scm {
                         connection.set(ObfustringData.core.publish.publishScmConnection)
                         developerConnection.set(
-                            ObfustringData.core.publish.publishScmDeveloperConnection
+                            ObfustringData.core.publish.publishScmDeveloperConnection,
                         )
                         url.set(ObfustringData.core.publish.publishScmUrl)
                     }

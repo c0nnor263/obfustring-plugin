@@ -7,9 +7,7 @@ This is a Android Gradle plugin that obfuscates strings in Kotlin classes
 You have to apply the Obfustring plugin to the project.
 
 > [!WARNING]
-> Starting from JDK 9, string concatenation
->
-uses [invokedynamic instruction](https://www.baeldung.com/java-string-concatenation-invoke-dynamic)
+> Starting from JDK 9, string concatenation uses [invokedynamic instruction](https://www.baeldung.com/java-string-concatenation-invoke-dynamic)
 > by default.
 > For this reason, the Obfustring plugin must use StringConcatFactory strategies, which use the old
 > method of string concatenation via StringBuilder.

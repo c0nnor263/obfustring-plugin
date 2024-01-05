@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Oleh Boichuk
+ * Copyright 2024 Oleh Boichuk
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,10 @@
 
 @file:Suppress("UnstableApiUsage")
 
+import io.github.c0nnor263.obfustringplugin.enums.ObfustringMode
+import io.github.c0nnor263.obfustringplugin.enums.StringConcatStrategy
+
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -23,12 +27,12 @@ plugins {
 }
 
 android {
-    compileSdk = ObfustringData.config.compileSdk
-    namespace = ObfustringData.config.namespace
+    compileSdk = ObfustringData.exampleapp.compileSdk
+    namespace = ObfustringData.exampleapp.namespace
 
     defaultConfig {
         applicationId = namespace
-        minSdk = ObfustringData.config.minSdk
+        minSdk = ObfustringData.exampleapp.minSdk
         versionCode = 1
         versionName = "1.0"
 
@@ -41,20 +45,19 @@ android {
             isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
             signingConfig = signingConfigs.getByName("debug")
+            testProguardFile("proguard-test-rules.pro")
         }
     }
+    testBuildType = "release"
     compileOptions {
-        sourceCompatibility = ObfustringData.config.sourceCompatibility
-        targetCompatibility = ObfustringData.config.targetCompatibility
-    }
-    kotlinOptions {
-        freeCompilerArgs += "-Xstring-concat=indy"
+        sourceCompatibility = ObfustringData.exampleapp.sourceCompatibility
+        targetCompatibility = ObfustringData.exampleapp.targetCompatibility
     }
     kotlin {
-        jvmToolchain(ObfustringData.config.jvmTarget)
+        jvmToolchain(ObfustringData.exampleapp.jvmTarget)
     }
 }
 
@@ -69,6 +72,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.1")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test:runner:1.5.2")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 }
 
@@ -77,4 +81,6 @@ obfustring {
         key = it
     }
     loggingEnabled = true
+    mode = ObfustringMode.DEFAULT
+    stringConcatStrategy = StringConcatStrategy.INDY
 }

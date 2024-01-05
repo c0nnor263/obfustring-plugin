@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 #
-# Copyright 2023 Oleh Boichuk
+# Copyright 2024 Oleh Boichuk
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.

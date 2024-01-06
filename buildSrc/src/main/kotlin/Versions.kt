@@ -16,7 +16,8 @@
 
 @Suppress("ktlint:standard:property-naming")
 object Versions {
-    const val obfustringVersion = "12.0.0"
+    const val obfustringPluginVersion = "12.0.0"
+    const val obfustringCoreVersion = "12.0.0"
     const val benNamesVersions = "0.50.0"
     const val nexusPublishPlugin = "1.3.0"
     const val kotlin = "1.9.21"

@@ -23,7 +23,7 @@ plugins {
 }
 
 group = ObfustringData.groupId
-version = Versions.obfustringVersion
+version = Versions.obfustringPluginVersion
 
 kotlin {
     jvmToolchain(ObfustringData.exampleapp.jvmTarget)

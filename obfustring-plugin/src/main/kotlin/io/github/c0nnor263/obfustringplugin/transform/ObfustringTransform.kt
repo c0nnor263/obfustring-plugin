@@ -35,7 +35,7 @@ internal class ObfustringTransform(private val androidComponents: AndroidCompone
                 )
                 transformClassesWith(
                     ObfustringVisitorFactory::class.java,
-                    InstrumentationScope.ALL,
+                    InstrumentationScope.PROJECT,
                     parametersBlock,
                 )
             }

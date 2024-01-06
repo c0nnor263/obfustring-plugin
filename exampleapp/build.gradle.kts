@@ -16,10 +16,6 @@
 
 @file:Suppress("UnstableApiUsage")
 
-import io.github.c0nnor263.obfustringplugin.enums.ObfustringMode
-import io.github.c0nnor263.obfustringplugin.enums.StringConcatStrategy
-
-
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -76,11 +72,11 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 }
 
-obfustring {
-    android.namespace?.let {
-        key = it
-    }
-    loggingEnabled = true
-    mode = ObfustringMode.DEFAULT
-    stringConcatStrategy = StringConcatStrategy.INDY
-}
+// obfustring {
+//    android.namespace?.let {
+//        key = it
+//    }
+//    loggingEnabled = true
+//    mode = ObfustringMode.DEFAULT
+//    stringConcatStrategy = StringConcatStrategy.INDY
+// }

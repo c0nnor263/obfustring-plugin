@@ -21,7 +21,7 @@ plugins {
 }
 
 group = ObfustringData.groupId
-version = Versions.obfustringVersion
+version = Versions.obfustringCoreVersion
 
 kotlin {
     jvmToolchain(ObfustringData.exampleapp.jvmTarget)
@@ -57,7 +57,7 @@ afterEvaluate {
             create<MavenPublication>("obfustring-core-release") {
                 groupId = ObfustringData.groupId
                 artifactId = ObfustringData.core.common.artifactId
-                version = Versions.obfustringVersion
+                version = Versions.obfustringCoreVersion
 
                 if (plugins.hasPlugin("com.android.library")) {
                     from(components["release"])

@@ -26,7 +26,7 @@ buildscript {
         gradlePluginPortal()
     }
     dependencies {
-        classpath("io.github.c0nnor263:obfustring-plugin:${Versions.obfustringVersion}")
+        classpath("io.github.c0nnor263:obfustring-plugin:${Versions.obfustringPluginVersion}")
     }
 }
 plugins {

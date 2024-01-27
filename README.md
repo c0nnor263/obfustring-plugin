@@ -21,6 +21,7 @@ You have to apply the Obfustring plugin to the project.
 buildscript {
     repositories {
         mavenCentral()
+        gradlePluginPortal()
     }
     dependencies {
         classpath("io.github.c0nnor263:obfustring-plugin:$version")

@@ -20,6 +20,9 @@ import com.android.build.gradle.internal.dsl.BaseAppModuleExtension
 import io.github.c0nnor263.obfustringcore.Obfustring
 import io.github.c0nnor263.obfustringplugin.enums.ObfustringMode
 import io.github.c0nnor263.obfustringplugin.enums.StringConcatStrategy
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.PrintStream
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.internal.impldep.org.hamcrest.MatcherAssert.assertThat
@@ -29,9 +32,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.PrintStream
 
 class ObfustringPluginTest {
     @TempDir
@@ -71,7 +71,7 @@ class ObfustringPluginTest {
                     isShrinkResources = true
                     proguardFiles(
                         getDefaultProguardFile("proguard-android-optimize.txt"),
-                        "proguard-rules.pro",
+                        "proguard-rules.pro"
                     )
                     signingConfig = signingConfigs.getByName("debug")
                 }
@@ -88,7 +88,7 @@ class ObfustringPluginTest {
         with(project) {
             assertThat(
                 extensions.getByType(ObfustringExtension::class.java),
-                IsNull.notNullValue(),
+                IsNull.notNullValue()
             )
         }
 
@@ -99,7 +99,7 @@ class ObfustringPluginTest {
                 configurations.getByName("implementation").dependencies.find {
                     it.name == "obfustring-core"
                 },
-                IsNull.notNullValue(),
+                IsNull.notNullValue()
             )
         }
 

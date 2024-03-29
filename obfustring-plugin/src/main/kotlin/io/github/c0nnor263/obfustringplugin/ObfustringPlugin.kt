@@ -39,11 +39,11 @@ class ObfustringPlugin : Plugin<Project> {
             obfustringExtension =
                 extensions.create(
                     ObfustringExtension.CONFIGURATION_NAME,
-                    ObfustringExtension::class.java,
+                    ObfustringExtension::class.java
                 )
             dependencies.add(
                 JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME,
-                "io.github.c0nnor263:obfustring-core:12.0.0",
+                "io.github.c0nnor263:obfustring-core:12.0.1"
             )
         }
 

@@ -22,13 +22,13 @@ import io.github.c0nnor263.obfustringcore.model.KeyData
 
 internal fun Char.tryProcess(
     keyData: KeyData,
-    mode: Int,
+    mode: Int
 ): Char? {
     return this.alphabeticCase()?.let { case ->
         this.code.crypto(
             case,
             keyData,
-            mode,
+            mode
         )
     }
 }

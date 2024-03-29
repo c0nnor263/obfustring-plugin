@@ -28,7 +28,7 @@ internal class Crypto {
         fun Int.crypto(
             case: AlphabeticCase,
             keyData: KeyData,
-            mode: Int,
+            mode: Int
         ): Char {
             val encryptInt = ENCRYPT_INT
             val decryptInt =

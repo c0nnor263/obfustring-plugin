@@ -31,7 +31,7 @@ object Obfustring {
     fun process(
         key: String,
         stringValue: String,
-        mode: Int,
+        mode: Int
     ): String {
         if (stringValue.isBlank()) return stringValue
         require(key.isNotBlank()) { EMPTY_KEY_MSG }

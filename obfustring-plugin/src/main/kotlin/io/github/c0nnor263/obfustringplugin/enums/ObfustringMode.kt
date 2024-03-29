@@ -32,7 +32,7 @@ enum class ObfustringMode {
     /**
      * Disabled mode. Obfustring will not be applied
      */
-    DISABLED,
+    DISABLED
 }
 
 fun ObfustringMode.isEnabled(): Boolean = this != ObfustringMode.DISABLED

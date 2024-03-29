@@ -41,7 +41,7 @@ class MyApplication : Application() {
 
         Log.i(
             TAG,
-            "Application onCreate: $isValidUserMsg",
+            "Application onCreate: $isValidUserMsg"
         )
     }
 }
@@ -64,7 +64,7 @@ class UserChecker {
             Log.i(
                 "TAG",
                 "\tisValidName: $name is $result\n" +
-                    "\tAll forbidden names: $forbiddenNames",
+                        "\tAll forbidden names: $forbiddenNames"
             )
         }
     }

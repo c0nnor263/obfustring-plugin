@@ -33,5 +33,5 @@ enum class StringConcatStrategy(val rawArgument: String) {
      *  Performs classic concatenation via StringBuilder.append(...)
      *  Slowest strategy according to [INDY] and [INDY_WITH_CONSTANTS]
      */
-    INLINE("-Xstring-concat=inline"),
+    INLINE("-Xstring-concat=inline")
 }

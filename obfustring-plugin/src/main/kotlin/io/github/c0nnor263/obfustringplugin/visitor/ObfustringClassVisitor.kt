@@ -30,14 +30,14 @@ import org.objectweb.asm.commons.Method
 
 internal class ObfustringClassVisitor(
     private val params: ClassVisitorParams,
-    nextClassVisitor: ClassVisitor,
+    nextClassVisitor: ClassVisitor
 ) : ClassVisitor(Opcodes.ASM9, nextClassVisitor) {
     override fun visitMethod(
         access: Int,
         name: String,
         descriptor: String,
         signature: String?,
-        exceptions: Array<out String>?,
+        exceptions: Array<out String>?
     ): MethodVisitor {
         val visitor = super.visitMethod(access, name, descriptor, signature, exceptions)
         return ObfustringGeneratorAdapter(
@@ -46,7 +46,7 @@ internal class ObfustringClassVisitor(
             methodVisitor = visitor,
             access = access,
             name = name,
-            descriptor = descriptor,
+            descriptor = descriptor
         )
     }
 }
@@ -57,7 +57,7 @@ internal class ObfustringGeneratorAdapter(
     methodVisitor: MethodVisitor,
     access: Int,
     name: String,
-    descriptor: String,
+    descriptor: String
 ) : GeneratorAdapter(api, methodVisitor, access, name, descriptor) {
     companion object {
         private val stringType = Type.getType(String::class.java)
@@ -67,7 +67,7 @@ internal class ObfustringGeneratorAdapter(
             Method(
                 Obfustring::class.java.methods.find { it.name == "process" }?.name ?: "process",
                 Type.getType(String::class.java),
-                arrayOf(stringType, stringType, Type.INT_TYPE),
+                arrayOf(stringType, stringType, Type.INT_TYPE)
             )
     }
 
@@ -96,7 +96,7 @@ internal class ObfustringGeneratorAdapter(
             println(
                 "\t\t- FOUND: [$string]\n" +
                     "\t\t\tENCODED: [$encodedString]\n" +
-                    "\t\t\tORIGINAL: [$decodedString]",
+                        "\t\t\tORIGINAL: [$decodedString]"
             )
         }
     }

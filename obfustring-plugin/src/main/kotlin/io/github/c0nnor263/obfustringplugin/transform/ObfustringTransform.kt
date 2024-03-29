@@ -26,17 +26,19 @@ internal class ObfustringTransform(private val androidComponents: AndroidCompone
         const val VARIANT_SELECTOR_RELEASE = "release"
     }
 
-    fun configureInstrumentationParamsConfig(parametersBlock: (ObfustringVisitorFactory.InstrumentationParams) -> Unit) {
+    fun configureInstrumentationParamsConfig(
+        parametersBlock: (ObfustringVisitorFactory.InstrumentationParams) -> Unit
+    ) {
         val releaseSelector = androidComponents.selector().withName(VARIANT_SELECTOR_RELEASE)
         androidComponents.onVariants(selector = releaseSelector) { variant ->
             with(variant.instrumentation) {
                 setAsmFramesComputationMode(
-                    FramesComputationMode.COMPUTE_FRAMES_FOR_INSTRUMENTED_METHODS,
+                    FramesComputationMode.COMPUTE_FRAMES_FOR_INSTRUMENTED_METHODS
                 )
                 transformClassesWith(
                     ObfustringVisitorFactory::class.java,
                     InstrumentationScope.PROJECT,
-                    parametersBlock,
+                    parametersBlock
                 )
             }
         }

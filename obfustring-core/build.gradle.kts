@@ -15,13 +15,13 @@
  */
 
 plugins {
-    kotlin("jvm")
+    alias(libs.plugins.kotlin.jvm)
     id("signing")
     `maven-publish`
 }
 
 group = ObfustringData.groupId
-version = Versions.obfustringCoreVersion
+version = libs.versions.obfustring.core.get()
 
 kotlin {
     jvmToolchain(ObfustringData.exampleapp.jvmTarget)
@@ -35,10 +35,8 @@ java {
 }
 
 dependencies {
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:${Versions.kotlin}")
-    testImplementation("org.junit.jupiter:junit-jupiter:${Versions.Tooling.jupiter}")
-    testImplementation("junit:junit:${Versions.Tooling.junit}")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testImplementation(libs.bundles.test.core)
+    testRuntimeOnly(libs.junit.platform.launcher)
 }
 
 tasks.named<Test>("test") {
@@ -57,7 +55,7 @@ afterEvaluate {
             create<MavenPublication>("obfustring-core-release") {
                 groupId = ObfustringData.groupId
                 artifactId = ObfustringData.core.common.artifactId
-                version = Versions.obfustringCoreVersion
+                version = libs.versions.obfustring.core.get()
 
                 if (plugins.hasPlugin("com.android.library")) {
                     from(components["release"])
@@ -88,7 +86,7 @@ afterEvaluate {
                     scm {
                         connection.set(ObfustringData.core.publish.publishScmConnection)
                         developerConnection.set(
-                            ObfustringData.core.publish.publishScmDeveloperConnection,
+                            ObfustringData.core.publish.publishScmDeveloperConnection
                         )
                         url.set(ObfustringData.core.publish.publishScmUrl)
                     }

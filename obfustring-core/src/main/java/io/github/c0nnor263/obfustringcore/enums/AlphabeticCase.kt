@@ -18,5 +18,5 @@ package io.github.c0nnor263.obfustringcore.enums
 
 internal enum class AlphabeticCase(val startFromCharCode: Int) {
     UPPER_CASE(65),
-    LOWER_CASE(97),
+    LOWER_CASE(97)
 }

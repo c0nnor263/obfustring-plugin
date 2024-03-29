@@ -18,7 +18,7 @@ package io.github.c0nnor263.obfustringcore.model
 
 internal data class KeyData(
     val key: String,
-    var index: Int = 0,
+    var index: Int = 0
 ) {
     fun increase() {
         index++

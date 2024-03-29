@@ -24,3 +24,7 @@ local.properties
 /.idea/
 /buildSrc/build/
 /exampleapp/com.conboi.examplekeystore
+/gradle/wrapper/
+/.gitattributes
+/gradlew
+/gradlew.bat

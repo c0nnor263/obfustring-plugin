@@ -38,7 +38,7 @@ class ObfustringCoreTest {
                     Obfustring.process(
                         key = "",
                         stringValue = "test",
-                        mode = ObfustringCryptoMode.ENCRYPT,
+                        mode = ObfustringCryptoMode.ENCRYPT
                     )
                 }
             val decryptException =
@@ -46,7 +46,7 @@ class ObfustringCoreTest {
                     Obfustring.process(
                         key = "",
                         stringValue = "test",
-                        mode = ObfustringCryptoMode.DECRYPT,
+                        mode = ObfustringCryptoMode.DECRYPT
                     )
                 }
             assert(encryptException.message == EMPTY_KEY_MSG)
@@ -64,14 +64,14 @@ class ObfustringCoreTest {
                 Obfustring.process(
                     key = TEST_KEY,
                     stringValue = originalString,
-                    mode = ObfustringCryptoMode.ENCRYPT,
+                    mode = ObfustringCryptoMode.ENCRYPT
                 )
 
             val decryptedString =
                 Obfustring.process(
                     key = TEST_KEY,
                     stringValue = encryptedString,
-                    mode = ObfustringCryptoMode.DECRYPT,
+                    mode = ObfustringCryptoMode.DECRYPT
                 )
 
             assert(originalString == decryptedString)
@@ -93,8 +93,10 @@ class ObfustringCoreTest {
                     "^And many more strange symbols: ༼ つ ◕_◕ ༽つ ㋛ ٩(◕‿◕｡)۶",
                     " ¡Chinese characters: 你好世界 (Hello World), 愛 (Love), 福 (Luck)",
                     "¥Japanese characters: こんにちは (Konnichiwa), ありがとう (Arigatou), さようなら (Sayonara)",
-                    "@Russian charact\r\r\r\r\n\ters: Привет мир (Privet Mir - Hello World), Любовь (Love), Счастье (Happiness)",
-                    "&Arabic characters: السلام عليكم (As-salamu alaykum - Peace be upon you), حب (Love), سعادة (Happiness)",
+                    "@Russian charact\r\r\r\r\n\ters: Привет мир (Privet Mir - Hello World), Любовь (Love), " +
+                            "Счастье (Happiness)",
+                    "&Arabic characters: السلام عليكم (As-salamu alaykum - Peace be upon you), حب (Love), " +
+                            "سعادة (Happiness)",
                     "#Symbols from different cultures: ☯ 卍 ☪",
                     "%Astrological symbols: ♈ ♉ ♊ ♋ ♌ ♍ ♎ ♏ ♐ ♑ ♒ ♓",
                     "&Weather symbols: ☀ ☁ ⚡ ☔ ❄",
@@ -129,7 +131,7 @@ class ObfustringCoreTest {
                     "~Arcane Adventures: ☩ ☪ ☫ ☬",
                     "+Enchanting Episodes: ♛ ♜ ♝ ♞",
                     "@Puzzling Parables: ♆ ♇ ♈ ♉",
-                    "*Whimsical Wonders: ✿ ❀ ❁ ❃",
+                    "*Whimsical Wonders: ✿ ❀ ❁ ❃"
                 )
 
             strings.forEach { originalString ->
@@ -137,13 +139,13 @@ class ObfustringCoreTest {
                     Obfustring.process(
                         key = TEST_KEY,
                         stringValue = originalString,
-                        mode = ObfustringCryptoMode.ENCRYPT,
+                        mode = ObfustringCryptoMode.ENCRYPT
                     )
                 val decryptedString =
                     Obfustring.process(
                         key = TEST_KEY,
                         stringValue = encryptedString,
-                        mode = ObfustringCryptoMode.DECRYPT,
+                        mode = ObfustringCryptoMode.DECRYPT
                     )
                 assert(originalString == decryptedString)
             }
@@ -159,7 +161,7 @@ class ObfustringCoreTest {
             code.crypto(
                 case = case,
                 keyData = keyData,
-                mode = ObfustringCryptoMode.ENCRYPT,
+                mode = ObfustringCryptoMode.ENCRYPT
             )
             assert(keyData.index == initialIndex + 1)
         }
@@ -174,7 +176,7 @@ class ObfustringCoreTest {
                 code.crypto(
                     case = case,
                     keyData = keyData,
-                    mode = ObfustringCryptoMode.ENCRYPT,
+                    mode = ObfustringCryptoMode.ENCRYPT
                 )
             assert(result != char)
         }
@@ -186,13 +188,13 @@ class ObfustringCoreTest {
                 original.code.crypto(
                     case = original.alphabeticCase()!!,
                     keyData = KeyData(TEST_KEY),
-                    mode = ObfustringCryptoMode.ENCRYPT,
+                    mode = ObfustringCryptoMode.ENCRYPT
                 )
             val decrypted =
                 encrypted.code.crypto(
                     case = encrypted.alphabeticCase()!!,
                     keyData = KeyData(TEST_KEY),
-                    mode = ObfustringCryptoMode.DECRYPT,
+                    mode = ObfustringCryptoMode.DECRYPT
                 )
             assert(decrypted == original)
         }

@@ -26,16 +26,17 @@ buildscript {
         gradlePluginPortal()
     }
     dependencies {
-        classpath("io.github.c0nnor263:obfustring-plugin:${Versions.obfustringPluginVersion}")
+        classpath("io.github.c0nnor263:obfustring-plugin:12.0.1")
     }
 }
+
 plugins {
-    id("com.android.application") version Versions.gradle apply false
-    id("com.android.library") version Versions.gradle apply false
-    id("org.jetbrains.kotlin.android") version Versions.kotlin apply false
-    id("org.jetbrains.kotlin.jvm") version Versions.kotlin apply false
-    id("io.github.gradle-nexus.publish-plugin") version Versions.nexusPublishPlugin
-    id("com.github.ben-manes.versions") version Versions.benNamesVersions
+    alias(libs.plugins.android.application) apply false
+    alias(libs.plugins.android.library) apply false
+    alias(libs.plugins.kotlin.android) apply false
+    alias(libs.plugins.kotlin.jvm) apply false
+    alias(libs.plugins.nexusPublish)
+    alias(libs.plugins.benMames)
 }
 
 tasks.withType<DependencyUpdatesTask> {
@@ -73,7 +74,7 @@ nexusPublishing {
             password.set(ossrhPassword)
             nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
             snapshotRepositoryUrl.set(
-                uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"),
+                uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
             )
         }
     }

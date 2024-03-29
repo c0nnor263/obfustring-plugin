@@ -81,7 +81,7 @@ object ObfustringData {
                 "security-tools",
                 "obfustring",
                 "obfuscate",
-                "strings",
+                "strings"
             )
     }
 }

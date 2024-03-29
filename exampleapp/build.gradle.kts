@@ -17,8 +17,8 @@
 @file:Suppress("UnstableApiUsage")
 
 plugins {
-    id("com.android.application")
-    id("org.jetbrains.kotlin.android")
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
     id("io.github.c0nnor263.obfustring-plugin")
 }
 
@@ -41,7 +41,7 @@ android {
             isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro",
+                "proguard-rules.pro"
             )
             signingConfig = signingConfigs.getByName("debug")
             testProguardFile("proguard-test-rules.pro")
@@ -58,25 +58,5 @@ android {
 }
 
 dependencies {
-
-    implementation("androidx.core:core-ktx:1.12.0")
-    implementation("androidx.activity:activity-ktx:1.8.2")
-    implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
-
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:1.9.21")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.10.1")
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test:runner:1.5.2")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    implementation(libs.bundles.android.example.app)
 }
-
-// obfustring {
-//    android.namespace?.let {
-//        key = it
-//    }
-//    loggingEnabled = true
-//    mode = ObfustringMode.DEFAULT
-//    stringConcatStrategy = StringConcatStrategy.INDY
-// }

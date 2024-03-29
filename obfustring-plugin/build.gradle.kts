@@ -17,38 +17,25 @@
 @file:Suppress("UnstableApiUsage")
 
 plugins {
-    kotlin("jvm")
-    id("com.gradle.plugin-publish") version Versions.gradlePublish
-    id("nu.studer.credentials") version Versions.nuStuderCredentials
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.pluginPublish)
+    alias(libs.plugins.studerCredentials)
 }
 
 group = ObfustringData.groupId
-version = Versions.obfustringPluginVersion
+version = libs.versions.obfustring.plugin.get()
 
 kotlin {
     jvmToolchain(ObfustringData.exampleapp.jvmTarget)
 }
 
-java {
-    sourceCompatibility = ObfustringData.exampleapp.sourceCompatibility
-    targetCompatibility = ObfustringData.exampleapp.targetCompatibility
-}
-
 dependencies {
     implementation(project(":obfustring-core"))
-    implementation("com.android.tools.build:gradle-api:${Versions.gradle}")
-    implementation("com.android.tools.build:gradle:${Versions.gradle}")
-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.kotlin}")
-    implementation("org.ow2.asm:asm:${Versions.asm}")
-    implementation("org.ow2.asm:asm-commons:${Versions.asm}")
-    implementation("org.ow2.asm:asm-util:${Versions.asm}")
-    implementation("com.joom.grip:grip:${Versions.joomGrip}")
+    implementation(libs.bundles.obfustring.plugin)
 
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:${Versions.kotlin}")
-    testImplementation("org.junit.jupiter:junit-jupiter:${Versions.Tooling.jupiter}")
-    testImplementation("junit:junit:${Versions.Tooling.junit}")
+    testImplementation(libs.bundles.test.core)
     testImplementation(gradleTestKit())
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testRuntimeOnly(libs.junit.platform.launcher)
 }
 
 tasks.named<Test>("test") {
@@ -56,7 +43,7 @@ tasks.named<Test>("test") {
     javaLauncher.set(
         javaToolchains.launcherFor {
             languageVersion.set(JavaLanguageVersion.of(17))
-        },
+        }
     )
     useJUnitPlatform()
 
@@ -66,7 +53,10 @@ tasks.named<Test>("test") {
         showStandardStreams = true
     }
 }
+
 gradlePlugin {
+    website.set(ObfustringData.plugin.website)
+    vcsUrl.set(ObfustringData.plugin.vcsUrl)
     val obfustringPlugin by plugins.creating {
         id = ObfustringData.plugin.artifactId
         displayName = ObfustringData.plugin.displayName
@@ -74,6 +64,4 @@ gradlePlugin {
         implementationClass = ObfustringData.plugin.implementationClass
         tags = ObfustringData.plugin.tags
     }
-    website.set(ObfustringData.plugin.website)
-    vcsUrl.set(ObfustringData.plugin.vcsUrl)
 }

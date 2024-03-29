@@ -31,13 +31,13 @@ abstract class ObfustringVisitorFactory :
     AsmClassVisitorFactory<ObfustringVisitorFactory.InstrumentationParams> {
     override fun createClassVisitor(
         classContext: ClassContext,
-        nextClassVisitor: ClassVisitor,
+        nextClassVisitor: ClassVisitor
     ): ClassVisitor {
         val params = ClassVisitorParams.fromInstrumentationParams(parameters.get())
         val verifyClassAdapter = VerifyClassAdapter(nextClassVisitor)
         return ObfustringClassVisitor(
             params = params,
-            nextClassVisitor = verifyClassAdapter,
+            nextClassVisitor = verifyClassAdapter
         )
     }
 
@@ -51,7 +51,9 @@ abstract class ObfustringVisitorFactory :
             }
 
             ObfustringMode.FORCE -> true
+
             ObfustringMode.DISABLED -> false
+
             else -> false
         }.also { isReadyForProcessing ->
             if (isReadyForProcessing) {

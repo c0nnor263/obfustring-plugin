@@ -16,6 +16,8 @@
 
 package io.github.c0nnor263.obfustringplugin
 
+import io.github.c0nnor263.obfustringcore.CommonObfustring
+import io.github.c0nnor263.obfustringcore.Obfustring
 import io.github.c0nnor263.obfustringplugin.enums.ObfustringMode
 import io.github.c0nnor263.obfustringplugin.enums.StringConcatStrategy
 
@@ -48,6 +50,14 @@ abstract class ObfustringExtension {
      * Default value is [StringConcatStrategy.INDY]
      */
     var stringConcatStrategy: StringConcatStrategy = StringConcatStrategy.INDY
+
+
+    /**
+     * Custom Obfustring implementation that extends [CommonObfustring]
+     *
+     * Default value is [Obfustring] from obfustring-core library
+     */
+    var customObfustring: CommonObfustring = Obfustring
 
     companion object {
         const val CONFIGURATION_NAME = "obfustring"

@@ -17,6 +17,7 @@
 package io.github.c0nnor263.obfustringplugin
 
 import com.android.build.api.variant.AndroidComponentsExtension
+import io.github.c0nnor263.obfustringcore.CommonObfustring
 import io.github.c0nnor263.obfustringcore.Obfustring
 import io.github.c0nnor263.obfustringplugin.enums.isEnabled
 import io.github.c0nnor263.obfustringplugin.transform.ObfustringTransform
@@ -26,7 +27,16 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.api.plugins.JavaPlugin
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+// TODO: Write some tests for new functionality
+// TODO: Add class names exclude list
+// TODO: Add @ObfustringWith annotation
+// TODO: Add @ObfustringExclude annotation
+
 class ObfustringPlugin : Plugin<Project> {
+    companion object {
+        var mainObfustring: CommonObfustring = Obfustring
+    }
+
     private lateinit var obfustringExtension: ObfustringExtension
 
     override fun apply(project: Project) {
@@ -43,7 +53,7 @@ class ObfustringPlugin : Plugin<Project> {
                 )
             dependencies.add(
                 JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME,
-                "io.github.c0nnor263:obfustring-core:12.0.1"
+                "io.github.c0nnor263:obfustring-core:12.0.2"
             )
         }
 
@@ -57,6 +67,7 @@ class ObfustringPlugin : Plugin<Project> {
                 key.set(obfustringExtension.key)
                 loggingEnabled.set(obfustringExtension.loggingEnabled)
                 mode.set(obfustringExtension.mode)
+                mainObfustring = obfustringExtension.customObfustring
             }
             if (obfustringExtension.mode.isEnabled()) {
                 setupKotlinCompileOptions(project)
@@ -70,7 +81,7 @@ class ObfustringPlugin : Plugin<Project> {
             if (obfustringExtension.loggingEnabled) {
                 logging.captureStandardOutput(LogLevel.INFO)
                 logging.captureStandardError(LogLevel.ERROR)
-                println("${Obfustring::class.java.simpleName} | KEY: ${obfustringExtension.key}")
+                println("${Obfustring.NAME} | KEY: ${obfustringExtension.key}")
             }
         }
 

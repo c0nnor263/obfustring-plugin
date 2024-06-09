@@ -47,6 +47,7 @@ tasks.named<Test>("test") {
     )
     useJUnitPlatform()
 
+    jvmArgs("--add-opens=java.base/java.lang=ALL-UNNAMED")
     maxHeapSize = "1G"
 
     testLogging {

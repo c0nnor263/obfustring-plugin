@@ -29,16 +29,25 @@ import org.gradle.internal.impldep.org.hamcrest.MatcherAssert.assertThat
 import org.gradle.internal.impldep.org.hamcrest.core.IsNull
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.TestInstance.Lifecycle
 import org.junit.jupiter.api.io.TempDir
 
+@TestInstance(Lifecycle.PER_CLASS)
 class ObfustringPluginTest {
     @TempDir
     var testProjectDir: File? = null
 
     private lateinit var project: Project
     private lateinit var outputStream: ByteArrayOutputStream
+
+    @BeforeAll
+    fun prepare() {
+        project = ProjectBuilder.builder().withProjectDir(testProjectDir).build()
+    }
 
     @BeforeEach
     fun setup() {
@@ -144,7 +153,7 @@ class ObfustringPluginTest {
             evaluationDependsOn(":")
             val result =
                 outputStream.toString()
-                    .contains("${Obfustring::class.java.simpleName} | KEY: ${extension.key}")
+                    .contains("${Obfustring.NAME} | KEY: ${extension.key}")
             assert(result)
         }
 
@@ -158,7 +167,7 @@ class ObfustringPluginTest {
             evaluationDependsOn(":")
             val result =
                 outputStream.toString()
-                    .contains("${Obfustring::class.java.simpleName} | KEY: ${extension.key}")
+                    .contains("${Obfustring.NAME} | KEY: ${extension.key}")
             assert(!result)
         }
 }

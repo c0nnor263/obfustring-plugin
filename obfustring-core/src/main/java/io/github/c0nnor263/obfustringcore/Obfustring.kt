@@ -24,11 +24,11 @@ import io.github.c0nnor263.obfustringcore.model.KeyData
  *
  * [process] - main method for obfuscation
  */
-object Obfustring {
-    val EMPTY_KEY_MSG = "${Obfustring::class.java.simpleName} | Key must not be empty"
+object Obfustring : CommonObfustring {
+    const val NAME = "Obfustring"
+    const val EMPTY_KEY_MSG = "$NAME | Key must not be empty"
 
-    @JvmStatic
-    fun process(
+    override fun process(
         key: String,
         stringValue: String,
         mode: Int

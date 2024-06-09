@@ -1,23 +1,29 @@
 [versions]
-obfustring-plugin = "12.0.1"
-obfustring-core = "12.0.1"
-kotlin = "1.9.23"
+obfustring-plugin = "12.0.2"
+obfustring-core = "12.0.2"
+
+# Plugins
 benMames = "0.51.0"
-nexusPublishPlugin = "1.3.0"
+nexusPublishPlugin = "2.0.0"
+ktlint = "12.1.1"
+nuStuderCredentials = "3.0"
+gradlePublish = "1.2.1"
+
+# Common
+kotlin = "2.0.0"
+gradle = "8.4.1"
 asm = "9.7"
 joomGrip = "0.9.1"
-nuStuderCredentials = "3.0"
-gradle = "8.3.1"
-gradlePublish = "1.2.1"
+kotlinpoet = "1.17.0"
 
 # Tooling
 jupiter = "5.10.2"
 junit = "4.13.2"
 
 # Android Example app
-core-ktx = "1.12.0"
-activity-ktx = "1.8.2"
-appcompat = "1.6.1"
+core-ktx = "1.13.1"
+activity-ktx = "1.9.0"
+appcompat = "1.7.0"
 lifecycle-runtime-ktx = "2.7.0"
 
 
@@ -30,6 +36,7 @@ asm = { module = "org.ow2.asm:asm", version.ref = "asm" }
 asm-commons = { module = "org.ow2.asm:asm-commons", version.ref = "asm" }
 asm-util = { module = "org.ow2.asm:asm-util", version.ref = "asm" }
 grip = { module = "com.joom.grip:grip", version.ref = "joomGrip" }
+kotlinpoet = { module = "com.squareup:kotlinpoet", version.ref = "kotlinpoet" }
 
 # Android Example app
 core-ktx = { module = "androidx.core:core-ktx", version.ref = "core-ktx" }
@@ -60,6 +67,7 @@ obfustring-plugin = [
     "asm-commons",
     "asm-util",
     "grip",
+    "kotlinpoet",
 ]
 
 android-example-app = [
@@ -70,12 +78,22 @@ android-example-app = [
 ]
 
 [plugins]
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+obfustring = { id = "io.github.c0nnor263.obfustring-plugin", version.ref = "obfustring-plugin" }
+# Android
 android-application = { id = "com.android.application", version.ref = "gradle" }
 android-library = { id = "com.android.library", version.ref = "gradle" }
+
+# Kotlin
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+
+# Publishing
 studerCredentials = { id = "nu.studer.credentials", version.ref = "nuStuderCredentials" }
 pluginPublish = { id = "com.gradle.plugin-publish", version.ref = "gradlePublish" }
 nexusPublish = { id = "io.github.gradle-nexus.publish-plugin", version.ref = "nexusPublishPlugin" }
+
+# Check dependencies
 benMames = { id = "com.github.ben-manes.versions", version.ref = "benMames" }
-obfustring = { id = "io.github.c0nnor263.obfustring-plugin", version.ref = "obfustring-plugin" }
+
+# Ktlint
+ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }

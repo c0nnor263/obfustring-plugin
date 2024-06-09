@@ -18,8 +18,10 @@ package io.github.c0nnor263.obfustringplugin.visitor
 
 import com.joom.grip.mirrors.getObjectType
 import com.joom.grip.mirrors.toAsmType
+import io.github.c0nnor263.obfustringcore.CommonObfustring
 import io.github.c0nnor263.obfustringcore.Obfustring
 import io.github.c0nnor263.obfustringcore.ObfustringCryptoMode
+import io.github.c0nnor263.obfustringplugin.ObfustringPlugin
 import io.github.c0nnor263.obfustringplugin.model.ClassVisitorParams
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.MethodVisitor
@@ -61,11 +63,10 @@ internal class ObfustringGeneratorAdapter(
 ) : GeneratorAdapter(api, methodVisitor, access, name, descriptor) {
     companion object {
         private val stringType = Type.getType(String::class.java)
-        private val obfustringType = getObjectType(Obfustring::class.java)
-
+        private val obfustringType = getObjectType(ObfustringPlugin.mainObfustring::class.java)
         private val processMethod =
             Method(
-                Obfustring::class.java.methods.find { it.name == "process" }?.name ?: "process",
+                CommonObfustring::class.java.methods.find { it.name == "process" }?.name ?: "process",
                 Type.getType(String::class.java),
                 arrayOf(stringType, stringType, Type.INT_TYPE)
             )
@@ -81,21 +82,22 @@ internal class ObfustringGeneratorAdapter(
 
     private fun replaceStringWithDeobfuscationMethod(string: String) {
         val (key, isLoggingEnabled) = params
-        val encodedString = Obfustring.process(key, string, ObfustringCryptoMode.ENCRYPT)
-        val decodedString = Obfustring.process(key, encodedString, ObfustringCryptoMode.DECRYPT)
+        val encodedString = ObfustringPlugin.mainObfustring.process(key, string, ObfustringCryptoMode.ENCRYPT)
+        val decodedString = ObfustringPlugin.mainObfustring.process(key, encodedString, ObfustringCryptoMode.DECRYPT)
         require(decodedString == string) {
-            "${Obfustring::class.java.simpleName} | Error: Decoded string [$decodedString] does not match input string [$string]"
+            "${Obfustring.NAME} | Error: Decoded string [$decodedString] does not match input string [$string]"
         }
 
+        getStatic(obfustringType.toAsmType(), "INSTANCE", obfustringType.toAsmType())
         push(key)
         push(encodedString)
         push(ObfustringCryptoMode.DECRYPT)
-        invokeStatic(obfustringType.toAsmType(), processMethod)
+        invokeVirtual(obfustringType.toAsmType(), processMethod)
 
         if (isLoggingEnabled) {
             println(
                 "\t\t- FOUND: [$string]\n" +
-                    "\t\t\tENCODED: [$encodedString]\n" +
+                        "\t\t\tENCODED: [$encodedString]\n" +
                         "\t\t\tORIGINAL: [$decodedString]"
             )
         }

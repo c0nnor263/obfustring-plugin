@@ -16,6 +16,8 @@
 
 @file:Suppress("UnstableApiUsage")
 
+import obfustring.CustomObfustring
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -57,6 +59,18 @@ android {
     }
 }
 
+sourceSets {
+    kotlin {
+        sourceSets["main"].kotlin {
+            srcDirs(srcDirs + files("${project.rootDir}/buildSrc/src/main/kotlin/obfustring/"))
+        }
+    }
+}
+
 dependencies {
     implementation(libs.bundles.android.example.app)
+}
+
+obfustring {
+    customObfustring = CustomObfustring
 }

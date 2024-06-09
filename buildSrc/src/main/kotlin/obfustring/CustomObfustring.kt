@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-plugins {
-    `kotlin-dsl`
-}
+package obfustring
 
-repositories {
-    mavenCentral()
-    mavenLocal()
-}
+import io.github.c0nnor263.obfustringcore.CommonObfustring
 
-dependencies {
-    implementation("io.github.c0nnor263:obfustring-core:12.0.2")
+object CustomObfustring : CommonObfustring {
+    override fun process(
+        key: String,
+        stringValue: String,
+        mode: Int
+    ): String {
+        return stringValue
+    }
 }

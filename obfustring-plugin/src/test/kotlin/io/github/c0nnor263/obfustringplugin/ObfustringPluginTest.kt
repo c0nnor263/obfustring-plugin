@@ -49,7 +49,12 @@ class ObfustringPluginTest {
         val printStream = PrintStream(outputStream)
         System.setOut(printStream)
 
-        project = ProjectBuilder.builder().withProjectDir(testProjectDir).build()
+        val projectBuilder = ProjectBuilder.builder().withProjectDir(testProjectDir)
+        project = try {
+            projectBuilder.build()
+        } catch (e: Exception) {
+            projectBuilder.build()
+        }
         project.pluginManager.apply {
             apply("com.android.application")
             apply("kotlin-android")

@@ -18,7 +18,6 @@ package io.github.c0nnor263.obfustringplugin.visitor
 
 import com.joom.grip.mirrors.getObjectType
 import com.joom.grip.mirrors.toAsmType
-import io.github.c0nnor263.obfustringcore.CommonObfustring
 import io.github.c0nnor263.obfustringcore.Obfustring
 import io.github.c0nnor263.obfustringcore.ObfustringCryptoMode
 import io.github.c0nnor263.obfustringplugin.ObfustringPlugin
@@ -61,16 +60,14 @@ internal class ObfustringGeneratorAdapter(
     name: String,
     descriptor: String
 ) : GeneratorAdapter(api, methodVisitor, access, name, descriptor) {
-    companion object {
-        private val stringType = Type.getType(String::class.java)
-        private val obfustringType = getObjectType(ObfustringPlugin.mainObfustring::class.java)
-        private val processMethod =
-            Method(
-                CommonObfustring::class.java.methods.find { it.name == "process" }?.name ?: "process",
-                Type.getType(String::class.java),
-                arrayOf(stringType, stringType, Type.INT_TYPE)
-            )
-    }
+    private val stringType = Type.getType(String::class.java)
+    private val obfustringType = getObjectType(ObfustringPlugin.mainObfustring::class.java)
+    private val processMethod =
+        Method(
+            "process",
+            Type.getType(String::class.java),
+            arrayOf(stringType, stringType, Type.INT_TYPE)
+        )
 
     override fun visitLdcInsn(constant: Any) {
         if (constant is String && constant.isNotBlank()) {

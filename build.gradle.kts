@@ -28,7 +28,7 @@ buildscript {
         gradlePluginPortal()
     }
     dependencies {
-        classpath("io.github.c0nnor263:obfustring-plugin:12.0.2")
+        classpath("io.github.c0nnor263:obfustring-plugin:${ObfustringData.plugin.version}")
     }
 }
 

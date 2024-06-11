@@ -1,7 +1,4 @@
 [versions]
-obfustring-plugin = "12.0.2"
-obfustring-core = "12.0.2"
-
 # Plugins
 benMames = "0.51.0"
 nexusPublishPlugin = "2.0.0"
@@ -36,7 +33,6 @@ asm = { module = "org.ow2.asm:asm", version.ref = "asm" }
 asm-commons = { module = "org.ow2.asm:asm-commons", version.ref = "asm" }
 asm-util = { module = "org.ow2.asm:asm-util", version.ref = "asm" }
 grip = { module = "com.joom.grip:grip", version.ref = "joomGrip" }
-kotlinpoet = { module = "com.squareup:kotlinpoet", version.ref = "kotlinpoet" }
 
 # Android Example app
 core-ktx = { module = "androidx.core:core-ktx", version.ref = "core-ktx" }
@@ -67,7 +63,6 @@ obfustring-plugin = [
     "asm-commons",
     "asm-util",
     "grip",
-    "kotlinpoet",
 ]
 
 android-example-app = [
@@ -78,7 +73,6 @@ android-example-app = [
 ]
 
 [plugins]
-obfustring = { id = "io.github.c0nnor263.obfustring-plugin", version.ref = "obfustring-plugin" }
 # Android
 android-application = { id = "com.android.application", version.ref = "gradle" }
 android-library = { id = "com.android.library", version.ref = "gradle" }

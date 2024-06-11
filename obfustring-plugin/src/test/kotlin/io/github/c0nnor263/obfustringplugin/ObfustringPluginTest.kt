@@ -28,8 +28,7 @@ import org.gradle.api.Project
 import org.gradle.internal.impldep.org.hamcrest.MatcherAssert.assertThat
 import org.gradle.internal.impldep.org.hamcrest.core.IsNull
 import org.gradle.testfixtures.ProjectBuilder
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.junit.jupiter.api.BeforeAll
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -43,11 +42,6 @@ class ObfustringPluginTest {
 
     private lateinit var project: Project
     private lateinit var outputStream: ByteArrayOutputStream
-
-    @BeforeAll
-    fun prepare() {
-        project = ProjectBuilder.builder().withProjectDir(testProjectDir).build()
-    }
 
     @BeforeEach
     fun setup() {
@@ -120,9 +114,9 @@ class ObfustringPluginTest {
                 mode = ObfustringMode.DISABLED
             }
             evaluationDependsOn(":")
-            tasks.withType(KotlinCompile::class.java).configureEach { task ->
-                task.kotlinOptions {
-                    assert(freeCompilerArgs.isEmpty())
+            tasks.withType(KotlinJvmCompile::class.java).configureEach { task ->
+                task.compilerOptions {
+                    assert(freeCompilerArgs.get().isEmpty())
                 }
             }
         }
@@ -136,9 +130,9 @@ class ObfustringPluginTest {
                 mode = ObfustringMode.DEFAULT
             }
             evaluationDependsOn(":")
-            tasks.withType(KotlinCompile::class.java).configureEach { task ->
-                task.kotlinOptions {
-                    assert(freeCompilerArgs.any { it == concatStrategy.rawArgument })
+            tasks.withType(KotlinJvmCompile::class.java).configureEach { task ->
+                task.compilerOptions {
+                    assert(freeCompilerArgs.get().any { it == concatStrategy.rawArgument })
                 }
             }
         }

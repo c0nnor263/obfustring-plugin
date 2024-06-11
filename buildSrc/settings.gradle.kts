@@ -14,17 +14,4 @@
  * limitations under the License.
  */
 
-plugins {
-    `kotlin-dsl`
-}
-
-repositories {
-    mavenCentral()
-    mavenLocal()
-}
-
-java.toolchain.languageVersion = JavaLanguageVersion.of(11)
-
-dependencies {
-    implementation("io.github.c0nnor263:obfustring-core:12.0.2")
-}
+rootProject.name = "ObfustringBuildSrc"

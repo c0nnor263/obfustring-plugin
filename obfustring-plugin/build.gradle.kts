@@ -16,6 +16,7 @@
 
 @file:Suppress("UnstableApiUsage")
 
+
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.pluginPublish)
@@ -23,14 +24,14 @@ plugins {
 }
 
 group = ObfustringData.groupId
-version = libs.versions.obfustring.plugin.get()
+version = ObfustringData.plugin.version
 
 kotlin {
     jvmToolchain(ObfustringData.exampleapp.jvmTarget)
 }
 
 dependencies {
-    implementation(project(":obfustring-core"))
+    implementation(projects.obfustringCore)
     implementation(libs.bundles.obfustring.plugin)
 
     testImplementation(libs.bundles.test.core)
@@ -47,7 +48,6 @@ tasks.named<Test>("test") {
     )
     useJUnitPlatform()
 
-    jvmArgs("--add-opens=java.base/java.lang=ALL-UNNAMED")
     maxHeapSize = "1G"
 
     testLogging {

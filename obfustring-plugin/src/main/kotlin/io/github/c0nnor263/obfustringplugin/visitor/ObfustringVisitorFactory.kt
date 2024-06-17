@@ -20,7 +20,9 @@ import com.android.build.api.instrumentation.AsmClassVisitorFactory
 import com.android.build.api.instrumentation.ClassContext
 import com.android.build.api.instrumentation.ClassData
 import com.android.build.api.instrumentation.InstrumentationParameters
-import io.github.c0nnor263.obfustringcore.ObfustringThis
+import io.github.c0nnor263.obfustringcore.annotations.ObfustringExclude
+import io.github.c0nnor263.obfustringcore.annotations.ObfustringThis
+import io.github.c0nnor263.obfustringplugin.ObfustringPlugin
 import io.github.c0nnor263.obfustringplugin.enums.ObfustringMode
 import io.github.c0nnor263.obfustringplugin.model.ClassVisitorParams
 import org.gradle.api.provider.Property
@@ -42,21 +44,27 @@ abstract class ObfustringVisitorFactory :
     }
 
     override fun isInstrumentable(classData: ClassData): Boolean {
-        val mode = parameters.get().mode.get()
-        return when (mode) {
+        val parameters = parameters.get()
+        val mode = parameters.mode.get()
+        val modeAvailable = when (mode) {
             ObfustringMode.DEFAULT -> {
                 classData.classAnnotations.any {
                     it == ObfustringThis::class.java.name
+                } && classData.classAnnotations.none {
+                    it == ObfustringExclude::class.java.name
                 }
             }
 
             ObfustringMode.FORCE -> true
 
             ObfustringMode.DISABLED -> false
+        }
 
-            else -> false
-        }.also { isReadyForProcessing ->
-            if (isReadyForProcessing) {
+        val isExcluded = ObfustringPlugin.pluginExtension.excludeClasses.any { excludedClassInfo ->
+            excludedClassInfo.checkIfExcluded(classData)
+        }
+        return (modeAvailable && !isExcluded).also { isInstrumental ->
+            if (isInstrumental && parameters.loggingEnabled.get()) {
                 println("\n\t- CLASS: ${classData.className}")
             }
         }

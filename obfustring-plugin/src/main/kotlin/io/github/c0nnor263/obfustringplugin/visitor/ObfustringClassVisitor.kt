@@ -60,8 +60,9 @@ internal class ObfustringGeneratorAdapter(
     name: String,
     descriptor: String
 ) : GeneratorAdapter(api, methodVisitor, access, name, descriptor) {
+    private val customObfustring = ObfustringPlugin.pluginExtension.customObfustring
     private val stringType = Type.getType(String::class.java)
-    private val obfustringType = getObjectType(ObfustringPlugin.mainObfustring::class.java)
+    private val obfustringType = getObjectType(customObfustring::class.java)
     private val processMethod =
         Method(
             "process",
@@ -79,8 +80,8 @@ internal class ObfustringGeneratorAdapter(
 
     private fun replaceStringWithDeobfuscationMethod(string: String) {
         val (key, isLoggingEnabled) = params
-        val encodedString = ObfustringPlugin.mainObfustring.process(key, string, ObfustringCryptoMode.ENCRYPT)
-        val decodedString = ObfustringPlugin.mainObfustring.process(key, encodedString, ObfustringCryptoMode.DECRYPT)
+        val encodedString = customObfustring.process(key, string, ObfustringCryptoMode.ENCRYPT)
+        val decodedString = customObfustring.process(key, encodedString, ObfustringCryptoMode.DECRYPT)
         require(decodedString == string) {
             "${Obfustring.NAME} | Error: Decoded string [$decodedString] does not match input string [$string]"
         }

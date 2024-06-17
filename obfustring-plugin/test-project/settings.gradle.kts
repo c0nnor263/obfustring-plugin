@@ -14,25 +14,22 @@
  * limitations under the License.
  */
 
-package io.github.c0nnor263.obfustringplugin.enums
+@file:Suppress("UnstableApiUsage")
 
-import io.github.c0nnor263.obfustringcore.annotations.ObfustringThis
-
-enum class ObfustringMode {
-    /**
-     * Default mode. Obfustring will be applied only to classes annotated with [ObfustringThis]
-     */
-    DEFAULT,
-
-    /**
-     * Force mode. Obfustring will be applied to all classes
-     */
-    FORCE,
-
-    /**
-     * Disabled mode. Obfustring will not be applied
-     */
-    DISABLED
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        google()
+        mavenCentral()
+        mavenLocal()
+    }
 }
-
-fun ObfustringMode.isEnabled(): Boolean = this != ObfustringMode.DISABLED
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        gradlePluginPortal()
+        google()
+        mavenCentral()
+        mavenLocal()
+    }
+}

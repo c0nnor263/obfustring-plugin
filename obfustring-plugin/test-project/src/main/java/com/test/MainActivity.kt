@@ -14,7 +14,13 @@
  * limitations under the License.
  */
 
-package io.github.c0nnor263.obfustringcore
+package com.test
 
-@Target(AnnotationTarget.CLASS)
-annotation class ObfustringThis
+import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+
+class MainActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+    }
+}

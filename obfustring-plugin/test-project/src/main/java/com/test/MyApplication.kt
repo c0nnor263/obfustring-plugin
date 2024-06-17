@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.conboi.exampleapp
+package com.test
 
 import android.app.Application
 import android.util.Log
@@ -64,7 +64,7 @@ class UserChecker {
             Log.i(
                 "TAG",
                 "\tisValidName: $name is $result\n" +
-                    "\tAll forbidden names: $forbiddenNames"
+                        "\tAll forbidden names: $forbiddenNames"
             )
         }
     }

@@ -14,25 +14,5 @@
  * limitations under the License.
  */
 
-package io.github.c0nnor263.obfustringplugin.enums
+package io.github.c0nnor263.obfustringplugin
 
-import io.github.c0nnor263.obfustringcore.annotations.ObfustringThis
-
-enum class ObfustringMode {
-    /**
-     * Default mode. Obfustring will be applied only to classes annotated with [ObfustringThis]
-     */
-    DEFAULT,
-
-    /**
-     * Force mode. Obfustring will be applied to all classes
-     */
-    FORCE,
-
-    /**
-     * Disabled mode. Obfustring will not be applied
-     */
-    DISABLED
-}
-
-fun ObfustringMode.isEnabled(): Boolean = this != ObfustringMode.DISABLED

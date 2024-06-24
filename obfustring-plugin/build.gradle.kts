@@ -36,10 +36,9 @@ dependencies {
 
     testImplementation(libs.bundles.test.core)
     testImplementation(gradleTestKit())
-    testRuntimeOnly(libs.junit.platform.launcher)
 }
 
-tasks.named<Test>("test") {
+tasks.test {
     val javaToolchains = project.extensions.getByType<JavaToolchainService>()
     javaLauncher.set(
         javaToolchains.launcherFor {
@@ -47,12 +46,6 @@ tasks.named<Test>("test") {
         }
     )
     useJUnitPlatform()
-
-    maxHeapSize = "1G"
-
-    testLogging {
-        showStandardStreams = true
-    }
 }
 
 gradlePlugin {

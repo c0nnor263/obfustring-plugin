@@ -37,9 +37,9 @@ plugins {
     alias(libs.plugins.android.library) apply false
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.kotlin.jvm) apply false
-    alias(libs.plugins.nexusPublish)
-    alias(libs.plugins.benMames)
-    alias(libs.plugins.ktlint) apply true
+    alias(libs.plugins.nexusPublish) apply true
+    alias(libs.plugins.benMames) apply false
+    alias(libs.plugins.ktlint) apply false
 }
 
 allprojects {

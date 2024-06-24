@@ -29,6 +29,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 // TODO: Write test for checking obfustring directory in buildSrc
 // TODO: Write test for class names exclude list
+// TODO: Secure obfuscation key
+// TODO: Implement Logger
 class ObfustringPlugin : Plugin<Project> {
     companion object {
         lateinit var pluginExtension: ObfustringExtension

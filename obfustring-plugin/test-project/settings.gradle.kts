@@ -33,3 +33,5 @@ dependencyResolutionManagement {
         mavenLocal()
     }
 }
+
+rootProject.name = "ObfustringTest"

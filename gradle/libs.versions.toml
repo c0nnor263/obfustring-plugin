@@ -16,6 +16,7 @@ kotlinpoet = "1.17.0"
 # Tooling
 jupiter = "5.10.2"
 junit = "4.13.2"
+mockk = "1.13.11"
 
 # Android Example app
 core-ktx = "1.13.1"
@@ -45,7 +46,7 @@ lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", v
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "jupiter" }
 junit = { module = "junit:junit", version.ref = "junit" }
-junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher", version.prefer = "1.10.2" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 
 
 
@@ -54,6 +55,7 @@ test-core = [
     "kotlin-test-junit",
     "junit-jupiter",
     "junit",
+    "mockk"
 ]
 obfustring-plugin = [
     "android-gradle-api",

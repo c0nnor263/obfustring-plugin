@@ -57,7 +57,7 @@ abstract class ObfustringVisitorFactory :
 
             ObfustringMode.FORCE -> true
 
-            ObfustringMode.DISABLED -> false
+            ObfustringMode.DISABLED -> return false
         }
 
         val isExcluded = ObfustringPlugin.pluginExtension.excludeClasses.any { excludedClassInfo ->

@@ -35,10 +35,7 @@ internal fun verifyKey(key: String): String {
         .replace(' ', rangeSymbols.random())
 }
 
-
 internal fun checkCustomObfustring(custom: CommonObfustring): CommonObfustring {
-
-    // TODO: Check if custom obfustring has a package with obfustring in path
     require(custom::class.java.kotlin.objectInstance != null) {
         "${Obfustring.NAME} | Error: Custom Obfustring must be an object instance. Please provide a valid customObfustring to ObfustringExtension"
     }

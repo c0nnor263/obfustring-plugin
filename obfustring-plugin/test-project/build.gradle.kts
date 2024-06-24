@@ -16,11 +16,7 @@
 
 @file:Suppress("UnstableApiUsage")
 
-import ObfustringData.exampleapp.compileSdk
-import ObfustringData.exampleapp.minSdk
-import ObfustringData.exampleapp.namespace
-import ObfustringData.exampleapp.sourceCompatibility
-import ObfustringData.exampleapp.targetCompatibility
+import io.github.c0nnor263.obfustringcore.CommonObfustring
 
 plugins {
     id("com.android.application")

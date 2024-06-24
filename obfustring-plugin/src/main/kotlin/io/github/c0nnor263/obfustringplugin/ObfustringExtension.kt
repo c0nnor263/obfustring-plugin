@@ -53,7 +53,9 @@ abstract class ObfustringExtension {
     var stringConcatStrategy: StringConcatStrategy = StringConcatStrategy.INDY
 
     /**
-     * List of classes that should be excluded from obfuscation
+     * List of classes that should be excluded from obfuscation.
+     *
+     * Has higher priority than [ObfustringMode] except [ObfustringMode.DISABLED]
      */
     var excludeClasses: List<ExcludedClassInfo> = emptyList()
 

@@ -36,17 +36,10 @@ java {
 
 dependencies {
     testImplementation(libs.bundles.test.core)
-    testRuntimeOnly(libs.junit.platform.launcher)
 }
 
-tasks.named<Test>("test") {
+tasks.test {
     useJUnitPlatform()
-
-    maxHeapSize = "1G"
-
-    testLogging {
-        events("passed")
-    }
 }
 
 afterEvaluate {

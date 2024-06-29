@@ -17,6 +17,7 @@
 package io.github.c0nnor263.obfustringplugin
 
 import io.github.c0nnor263.obfustringcore.CommonObfustring
+import io.github.c0nnor263.obfustringcore.Obfustring
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
@@ -40,9 +41,10 @@ class UtilsTest {
 
     @Test
     fun checkCustomObfustring_passObfustringClass_throwsIllegalStateException() {
-        assertThrows<IllegalArgumentException> {
+        val exception = assertThrows<IllegalArgumentException> {
             checkCustomObfustring(MockClassObfustringTest())
         }
+        assert(exception.message == "${Obfustring.NAME} | Error: Custom Obfustring must be an object instance. Please provide a valid Custom Obfustring")
     }
 
     @Test

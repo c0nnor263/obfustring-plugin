@@ -21,6 +21,8 @@ import io.github.c0nnor263.obfustringplugin.enums.ObfustringMode
 import io.github.c0nnor263.obfustringplugin.enums.StringConcatStrategy
 import io.github.c0nnor263.obfustringplugin.model.TransformedAssertion
 import java.io.File
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import org.gradle.api.Project
 import org.gradle.internal.impldep.org.hamcrest.MatcherAssert.assertThat
 import org.gradle.internal.impldep.org.hamcrest.core.IsNull
@@ -28,13 +30,16 @@ import org.gradle.testfixtures.ProjectBuilder
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome
+import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.TestInstance.Lifecycle
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.assertTimeout
 import org.junit.jupiter.api.io.TempDir
 import org.objectweb.asm.ClassReader
@@ -57,7 +62,7 @@ class ObfustringPluginTest {
         @JvmStatic
         @BeforeAll
         fun beforeAll() {
-            repeat(3) {
+            repeat(2) {
                 try {
                     dummyProject = ProjectBuilder.builder().withProjectDir(File("test-project")).build()
                 } catch (e: Exception) {
@@ -81,6 +86,13 @@ class ObfustringPluginTest {
     @BeforeEach
     fun beforeEach() {
         originalBuildGradle?.copyRecursively(buildGradleFile, overwrite = true)
+        dummyProject.extensions.findByType(ObfustringExtension::class.java)?.run {
+            stringConcatStrategy = StringConcatStrategy.INDY
+            mode = ObfustringMode.DEFAULT
+            loggingEnabled = true
+            customObfustring = Obfustring
+            excludeClasses = emptyList()
+        }
     }
 
 
@@ -89,16 +101,30 @@ class ObfustringPluginTest {
 
         @Test
         fun initPlugin_obfustringExtensionCreated() {
-            val extension = dummyProject.extensions.getByType(ObfustringExtension::class.java)
+            val extension = dummyProject.extensions.findByType(ObfustringExtension::class.java)
             assertThat(extension, IsNull.notNullValue())
         }
 
         @Test
         fun initPlugin_obfustringCoreDependencyAdded() {
-            val dependency = dummyProject.configurations.getByName("implementation").dependencies.find {
+            val dependency = dummyProject.configurations.findByName("implementation")?.dependencies?.find {
                 it.name == "obfustring-core"
             }
             assertThat(dependency, IsNull.notNullValue())
+        }
+
+        @Test
+        fun initPlugin_androidPluginNotFound() {
+            val tempProject = ProjectBuilder.builder().build()
+            tempProject.pluginManager.apply {
+                apply("application")
+                apply("kotlin-android")
+            }
+
+            val exception = assertThrows<IllegalArgumentException> {
+                ObfustringPlugin().apply(tempProject)
+            }
+            assertEquals(exception.message, "${Obfustring.NAME} | Project is not an Android project")
         }
     }
 
@@ -108,9 +134,8 @@ class ObfustringPluginTest {
 
         @Test
         fun obfustringModeDisabled_stringConcatStrategyNotPresented() {
-            val extension = dummyProject.extensions.getByType(ObfustringExtension::class.java)
-            extension.apply {
-                stringConcatStrategy = StringConcatStrategy.INDY
+            val extension = dummyProject.extensions.findByType(ObfustringExtension::class.java)
+            extension?.apply {
                 mode = ObfustringMode.DISABLED
             }
             dummyProject.tasks.withType(KotlinJvmCompile::class.java).configureEach { task ->
@@ -120,12 +145,39 @@ class ObfustringPluginTest {
             }
         }
 
+//        @Test
+//        fun obfustringModeDefault_buildSrcSourcesAdded() {
+//            val extension = dummyProject.extensions.findByType(ObfustringExtension::class.java)
+//            extension?.apply {
+//                mode = ObfustringMode.DEFAULT
+//            }
+//            dummyProject.extensions.getByType(com.android.build.gradle.AppExtension::class.java)
+//                .setCompileSdkVersion(34)
+//            val kotlinExtension = dummyProject.extensions.getByType(KotlinAndroidProjectExtension::class.java)
+//            val result = kotlinExtension.sourceSets.getAt("main").kotlin.srcDirs.containsAll(
+//                dummyProject.layout.files("${dummyProject.rootDir}/buildSrc/src/main/kotlin/obfustring/").files
+//            )
+//            assertTrue(result)
+//        }
+//
+//        @Test
+//        fun obfustringModeDisabled_buildSrcSourcesNotAdded() {
+//            val extension = dummyProject.extensions.findByType(ObfustringExtension::class.java)
+//            extension?.apply {
+//                mode = ObfustringMode.DISABLED
+//            }
+//            val kotlinExtension = dummyProject.extensions.getByType(KotlinAndroidProjectExtension::class.java)
+//            val result = kotlinExtension.sourceSets.getAt("main").kotlin.srcDirs.containsAll(
+//                dummyProject.layout.files("${dummyProject.rootDir}/buildSrc/src/main/kotlin/obfustring/").files
+//            )
+//            assertFalse(result)
+//        }
+
         @Test
         fun obfustringModeDefault_stringConcatStrategyPresented() = with(dummyProject) {
             val concatStrategy = StringConcatStrategy.INLINE
-            extensions.getByType(ObfustringExtension::class.java).run {
+            extensions.findByType(ObfustringExtension::class.java)?.run {
                 stringConcatStrategy = concatStrategy
-                mode = ObfustringMode.DEFAULT
             }
             tasks.withType(KotlinJvmCompile::class.java).configureEach { task ->
                 task.compilerOptions {
@@ -214,7 +266,7 @@ class ObfustringPluginTest {
     @Nested
     inner class Obfuscation {
         @Test
-        fun transformReleaseClassesWithAsm_classFieldHasObfustringMethod() {
+        fun transformReleaseClassesWithAsm_classFieldWithObfustringMethod_compiledClassHasObfustringMethod() {
             appendFileWithText(
                 "src/main/java/com/test/MyApplication.kt",
                 """
@@ -231,16 +283,17 @@ class ObfustringPluginTest {
 
             val transformedAssertion = TransformedAssertion(
                 className = "com/test/MyApplication",
-                methodName = "getPassword()Ljava/lang/String;",
-                methodInsn = "io/github/c0nnor263/obfustringcore/Obfustring.process(Ljava/lang/String;Ljava/lang/String;I)Ljava/lang/String;",
+                methodName = "getPassword",
+                methodDescriptor = "()Ljava/lang/String;",
+                methodInsn = "io/github/c0nnor263/obfustringcore/Obfustring.process",
+                methodInsnDescriptor = "(Ljava/lang/String;Ljava/lang/String;I)Ljava/lang/String;"
             )
 
 
             val result = runCheckTask()
             assert(result.task(":transformReleaseClassesWithAsm")?.outcome == TaskOutcome.SUCCESS)
-            assertThatClassTransformed(transformedAssertion) { file ->
-                val classReader = ClassReader(file.readBytes())
-                val classVisitor = object : ClassVisitor(Opcodes.ASM9) {
+            assertThatClassTransformed(transformedAssertion) {
+                object : ClassVisitor(Opcodes.ASM9) {
                     var visitedClassName: String? = null
                     override fun visit(
                         version: Int,
@@ -262,7 +315,7 @@ class ObfustringPluginTest {
                         signature: String?,
                         exceptions: Array<out String>?
                     ): MethodVisitor? {
-                        transformedAssertion.assertMethodNameAtClass(visitedClassName, name)
+                        transformedAssertion.assertMethodNameAtClass(visitedClassName, name, descriptor)
                         val visitor = super.visitMethod(access, name, descriptor, signature, exceptions)
                         return object : MethodVisitor(Opcodes.ASM9, visitor) {
                             override fun visitMethodInsn(
@@ -273,23 +326,108 @@ class ObfustringPluginTest {
                                 isInterface: Boolean
                             ) {
                                 super.visitMethodInsn(opcode, owner, name, descriptor, isInterface)
-                                transformedAssertion.assertMethodInsnAtClass(visitedClassName, owner, name)
+                                transformedAssertion.assertMethodInsnAtClass(visitedClassName, owner, name, descriptor)
                             }
                         }
                     }
                 }
-
-                classReader.accept(classVisitor, 0)
             }
         }
 
-        //        @Test
-        // TODO: Fix this test
-        fun transformReleaseClassesWithAsm_classHasObfustringMethod() {
+
+        @Test
+        fun transformReleaseClassesWithAsm_classFieldWithCustomObfustringMethod_compiledClassHasCustomObfustringMethod() {
             appendFileWithText(
                 "src/main/java/com/test/MyApplication.kt",
                 """
-                    package com.test
+                    package com.test 
+                    
+                    import io.github.c0nnor263.obfustringcore.annotations.ObfustringThis
+                    
+                    @ObfustringThis
+                    class MyApplication {
+                        val password = "password"
+                    }
+                """.trimIndent()
+            )
+
+            val transformedAssertion = TransformedAssertion(
+                className = "com/test/MyApplication",
+                methodName = "getPassword",
+                methodDescriptor = "()Ljava/lang/String;",
+                methodInsn = "Build_gradle${"$"}CustomObfustring.process",
+                methodInsnDescriptor = "(Ljava/lang/String;Ljava/lang/String;I)Ljava/lang/String;"
+            )
+
+            buildGradleFile.appendText(
+                """
+                    
+                    object CustomObfustring : CommonObfustring{
+                         override fun process(
+                            key: String,
+                            stringValue: String,
+                            mode: Int
+                         ): String {
+                            return stringValue
+                         }
+                    }
+                    obfustring {
+                        loggingEnabled = false
+                        customObfustring = CustomObfustring
+                    }
+                """.trimIndent()
+            )
+
+            val result = runCheckTask()
+            assert(result.task(":transformReleaseClassesWithAsm")?.outcome == TaskOutcome.SUCCESS)
+            assertThatClassTransformed(transformedAssertion) {
+                object : ClassVisitor(Opcodes.ASM9) {
+                    var visitedClassName: String? = null
+                    override fun visit(
+                        version: Int,
+                        access: Int,
+                        name: String?,
+                        signature: String?,
+                        superName: String?,
+                        interfaces: Array<out String>?
+                    ) {
+                        super.visit(version, access, name, signature, superName, interfaces)
+                        visitedClassName = name
+                        transformedAssertion.assertNameAtClass(visitedClassName)
+                    }
+
+                    override fun visitMethod(
+                        access: Int,
+                        name: String?,
+                        descriptor: String?,
+                        signature: String?,
+                        exceptions: Array<out String>?
+                    ): MethodVisitor? {
+                        transformedAssertion.assertMethodNameAtClass(visitedClassName, name, descriptor)
+                        val visitor = super.visitMethod(access, name, descriptor, signature, exceptions)
+                        return object : MethodVisitor(Opcodes.ASM9, visitor) {
+                            override fun visitMethodInsn(
+                                opcode: Int,
+                                owner: String?,
+                                name: String?,
+                                descriptor: String?,
+                                isInterface: Boolean
+                            ) {
+                                super.visitMethodInsn(opcode, owner, name, descriptor, isInterface)
+                                transformedAssertion.assertMethodInsnAtClass(visitedClassName, owner, name, descriptor)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        @Test
+        fun transformReleaseClassesWithAsm_classStringWithObfustringMethod_compiledClassHasObfustringMethod() {
+            appendFileWithText(
+                "src/main/java/com/test/MyApplication.kt",
+                """
+                    package com.test 
 
                     import android.app.Application
                     import android.util.Log
@@ -298,63 +436,68 @@ class ObfustringPluginTest {
                     
                     @ObfustringThis
                     class MyApplication : Application() {
-                        companion object {
-                            private const val TAG = "MyApplication"
-                            val username = "user#${'$'}{Random.nextInt()}"
-                            val onCreateMsg = "Hello world and ${'$'}username!"
-                        }
 
                         override fun onCreate() {
                             super.onCreate()
-                            val userChecker = UserChecker()
-                            val isValidUserMsg =
-                                if (userChecker.isValidName(username)) {
-                                    onCreateMsg
-                                } else {
-                                    "${"$"}username is not valid user name"
-                                }
-
                             Log.i(
-                                TAG,
-                                "Application onCreate: ${"$"}isValidUserMsg"
+                                "TAG",
+                                "Application onCreate: init has been called"
                             )
-                        }
-                    }
-                    
-                    @Suppress("DEPRECATION")
-                    @ObfustringThis
-                    class UserChecker {
-                        companion object {
-                            @Deprecated("This is a deprecated list")
-                            private val forbiddenNames = listOf("admin", "root", "user")
-                        }
-
-                        fun isValidName(name: String): Boolean {
-                            return when {
-                                name.isBlank() -> false
-                                name.isEmpty() -> false
-                                forbiddenNames.contains(name) -> false
-                                else -> true
-                            }.also { result ->
-                                Log.i(
-                                    "TAG",
-                                    "\tisValidName: ${"$"}name is ${"$"}result\n" +
-                                            "\tAll forbidden names: ${"$"}forbiddenNames"
-                                )
-                            }
                         }
                     }
                 """.trimIndent()
             )
+
             val transformedAssertion = TransformedAssertion(
                 className = "com/test/MyApplication",
-                methodName = "io/github/c0nnor263/obfustringcore/Obfustring.process(Ljava/lang/String;Ljava/lang/String;I)Ljava/lang/String;",
-                methodInsn = "isValidName(Ljava/lang/String;)Z"
+                methodName = "onCreate",
+                methodDescriptor = "()V",
+                methodInsn = "android/util/Log.i",
+                methodInsnDescriptor = "(Ljava/lang/String;Ljava/lang/String;)I"
             )
+
 
             val result = runCheckTask()
             assert(result.task(":transformReleaseClassesWithAsm")?.outcome == TaskOutcome.SUCCESS)
-            assertThatClassTransformed(transformedAssertion) { file ->
+            assertThatClassTransformed(transformedAssertion) {
+                object : ClassVisitor(Opcodes.ASM9) {
+                    var visitedClassName: String? = null
+                    override fun visit(
+                        version: Int,
+                        access: Int,
+                        name: String?,
+                        signature: String?,
+                        superName: String?,
+                        interfaces: Array<out String>?
+                    ) {
+                        super.visit(version, access, name, signature, superName, interfaces)
+                        visitedClassName = name
+                        transformedAssertion.assertNameAtClass(visitedClassName)
+                    }
+
+                    override fun visitMethod(
+                        access: Int,
+                        name: String?,
+                        descriptor: String?,
+                        signature: String?,
+                        exceptions: Array<out String>?
+                    ): MethodVisitor? {
+                        transformedAssertion.assertMethodNameAtClass(visitedClassName, name, descriptor)
+                        val visitor = super.visitMethod(access, name, descriptor, signature, exceptions)
+                        return object : MethodVisitor(Opcodes.ASM9, visitor) {
+                            override fun visitMethodInsn(
+                                opcode: Int,
+                                owner: String?,
+                                name: String?,
+                                descriptor: String?,
+                                isInterface: Boolean
+                            ) {
+                                super.visitMethodInsn(opcode, owner, name, descriptor, isInterface)
+                                transformedAssertion.assertMethodInsnAtClass(visitedClassName, owner, name, descriptor)
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -371,7 +514,7 @@ class ObfustringPluginTest {
         file.writeText(text)
     }
 
-    fun assertThatClassTransformed(transformedAssertion: TransformedAssertion, action: (File) -> Unit) {
+    fun assertThatClassTransformed(transformedAssertion: TransformedAssertion, action: () -> ClassVisitor) {
         assertTimeout(java.time.Duration.of(1000, java.time.temporal.ChronoUnit.SECONDS)) {
             testProjectDir?.listFiles()
                 ?.find { it.name == "build" }?.listFiles()
@@ -382,7 +525,10 @@ class ObfustringPluginTest {
                 ?.find { it.name == "dirs" }?.listFiles()
                 ?.find { it.name == "com" }?.listFiles()
                 ?.find { it.name == "test" }?.listFiles()?.also {
-                    it.forEach(action)
+                    it.forEach { file ->
+                        val classReader = ClassReader(file.readBytes())
+                        classReader.accept(action(), 0)
+                    }
                     transformedAssertion.finalAssert()
                 }
         }

@@ -19,6 +19,8 @@ package io.github.c0nnor263.obfustringplugin.transform
 import com.android.build.api.instrumentation.FramesComputationMode
 import com.android.build.api.instrumentation.InstrumentationScope
 import com.android.build.api.variant.AndroidComponentsExtension
+import io.github.c0nnor263.obfustringplugin.ObfustringPlugin
+import io.github.c0nnor263.obfustringplugin.enums.isEnabled
 import io.github.c0nnor263.obfustringplugin.visitor.ObfustringVisitorFactory
 
 internal class ObfustringTransform(private val androidComponents: AndroidComponentsExtension<*, *, *>) {
@@ -31,6 +33,9 @@ internal class ObfustringTransform(private val androidComponents: AndroidCompone
     ) {
         val releaseSelector = androidComponents.selector().withName(VARIANT_SELECTOR_RELEASE)
         androidComponents.onVariants(selector = releaseSelector) { variant ->
+            if (!ObfustringPlugin.pluginExtension.mode.isEnabled()) {
+                return@onVariants
+            }
             with(variant.instrumentation) {
                 setAsmFramesComputationMode(
                     FramesComputationMode.COMPUTE_FRAMES_FOR_INSTRUMENTED_METHODS

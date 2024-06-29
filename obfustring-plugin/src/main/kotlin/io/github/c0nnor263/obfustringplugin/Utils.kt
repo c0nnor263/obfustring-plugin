@@ -37,7 +37,7 @@ internal fun verifyKey(key: String): String {
 
 internal fun checkCustomObfustring(custom: CommonObfustring): CommonObfustring {
     require(custom::class.java.kotlin.objectInstance != null) {
-        "${Obfustring.NAME} | Error: Custom Obfustring must be an object instance. Please provide a valid customObfustring to ObfustringExtension"
+        "${Obfustring.NAME} | Error: Custom Obfustring must be an object instance. Please provide a valid Custom Obfustring"
     }
     return custom
 }

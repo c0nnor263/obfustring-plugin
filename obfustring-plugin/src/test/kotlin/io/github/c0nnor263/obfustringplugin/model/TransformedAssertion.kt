@@ -21,7 +21,9 @@ import org.junit.jupiter.api.Assertions.assertTrue
 data class TransformedAssertion(
     val className: String,
     val methodName: String,
+    val methodDescriptor: String,
     val methodInsn: String,
+    val methodInsnDescriptor: String
 ) {
     var nameAsserted = false
     var methodNameAsserted = false
@@ -32,18 +34,18 @@ data class TransformedAssertion(
         nameAsserted = visitedClassName == className
     }
 
-    fun assertMethodNameAtClass(className: String?, methodName: String?) {
+    fun assertMethodNameAtClass(className: String?, methodName: String?, descriptor: String?) {
         if (methodNameAsserted) return
         if (className == this.className) {
-            methodNameAsserted = "$methodName()Ljava/lang/String;" == this.methodName
+            methodNameAsserted = "$methodName" == this.methodName && descriptor == this.methodDescriptor
         }
     }
 
-    fun assertMethodInsnAtClass(className: String?, owner: String?, methodName: String?) {
+    fun assertMethodInsnAtClass(className: String?, owner: String?, methodName: String?, descriptor: String?) {
         if (methodInsnAsserted) return
         if (className == this.className) {
             methodInsnAsserted =
-                "$owner.$methodName(Ljava/lang/String;Ljava/lang/String;I)Ljava/lang/String;" == methodInsn
+                "$owner.$methodName" == methodInsn && descriptor == methodInsnDescriptor
         }
     }
 

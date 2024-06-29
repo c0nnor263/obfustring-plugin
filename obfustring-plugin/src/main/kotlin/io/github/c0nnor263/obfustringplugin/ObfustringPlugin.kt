@@ -17,6 +17,7 @@
 package io.github.c0nnor263.obfustringplugin
 
 import com.android.build.api.variant.AndroidComponentsExtension
+import com.android.build.gradle.internal.crash.afterEvaluate
 import io.github.c0nnor263.obfustringcore.Obfustring
 import io.github.c0nnor263.obfustringplugin.enums.isEnabled
 import io.github.c0nnor263.obfustringplugin.transform.ObfustringTransform
@@ -27,34 +28,48 @@ import org.gradle.api.plugins.JavaPlugin
 import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
-// TODO: Write test for checking obfustring directory in buildSrc
-// TODO: Write test for class names exclude list
 // TODO: Secure obfuscation key
 // TODO: Implement Logger
+// TODO: Implement encrypt/decrypt methods
 class ObfustringPlugin : Plugin<Project> {
     companion object {
         lateinit var pluginExtension: ObfustringExtension
         const val VERSION: String = "12.0.2"
     }
 
+    private lateinit var project: Project
+
     override fun apply(project: Project) {
-        initPlugin(project)
-        initObfustringTransform(project)
+        this.project = project
+        initPlugin()
+        initObfustringTransform()
+        project.afterEvaluate {
+            if (pluginExtension.mode.isEnabled()) {
+                setupBuildSrc()
+                setupKotlinCompileOptions()
+                setupLogging()
+            }
+        }
     }
 
-    private fun initPlugin(project: Project) =
-        with(project) {
-            pluginExtension =
-                extensions.create(ObfustringExtension.CONFIGURATION_NAME, ObfustringExtension::class.java)
-            dependencies.add(
-                JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME,
-                "io.github.c0nnor263:obfustring-core:$VERSION"
-            )
-        }
+    private fun initPlugin() {
+        pluginExtension = project.extensions.create(
+            ObfustringExtension.CONFIGURATION_NAME,
+            ObfustringExtension::class.java
+        )
+        project.dependencies.add(
+            JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME,
+            "io.github.c0nnor263:obfustring-core:$VERSION"
+        )
+    }
 
-    private fun initObfustringTransform(project: Project) {
+    private fun initObfustringTransform() {
         val androidComponentsExtension =
-            project.extensions.getByType(AndroidComponentsExtension::class.java)
+            project.extensions.findByType(AndroidComponentsExtension::class.java)
+
+        requireNotNull(androidComponentsExtension) {
+            "${Obfustring.NAME} | Project is not an Android project"
+        }
 
         val transform = ObfustringTransform(androidComponentsExtension)
         transform.configureInstrumentationParamsConfig { params ->
@@ -63,44 +78,38 @@ class ObfustringPlugin : Plugin<Project> {
                 loggingEnabled.set(pluginExtension.loggingEnabled)
                 mode.set(pluginExtension.mode)
             }
-            if (pluginExtension.mode.isEnabled()) {
-                setupBuildSrc(project)
-                setupKotlinCompileOptions(project)
-                setupLogging(project)
-            }
         }
     }
 
-    private fun setupBuildSrc(project: Project) {
+    private fun setupBuildSrc() {
         val kotlinExtension = project.extensions.getByType(KotlinAndroidProjectExtension::class.java)
-        val originalSrcDirs = kotlinExtension.sourceSets.getAt("main").kotlin.srcDirs
-        kotlinExtension.sourceSets.getAt("main").kotlin.srcDirs(
-            originalSrcDirs + project.layout.files("${project.rootDir}/buildSrc/src/main/kotlin/obfustring/")
+        val kotlinMainSource = kotlinExtension.sourceSets.getAt("main").kotlin
+        kotlinMainSource.srcDirs(
+            kotlinMainSource.srcDirs + project.layout.files("${project.rootDir}/buildSrc/src/main/kotlin/obfustring/")
         )
     }
 
-    private fun setupKotlinCompileOptions(project: Project) =
-        with(project) {
-            val strategyArgument = pluginExtension.stringConcatStrategy.rawArgument
-            tasks.withType(KotlinCompilationTask::class.java).configureEach { task ->
-                task.compilerOptions {
-                    freeCompilerArgs.add(strategyArgument)
-                }
+    private fun setupKotlinCompileOptions() {
+        val strategyArgument = pluginExtension.stringConcatStrategy.rawArgument
+        project.tasks.withType(KotlinCompilationTask::class.java).configureEach { task ->
+            task.compilerOptions {
+                freeCompilerArgs.add(strategyArgument)
             }
         }
+    }
 
-    private fun setupLogging(project: Project) =
-        with(project) {
-            if (!pluginExtension.loggingEnabled) {
-                return@with
-            }
-            logging.captureStandardOutput(LogLevel.INFO)
-            logging.captureStandardError(LogLevel.ERROR)
-            println("${Obfustring.NAME} | KEY: ${pluginExtension.key}")
-
-            val customObfustring = pluginExtension.customObfustring
-            if (customObfustring !is Obfustring) {
-                println("${Obfustring.NAME} | CUSTOM_OBFUSTRING: ${customObfustring::class.simpleName}")
-            }
+    private fun setupLogging() {
+        if (!pluginExtension.loggingEnabled) {
+            return
         }
+        project.logging.captureStandardOutput(LogLevel.INFO)
+        project.logging.captureStandardError(LogLevel.ERROR)
+        println("${Obfustring.NAME} | KEY: ${pluginExtension.key}")
+
+        val customObfustring = pluginExtension.customObfustring
+
+        if (customObfustring !is Obfustring) {
+            println("${Obfustring.NAME} | CUSTOM_OBFUSTRING: ${customObfustring::class.simpleName}")
+        }
+    }
 }

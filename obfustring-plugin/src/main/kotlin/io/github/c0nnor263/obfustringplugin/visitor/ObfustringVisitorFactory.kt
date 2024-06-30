@@ -64,8 +64,8 @@ abstract class ObfustringVisitorFactory :
             excludedClassInfo.checkIfExcluded(classData)
         }
         return (modeAvailable && !isExcluded).also { isInstrumental ->
-            if (isInstrumental && parameters.loggingEnabled.get()) {
-                println("\n\t- CLASS: ${classData.className}")
+            if (isInstrumental) {
+                ObfustringPlugin.logger.quiet(LOG_INFO_INSTRUMENTABLE(classData.className))
             }
         }
     }
@@ -78,15 +78,15 @@ abstract class ObfustringVisitorFactory :
         val key: Property<String>
 
         /**
-         * Strategy to use for string concatenation
-         */
-        @get:Input
-        val loggingEnabled: Property<Boolean>
-
-        /**
          * Obfustring mode
          */
         @get:Input
         val mode: Property<ObfustringMode>
+    }
+
+    companion object {
+        val LOG_INFO_INSTRUMENTABLE: (String) -> String = { className ->
+            "\n\t- CLASS: $className"
+        }
     }
 }

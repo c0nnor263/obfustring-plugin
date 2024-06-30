@@ -17,26 +17,20 @@
 package io.github.c0nnor263.obfustringplugin
 
 import com.android.build.api.variant.AndroidComponentsExtension
-import com.android.build.gradle.internal.crash.afterEvaluate
 import io.github.c0nnor263.obfustringcore.Obfustring
 import io.github.c0nnor263.obfustringplugin.enums.isEnabled
+import io.github.c0nnor263.obfustringplugin.log.ObfustringLogger
 import io.github.c0nnor263.obfustringplugin.transform.ObfustringTransform
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.logging.LogLevel
+import org.gradle.api.logging.Logger
 import org.gradle.api.plugins.JavaPlugin
 import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 // TODO: Secure obfuscation key
-// TODO: Implement Logger
 // TODO: Implement encrypt/decrypt methods
 class ObfustringPlugin : Plugin<Project> {
-    companion object {
-        lateinit var pluginExtension: ObfustringExtension
-        const val VERSION: String = "12.0.2"
-    }
-
     private lateinit var project: Project
 
     override fun apply(project: Project) {
@@ -68,14 +62,13 @@ class ObfustringPlugin : Plugin<Project> {
             project.extensions.findByType(AndroidComponentsExtension::class.java)
 
         requireNotNull(androidComponentsExtension) {
-            "${Obfustring.NAME} | Project is not an Android project"
+            EXCEPTION_INIT_OBFUSTRING_TRANSFORM
         }
 
         val transform = ObfustringTransform(androidComponentsExtension)
         transform.configureInstrumentationParamsConfig { params ->
             params.apply {
                 key.set(pluginExtension.key)
-                loggingEnabled.set(pluginExtension.loggingEnabled)
                 mode.set(pluginExtension.mode)
             }
         }
@@ -99,17 +92,24 @@ class ObfustringPlugin : Plugin<Project> {
     }
 
     private fun setupLogging() {
-        if (!pluginExtension.loggingEnabled) {
-            return
-        }
-        project.logging.captureStandardOutput(LogLevel.INFO)
-        project.logging.captureStandardError(LogLevel.ERROR)
-        println("${Obfustring.NAME} | KEY: ${pluginExtension.key}")
+        logger = ObfustringLogger(pluginExtension.loggingEnabled, project.logger)
+        logger.quiet(LOG_INIT_WITH_KEY(pluginExtension.key))
 
         val customObfustring = pluginExtension.customObfustring
-
         if (customObfustring !is Obfustring) {
-            println("${Obfustring.NAME} | CUSTOM_OBFUSTRING: ${customObfustring::class.simpleName}")
+            logger.quiet(LOG_INIT_WITH_CUSTOM_OBFUSTRING(customObfustring::class.java.simpleName))
         }
+    }
+
+    companion object {
+        lateinit var pluginExtension: ObfustringExtension
+        lateinit var logger: Logger
+        const val VERSION: String = "12.0.2"
+
+        const val EXCEPTION_INIT_OBFUSTRING_TRANSFORM = "Obfustring | Project is not an Android project"
+        const val EXCEPTION_INVALID_CUSTOM_OBFUSTRING =
+            "Obfustring | Error: Custom Obfustring must be an object instance. Please provide a valid Custom Obfustring"
+        val LOG_INIT_WITH_KEY: (String) -> String = { "Obfustring | KEY: $it" }
+        val LOG_INIT_WITH_CUSTOM_OBFUSTRING: (String) -> String = { "Obfustring | CUSTOM_OBFUSTRING: $it" }
     }
 }

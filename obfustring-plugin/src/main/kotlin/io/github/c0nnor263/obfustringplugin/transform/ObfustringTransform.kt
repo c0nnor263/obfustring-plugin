@@ -24,10 +24,6 @@ import io.github.c0nnor263.obfustringplugin.enums.isEnabled
 import io.github.c0nnor263.obfustringplugin.visitor.ObfustringVisitorFactory
 
 internal class ObfustringTransform(private val androidComponents: AndroidComponentsExtension<*, *, *>) {
-    companion object {
-        const val VARIANT_SELECTOR_RELEASE = "release"
-    }
-
     fun configureInstrumentationParamsConfig(
         parametersBlock: (ObfustringVisitorFactory.InstrumentationParams) -> Unit
     ) {
@@ -47,5 +43,9 @@ internal class ObfustringTransform(private val androidComponents: AndroidCompone
                 )
             }
         }
+    }
+
+    companion object {
+        const val VARIANT_SELECTOR_RELEASE = "release"
     }
 }

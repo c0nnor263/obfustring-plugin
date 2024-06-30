@@ -21,6 +21,7 @@ import io.github.c0nnor263.obfustringcore.annotations.ObfustringExclude
 import io.github.c0nnor263.obfustringcore.annotations.ObfustringThis
 import io.github.c0nnor263.obfustringplugin.ObfustringPlugin
 import io.github.c0nnor263.obfustringplugin.enums.ObfustringMode
+import io.github.c0nnor263.obfustringplugin.log.ObfustringLogger
 import io.github.c0nnor263.obfustringplugin.model.ExcludedClassInfo
 import io.github.c0nnor263.obfustringplugin.model.createEmptyClassData
 import io.mockk.every
@@ -45,6 +46,13 @@ class ObfustringVisitorFactoryTest {
         ObfustringPlugin.pluginExtension = mockk {
             every { excludeClasses } returns emptyList()
         }
+        ObfustringPlugin.logger = ObfustringLogger(
+            loggingEnabled = true,
+            defaultLogger = mockk {
+                every { quiet(any()) } returns Unit
+                every { error(any()) } returns Unit
+            }
+        )
     }
 
     @Nested
@@ -55,7 +63,6 @@ class ObfustringVisitorFactoryTest {
         fun setup() {
             parameters = mockk {
                 every { get().mode.get() } returns ObfustringMode.DEFAULT
-                every { get().loggingEnabled.get() } returns true
             }
         }
 
@@ -121,7 +128,6 @@ class ObfustringVisitorFactoryTest {
         fun setup() {
             parameters = mockk {
                 every { get().mode.get() } returns ObfustringMode.FORCE
-                every { get().loggingEnabled.get() } returns true
             }
         }
 
@@ -176,7 +182,6 @@ class ObfustringVisitorFactoryTest {
         fun setup() {
             parameters = mockk {
                 every { get().mode.get() } returns ObfustringMode.DISABLED
-                every { get().loggingEnabled.get() } returns true
             }
         }
 

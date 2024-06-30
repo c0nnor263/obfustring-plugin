@@ -21,9 +21,6 @@ import io.github.c0nnor263.obfustringcore.model.KeyData
 import org.junit.jupiter.api.Test
 
 class UtilsTest {
-    companion object {
-        const val TEST_KEY = "UtilsTest"
-    }
 
     @Test
     fun tryProcess_encryptAndDecryptChar_encryptAndDecryptEquals() {
@@ -79,5 +76,9 @@ class UtilsTest {
         val char = '\\'
         val result = char.tryProcess(keyData, ObfustringCryptoMode.DECRYPT)
         assert(result == null)
+    }
+
+    companion object {
+        const val TEST_KEY = "UtilsTest"
     }
 }

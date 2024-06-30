@@ -19,9 +19,6 @@ package io.github.c0nnor263.obfustringcore.model
 import org.junit.jupiter.api.Test
 
 class KeyDataTest {
-    companion object {
-        const val TEST_KEY = "KeyDataTest"
-    }
 
     @Test
     fun increase_increaseKeyData_indexIncreased() {
@@ -59,5 +56,9 @@ class KeyDataTest {
             keyData.increase()
         }
         assert(keyData.getCode() == TEST_KEY[0].code)
+    }
+
+    companion object {
+        const val TEST_KEY = "KeyDataTest"
     }
 }

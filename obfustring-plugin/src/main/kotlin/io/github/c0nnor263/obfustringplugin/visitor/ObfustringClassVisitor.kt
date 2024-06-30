@@ -18,7 +18,6 @@ package io.github.c0nnor263.obfustringplugin.visitor
 
 import com.joom.grip.mirrors.getObjectType
 import com.joom.grip.mirrors.toAsmType
-import io.github.c0nnor263.obfustringcore.Obfustring
 import io.github.c0nnor263.obfustringcore.ObfustringCryptoMode
 import io.github.c0nnor263.obfustringplugin.ObfustringPlugin
 import io.github.c0nnor263.obfustringplugin.model.ClassVisitorParams
@@ -79,11 +78,12 @@ internal class ObfustringGeneratorAdapter(
     }
 
     private fun replaceStringWithDeobfuscationMethod(string: String) {
-        val (key, isLoggingEnabled) = params
+        // TODO: Move to obfustring realization
+        val key = params.key
         val encodedString = customObfustring.process(key, string, ObfustringCryptoMode.ENCRYPT)
         val decodedString = customObfustring.process(key, encodedString, ObfustringCryptoMode.DECRYPT)
         require(decodedString == string) {
-            "${Obfustring.NAME} | Error: Decoded string [$decodedString] does not match input string [$string]"
+            EXCEPTION_MISMATCHED_STRING
         }
 
         getStatic(obfustringType.toAsmType(), "INSTANCE", obfustringType.toAsmType())
@@ -92,12 +92,19 @@ internal class ObfustringGeneratorAdapter(
         push(ObfustringCryptoMode.DECRYPT)
         invokeVirtual(obfustringType.toAsmType(), processMethod)
 
-        if (isLoggingEnabled) {
-            println(
-                "\t\t- FOUND: [$string]\n" +
-                        "\t\t\tENCODED: [$encodedString]\n" +
-                        "\t\t\tORIGINAL: [$decodedString]"
-            )
+        ObfustringPlugin.logger.quiet(
+            LOG_INFO_OBFUSCATED_RESULT(string, encodedString, decodedString)
+        )
+    }
+
+    companion object {
+        val EXCEPTION_MISMATCHED_STRING: (String, String) -> String = { string, decodedString ->
+            "Obfustring | Error: Decoded string [$decodedString] does not match input string [$string]"
+        }
+        val LOG_INFO_OBFUSCATED_RESULT: (String, String, String) -> String = { string, encodedString, decodedString ->
+            "\t\t- FOUND: [$string]\n" +
+                    "\t\t\tENCODED: [$encodedString]\n" +
+                    "\t\t\tORIGINAL: [$decodedString]"
         }
     }
 }

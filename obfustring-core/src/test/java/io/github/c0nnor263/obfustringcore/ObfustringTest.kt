@@ -21,10 +21,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 class ObfustringTest {
-    companion object {
-        const val TEST_KEY = "ObfustringTest"
-    }
-
     @Test
     fun process_emptyKey_exceptionWithMessage() {
         val encryptException =
@@ -140,5 +136,9 @@ class ObfustringTest {
                 )
             assert(originalString == decryptedString)
         }
+    }
+
+    companion object {
+        const val TEST_KEY = "ObfustringTest"
     }
 }

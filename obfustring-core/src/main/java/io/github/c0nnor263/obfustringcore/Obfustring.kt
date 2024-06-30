@@ -17,6 +17,7 @@
 package io.github.c0nnor263.obfustringcore
 
 import io.github.c0nnor263.obfustringcore.Obfustring.process
+import io.github.c0nnor263.obfustringcore.annotations.ObfustringThis
 import io.github.c0nnor263.obfustringcore.model.KeyData
 
 /**
@@ -25,8 +26,7 @@ import io.github.c0nnor263.obfustringcore.model.KeyData
  * [process] - main method for obfuscation
  */
 object Obfustring : CommonObfustring {
-    const val NAME = "Obfustring"
-    const val EMPTY_KEY_MSG = "$NAME | Key must not be empty"
+    const val EMPTY_KEY_MSG = "Obfustring | Key must not be empty"
 
     override fun process(
         key: String,

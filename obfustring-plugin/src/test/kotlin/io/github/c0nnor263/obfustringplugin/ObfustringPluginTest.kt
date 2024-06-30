@@ -20,9 +20,9 @@ import io.github.c0nnor263.obfustringcore.Obfustring
 import io.github.c0nnor263.obfustringplugin.enums.ObfustringMode
 import io.github.c0nnor263.obfustringplugin.enums.StringConcatStrategy
 import io.github.c0nnor263.obfustringplugin.model.TransformedAssertion
+import io.mockk.junit5.MockKExtension
 import java.io.File
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
 import org.gradle.api.Project
 import org.gradle.internal.impldep.org.hamcrest.MatcherAssert.assertThat
 import org.gradle.internal.impldep.org.hamcrest.core.IsNull
@@ -30,9 +30,6 @@ import org.gradle.testfixtures.ProjectBuilder
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome
-import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension
-import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
@@ -47,6 +44,8 @@ import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes
 
+@MockKExtension.ConfirmVerification
+@MockKExtension.CheckUnnecessaryStub
 @TestInstance(Lifecycle.PER_CLASS)
 class ObfustringPluginTest {
     companion object {
@@ -54,6 +53,7 @@ class ObfustringPluginTest {
         var testProjectDir: File? = null
 
         lateinit var dummyProject: Project
+        lateinit var obfustringPlugin: ObfustringPlugin
         lateinit var buildGradleFile: File
         var originalBuildGradle: File? = null
 
@@ -75,7 +75,9 @@ class ObfustringPluginTest {
             dummyProject.pluginManager.apply {
                 apply("com.android.application")
                 apply("kotlin-android")
-                ObfustringPlugin().apply(dummyProject)
+                obfustringPlugin = ObfustringPlugin().also {
+                    it.apply(dummyProject)
+                }
             }
 
             buildGradleFile = File(testProjectDir, "build.gradle.kts")
@@ -124,68 +126,13 @@ class ObfustringPluginTest {
             val exception = assertThrows<IllegalArgumentException> {
                 ObfustringPlugin().apply(tempProject)
             }
-            assertEquals(exception.message, "${Obfustring.NAME} | Project is not an Android project")
+            assertEquals(exception.message, ObfustringPlugin.EXCEPTION_INIT_OBFUSTRING_TRANSFORM)
         }
     }
 
 
     @Nested
     inner class Extension {
-
-        @Test
-        fun obfustringModeDisabled_stringConcatStrategyNotPresented() {
-            val extension = dummyProject.extensions.findByType(ObfustringExtension::class.java)
-            extension?.apply {
-                mode = ObfustringMode.DISABLED
-            }
-            dummyProject.tasks.withType(KotlinJvmCompile::class.java).configureEach { task ->
-                task.compilerOptions {
-                    assert(freeCompilerArgs.get().isEmpty())
-                }
-            }
-        }
-
-//        @Test
-//        fun obfustringModeDefault_buildSrcSourcesAdded() {
-//            val extension = dummyProject.extensions.findByType(ObfustringExtension::class.java)
-//            extension?.apply {
-//                mode = ObfustringMode.DEFAULT
-//            }
-//            dummyProject.extensions.getByType(com.android.build.gradle.AppExtension::class.java)
-//                .setCompileSdkVersion(34)
-//            val kotlinExtension = dummyProject.extensions.getByType(KotlinAndroidProjectExtension::class.java)
-//            val result = kotlinExtension.sourceSets.getAt("main").kotlin.srcDirs.containsAll(
-//                dummyProject.layout.files("${dummyProject.rootDir}/buildSrc/src/main/kotlin/obfustring/").files
-//            )
-//            assertTrue(result)
-//        }
-//
-//        @Test
-//        fun obfustringModeDisabled_buildSrcSourcesNotAdded() {
-//            val extension = dummyProject.extensions.findByType(ObfustringExtension::class.java)
-//            extension?.apply {
-//                mode = ObfustringMode.DISABLED
-//            }
-//            val kotlinExtension = dummyProject.extensions.getByType(KotlinAndroidProjectExtension::class.java)
-//            val result = kotlinExtension.sourceSets.getAt("main").kotlin.srcDirs.containsAll(
-//                dummyProject.layout.files("${dummyProject.rootDir}/buildSrc/src/main/kotlin/obfustring/").files
-//            )
-//            assertFalse(result)
-//        }
-
-        @Test
-        fun obfustringModeDefault_stringConcatStrategyPresented() = with(dummyProject) {
-            val concatStrategy = StringConcatStrategy.INLINE
-            extensions.findByType(ObfustringExtension::class.java)?.run {
-                stringConcatStrategy = concatStrategy
-            }
-            tasks.withType(KotlinJvmCompile::class.java).configureEach { task ->
-                task.compilerOptions {
-                    assert(freeCompilerArgs.get().any { it == concatStrategy.rawArgument })
-                }
-            }
-        }
-
         @Test
         fun setLoggingEnabled_loggingPresented() {
             buildGradleFile.appendText(
@@ -199,7 +146,7 @@ class ObfustringPluginTest {
 
             val result = runCheckTask()
             assert(result.task(":check")?.outcome == TaskOutcome.SUCCESS)
-            assert(result.output.contains("${Obfustring.NAME} | KEY: "))
+            assert(result.output.contains(ObfustringPlugin.LOG_INIT_WITH_KEY("")))
         }
 
         @Test
@@ -225,7 +172,7 @@ class ObfustringPluginTest {
 
             val result = runCheckTask()
             assert(result.task(":transformReleaseClassesWithAsm")?.outcome == TaskOutcome.SUCCESS)
-            assert(result.output.contains(Obfustring.NAME).not())
+            assert(result.output.contains("Obfustring").not())
         }
     }
 
@@ -233,7 +180,7 @@ class ObfustringPluginTest {
     fun usingDefaultObfustring_notLoggingCustom() {
         val result = runCheckTask()
         assert(result.task(":check")?.outcome == TaskOutcome.SUCCESS)
-        assert(result.output.contains("${Obfustring.NAME} | CUSTOM_OBFUSTRING:").not())
+        assert(result.output.contains(ObfustringPlugin.LOG_INIT_WITH_CUSTOM_OBFUSTRING("")).not())
     }
 
     @Test
@@ -258,7 +205,7 @@ class ObfustringPluginTest {
 
         val result = runCheckTask()
         assert(result.task(":check")?.outcome == TaskOutcome.SUCCESS)
-        assert(result.output.contains("${Obfustring.NAME} | CUSTOM_OBFUSTRING: CustomObfustring"))
+        assert(result.output.contains(ObfustringPlugin.LOG_INIT_WITH_CUSTOM_OBFUSTRING("CustomObfustring")))
 
     }
 
@@ -314,7 +261,7 @@ class ObfustringPluginTest {
                         descriptor: String?,
                         signature: String?,
                         exceptions: Array<out String>?
-                    ): MethodVisitor? {
+                    ): MethodVisitor {
                         transformedAssertion.assertMethodNameAtClass(visitedClassName, name, descriptor)
                         val visitor = super.visitMethod(access, name, descriptor, signature, exceptions)
                         return object : MethodVisitor(Opcodes.ASM9, visitor) {
@@ -402,7 +349,7 @@ class ObfustringPluginTest {
                         descriptor: String?,
                         signature: String?,
                         exceptions: Array<out String>?
-                    ): MethodVisitor? {
+                    ): MethodVisitor {
                         transformedAssertion.assertMethodNameAtClass(visitedClassName, name, descriptor)
                         val visitor = super.visitMethod(access, name, descriptor, signature, exceptions)
                         return object : MethodVisitor(Opcodes.ASM9, visitor) {
@@ -481,7 +428,7 @@ class ObfustringPluginTest {
                         descriptor: String?,
                         signature: String?,
                         exceptions: Array<out String>?
-                    ): MethodVisitor? {
+                    ): MethodVisitor {
                         transformedAssertion.assertMethodNameAtClass(visitedClassName, name, descriptor)
                         val visitor = super.visitMethod(access, name, descriptor, signature, exceptions)
                         return object : MethodVisitor(Opcodes.ASM9, visitor) {

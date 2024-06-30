@@ -14,21 +14,23 @@
  * limitations under the License.
  */
 
-package io.github.c0nnor263.obfustringplugin.model
+package io.github.c0nnor263.obfustringplugin.log
 
-import io.github.c0nnor263.obfustringplugin.enums.ObfustringMode
-import io.github.c0nnor263.obfustringplugin.visitor.ObfustringVisitorFactory
+import org.gradle.api.logging.Logger
 
-internal data class ClassVisitorParams(
-    val key: String,
-    val mode: ObfustringMode
-) {
-    companion object {
-        fun fromInstrumentationParams(params: ObfustringVisitorFactory.InstrumentationParams): ClassVisitorParams {
-            return ClassVisitorParams(
-                key = params.key.get(),
-                mode = params.mode.get()
-            )
-        }
+
+internal class ObfustringLogger(
+    private val loggingEnabled: Boolean,
+    private val defaultLogger: Logger
+) : Logger by defaultLogger {
+    override fun quiet(msg: String?) {
+        if (!loggingEnabled) return
+        defaultLogger.quiet(msg)
+    }
+
+    override fun error(msg: String) {
+        println("Error: $msg $loggingEnabled")
+        if (!loggingEnabled) return
+        defaultLogger.error(msg)
     }
 }

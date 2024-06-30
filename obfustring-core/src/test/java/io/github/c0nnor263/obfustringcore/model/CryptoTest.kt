@@ -22,10 +22,6 @@ import io.github.c0nnor263.obfustringcore.model.Crypto.Companion.crypto
 import org.junit.jupiter.api.Test
 
 class CryptoTest {
-    companion object {
-        const val TEST_KEY = "CryptoTest"
-    }
-
     private val testChar = 'A'
     private val charCase = testChar.alphabeticCase() ?: throw Exception("Case not found")
     private val charCode = testChar.code
@@ -70,5 +66,9 @@ class CryptoTest {
                 mode = ObfustringCryptoMode.DECRYPT
             )
         assert(decrypted == testChar)
+    }
+
+    companion object {
+        const val TEST_KEY = "CryptoTest"
     }
 }

@@ -16,15 +16,23 @@
 
 package io.github.c0nnor263.obfustringplugin.transform
 
+import com.android.build.api.artifact.ScopedArtifact
 import com.android.build.api.instrumentation.FramesComputationMode
 import com.android.build.api.instrumentation.InstrumentationScope
 import com.android.build.api.variant.AndroidComponentsExtension
+import com.android.build.api.variant.ScopedArtifacts
+import com.android.build.api.variant.Variant
 import io.github.c0nnor263.obfustringplugin.ObfustringPlugin
 import io.github.c0nnor263.obfustringplugin.enums.isEnabled
+import io.github.c0nnor263.obfustringplugin.task.GenerateKeyHandlerTask
 import io.github.c0nnor263.obfustringplugin.visitor.ObfustringVisitorFactory
+import org.gradle.api.tasks.TaskProvider
 
-internal class ObfustringTransform(private val androidComponents: AndroidComponentsExtension<*, *, *>) {
+internal class ObfustringTransform(
+    private val androidComponents: AndroidComponentsExtension<*, *, *>
+) {
     fun configureInstrumentationParamsConfig(
+        onRegisterTaskProvider: () -> TaskProvider<GenerateKeyHandlerTask>,
         parametersBlock: (ObfustringVisitorFactory.InstrumentationParams) -> Unit
     ) {
         val releaseSelector = androidComponents.selector().withName(VARIANT_SELECTOR_RELEASE)
@@ -32,6 +40,10 @@ internal class ObfustringTransform(private val androidComponents: AndroidCompone
             if (!ObfustringPlugin.pluginExtension.mode.isEnabled()) {
                 return@onVariants
             }
+
+            val taskProvider = onRegisterTaskProvider()
+            generateKeyHandler(taskProvider, variant)
+
             with(variant.instrumentation) {
                 setAsmFramesComputationMode(
                     FramesComputationMode.COMPUTE_FRAMES_FOR_INSTRUMENTED_METHODS
@@ -43,6 +55,16 @@ internal class ObfustringTransform(private val androidComponents: AndroidCompone
                 )
             }
         }
+    }
+
+    private fun generateKeyHandler(taskProvider: TaskProvider<GenerateKeyHandlerTask>, variant: Variant) {
+        variant.artifacts
+            .forScope(ScopedArtifacts.Scope.PROJECT)
+            .use(taskProvider)
+            .toAppend(
+                ScopedArtifact.CLASSES,
+                GenerateKeyHandlerTask::output
+            )
     }
 
     companion object {

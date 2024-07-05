@@ -35,6 +35,7 @@ dependencies {
 
     testImplementation(libs.bundles.test.core)
     testImplementation(gradleTestKit())
+    implementation("org.javassist:javassist:3.22.0-GA")
 }
 
 tasks.test {

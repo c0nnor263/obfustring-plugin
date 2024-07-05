@@ -55,7 +55,11 @@ abstract class ObfustringVisitorFactory :
                 }
             }
 
-            ObfustringMode.FORCE -> true
+            ObfustringMode.FORCE -> {
+                classData.classAnnotations.none {
+                    it == ObfustringExclude::class.java.name
+                }
+            }
 
             ObfustringMode.DISABLED -> return false
         }

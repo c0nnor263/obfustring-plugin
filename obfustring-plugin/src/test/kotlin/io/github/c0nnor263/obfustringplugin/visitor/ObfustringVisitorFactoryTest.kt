@@ -160,7 +160,7 @@ class ObfustringVisitorFactoryTest {
         }
 
         @Test
-        fun isInstrumentable_passClassDataWithObfustringExclude_returnsTrue() {
+        fun isInstrumentable_passClassDataWithObfustringExclude_returnsFalse() {
             val classData = createEmptyClassData().copy(
                 className = "com.example.Test",
                 classAnnotations = listOf(
@@ -170,7 +170,7 @@ class ObfustringVisitorFactoryTest {
             )
             val factory = MockObfustringVisitorFactoryTest(parameters = parameters)
             val result = factory.isInstrumentable(classData)
-            assertTrue(result)
+            assertFalse(result)
         }
     }
 

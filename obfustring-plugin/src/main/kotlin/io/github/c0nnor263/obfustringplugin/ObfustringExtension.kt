@@ -55,7 +55,7 @@ abstract class ObfustringExtension {
     /**
      * List of classes that should be excluded from obfuscation.
      *
-     * Has higher priority than [ObfustringMode] except [ObfustringMode.DISABLED]
+     * Has higher priority than [ObfustringExtension.mode]
      */
     var excludeClasses: List<ExcludedClassInfo> = emptyList()
 

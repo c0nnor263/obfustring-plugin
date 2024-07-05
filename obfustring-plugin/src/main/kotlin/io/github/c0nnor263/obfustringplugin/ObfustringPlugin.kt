@@ -20,7 +20,9 @@ import com.android.build.api.variant.AndroidComponentsExtension
 import io.github.c0nnor263.obfustringcore.Obfustring
 import io.github.c0nnor263.obfustringplugin.enums.isEnabled
 import io.github.c0nnor263.obfustringplugin.log.ObfustringLogger
+import io.github.c0nnor263.obfustringplugin.task.GenerateKeyHandlerTask
 import io.github.c0nnor263.obfustringplugin.transform.ObfustringTransform
+import io.github.c0nnor263.obfustringplugin.visitor.ObfustringVisitorFactory
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.logging.Logger
@@ -29,6 +31,8 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 // TODO: Secure obfuscation key
+// TODO: Secure mode
+// TODO: Android Provider
 // TODO: Implement encrypt/decrypt methods
 class ObfustringPlugin : Plugin<Project> {
     private lateinit var project: Project
@@ -67,12 +71,17 @@ class ObfustringPlugin : Plugin<Project> {
         }
 
         val transform = ObfustringTransform(androidComponentsExtension)
-        transform.configureInstrumentationParamsConfig { params ->
-            params.apply {
-                key.set(pluginExtension.key)
-                mode.set(pluginExtension.mode)
+        transform.configureInstrumentationParamsConfig(
+            onRegisterTaskProvider = {
+                project.tasks.register(GenerateKeyHandlerTask.NAME, GenerateKeyHandlerTask::class.java)
+            },
+            parametersBlock = { params: ObfustringVisitorFactory.InstrumentationParams ->
+                params.apply {
+                    key.set(pluginExtension.key)
+                    mode.set(pluginExtension.mode)
+                }
             }
-        }
+        )
     }
 
     private fun setupBuildSrc() {

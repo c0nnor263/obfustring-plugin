@@ -233,7 +233,7 @@ public final class UserChecker {
 
 ### Custom Obfustring
 
-If you want to write your own implementation of Obfustring encoding and decoding logic, you should open [this guide](docs/CUSTOM_OBFUSTRING.MD)
+If you want to write your own implementation of Obfustring encoding and decoding logic, you should open [this guide](docs/CUSTOM_OBFUSTRING.md)
 
 ### Feedback
 

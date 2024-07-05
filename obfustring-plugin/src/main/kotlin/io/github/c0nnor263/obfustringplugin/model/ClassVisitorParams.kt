@@ -21,14 +21,12 @@ import io.github.c0nnor263.obfustringplugin.visitor.ObfustringVisitorFactory
 
 internal data class ClassVisitorParams(
     val key: String,
-    val isLoggingEnabled: Boolean,
     val mode: ObfustringMode
 ) {
     companion object {
         fun fromInstrumentationParams(params: ObfustringVisitorFactory.InstrumentationParams): ClassVisitorParams {
             return ClassVisitorParams(
                 key = params.key.get(),
-                isLoggingEnabled = params.loggingEnabled.get(),
                 mode = params.mode.get()
             )
         }

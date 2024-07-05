@@ -16,8 +16,11 @@
 
 package io.github.c0nnor263.obfustringplugin
 
+import io.github.c0nnor263.obfustringcore.CommonObfustring
+import io.github.c0nnor263.obfustringcore.Obfustring
 import io.github.c0nnor263.obfustringplugin.enums.ObfustringMode
 import io.github.c0nnor263.obfustringplugin.enums.StringConcatStrategy
+import io.github.c0nnor263.obfustringplugin.model.ExcludedClassInfo
 
 abstract class ObfustringExtension {
     /**
@@ -31,7 +34,7 @@ abstract class ObfustringExtension {
         }
 
     /**
-     * Configure obfustring mode using [ObfustringMode]
+     * Configure Obfustring mode using [ObfustringMode]
      *
      * Default value is [ObfustringMode.DEFAULT]
      */
@@ -48,6 +51,21 @@ abstract class ObfustringExtension {
      * Default value is [StringConcatStrategy.INDY]
      */
     var stringConcatStrategy: StringConcatStrategy = StringConcatStrategy.INDY
+
+    /**
+     * List of classes that should be excluded from obfuscation.
+     *
+     * Has higher priority than [ObfustringMode] except [ObfustringMode.DISABLED]
+     */
+    var excludeClasses: List<ExcludedClassInfo> = emptyList()
+
+    /**
+     * Custom Obfustring implementation that extends [CommonObfustring]
+     *
+     * Default value is [Obfustring] from obfustring-core library
+     */
+    var customObfustring: CommonObfustring = Obfustring
+        get() = checkCustomObfustring(field)
 
     companion object {
         const val CONFIGURATION_NAME = "obfustring"

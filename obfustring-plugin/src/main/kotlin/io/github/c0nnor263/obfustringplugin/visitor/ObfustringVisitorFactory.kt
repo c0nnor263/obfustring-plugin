@@ -20,7 +20,9 @@ import com.android.build.api.instrumentation.AsmClassVisitorFactory
 import com.android.build.api.instrumentation.ClassContext
 import com.android.build.api.instrumentation.ClassData
 import com.android.build.api.instrumentation.InstrumentationParameters
-import io.github.c0nnor263.obfustringcore.ObfustringThis
+import io.github.c0nnor263.obfustringcore.annotations.ObfustringExclude
+import io.github.c0nnor263.obfustringcore.annotations.ObfustringThis
+import io.github.c0nnor263.obfustringplugin.ObfustringPlugin
 import io.github.c0nnor263.obfustringplugin.enums.ObfustringMode
 import io.github.c0nnor263.obfustringplugin.model.ClassVisitorParams
 import org.gradle.api.provider.Property
@@ -42,22 +44,28 @@ abstract class ObfustringVisitorFactory :
     }
 
     override fun isInstrumentable(classData: ClassData): Boolean {
-        val mode = parameters.get().mode.get()
-        return when (mode) {
+        val parameters = parameters.get()
+        val mode = parameters.mode.get()
+        val modeAvailable = when (mode) {
             ObfustringMode.DEFAULT -> {
                 classData.classAnnotations.any {
                     it == ObfustringThis::class.java.name
+                } && classData.classAnnotations.none {
+                    it == ObfustringExclude::class.java.name
                 }
             }
 
             ObfustringMode.FORCE -> true
 
-            ObfustringMode.DISABLED -> false
+            ObfustringMode.DISABLED -> return false
+        }
 
-            else -> false
-        }.also { isReadyForProcessing ->
-            if (isReadyForProcessing) {
-                println("\n\t- CLASS: ${classData.className}")
+        val isExcluded = ObfustringPlugin.pluginExtension.excludeClasses.any { excludedClassInfo ->
+            excludedClassInfo.checkIfExcluded(classData)
+        }
+        return (modeAvailable && !isExcluded).also { isInstrumental ->
+            if (isInstrumental) {
+                ObfustringPlugin.logger.quiet(LOG_INFO_INSTRUMENTABLE(classData.className))
             }
         }
     }
@@ -70,15 +78,15 @@ abstract class ObfustringVisitorFactory :
         val key: Property<String>
 
         /**
-         * Strategy to use for string concatenation
-         */
-        @get:Input
-        val loggingEnabled: Property<Boolean>
-
-        /**
          * Obfustring mode
          */
         @get:Input
         val mode: Property<ObfustringMode>
+    }
+
+    companion object {
+        val LOG_INFO_INSTRUMENTABLE: (String) -> String = { className ->
+            "\n\t- CLASS: $className"
+        }
     }
 }

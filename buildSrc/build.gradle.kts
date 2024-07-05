@@ -20,4 +20,11 @@ plugins {
 
 repositories {
     mavenCentral()
+    mavenLocal()
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(11)
+
+dependencies {
+    implementation("io.github.c0nnor263:obfustring-core:12.0.2")
 }

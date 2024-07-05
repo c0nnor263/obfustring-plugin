@@ -16,7 +16,7 @@
 
 package io.github.c0nnor263.obfustringplugin.enums
 
-import io.github.c0nnor263.obfustringcore.ObfustringThis
+import io.github.c0nnor263.obfustringcore.annotations.ObfustringThis
 
 enum class ObfustringMode {
     /**

@@ -17,6 +17,8 @@
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import java.io.FileInputStream
 import java.util.Properties
+import org.jlleitschuh.gradle.ktlint.KtlintExtension
+import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
 
 buildscript {
     repositories {
@@ -26,7 +28,7 @@ buildscript {
         gradlePluginPortal()
     }
     dependencies {
-        classpath("io.github.c0nnor263:obfustring-plugin:12.0.1")
+        classpath("io.github.c0nnor263:obfustring-plugin:${ObfustringData.plugin.version}")
     }
 }
 
@@ -35,23 +37,57 @@ plugins {
     alias(libs.plugins.android.library) apply false
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.kotlin.jvm) apply false
-    alias(libs.plugins.nexusPublish)
-    alias(libs.plugins.benMames)
+    alias(libs.plugins.nexusPublish) apply true
+    alias(libs.plugins.benMames) apply false
+    alias(libs.plugins.ktlint) apply false
 }
 
-tasks.withType<DependencyUpdatesTask> {
-    rejectVersionIf {
-        val version = candidate.version
-        val stableKeyword =
-            listOf("RELEASE", "FINAL", "GA").any {
-                version.uppercase(java.util.Locale.getDefault())
-                    .contains(it)
-            }
+allprojects {
+    apply(plugin = "org.jlleitschuh.gradle.ktlint")
+    apply<com.github.benmanes.gradle.versions.VersionsPlugin>()
+
+
+    // Ktlint configuration
+    configure<KtlintExtension> {
+        android = false // to use the Android Studio KtLint plugin style
+        ignoreFailures = true
+
+        reporters {
+            reporter(ReporterType.PLAIN)
+            reporter(ReporterType.CHECKSTYLE)
+        }
+        filter {
+            exclude("**/generated/**")
+            include("**/kotlin/**")
+        }
+    }
+    afterEvaluate {
+        tasks.findByName("preBuild")?.dependsOn("ktlintFormat")
+    }
+
+    // Never mind about this, it's just a helper function to check newest versions of dependencies
+    fun isNonStable(version: String): Boolean {
+        val stableKeyword = listOf("RELEASE", "FINAL", "GA").any { version.uppercase().contains(it) }
         val regex = "^[0-9,.v-]+(-r)?$".toRegex()
         val isStable = stableKeyword || regex.matches(version)
-        isStable.not()
+        return isStable.not()
+    }
+
+    tasks.withType<DependencyUpdatesTask> {
+        rejectVersionIf {
+            val version = candidate.version
+            val stableKeyword =
+                listOf("RELEASE", "FINAL", "GA").any {
+                    version.uppercase(java.util.Locale.getDefault())
+                        .contains(it)
+                }
+            val regex = "^[0-9,.v-]+(-r)?$".toRegex()
+            val isStable = stableKeyword || regex.matches(version)
+            isStable.not()
+        }
     }
 }
+
 
 var sonatypeStagingProfileId: String? = null
 var ossrhUsername: String? = null

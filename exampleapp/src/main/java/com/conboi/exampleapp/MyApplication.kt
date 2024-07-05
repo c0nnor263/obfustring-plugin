@@ -18,7 +18,7 @@ package com.conboi.exampleapp
 
 import android.app.Application
 import android.util.Log
-import io.github.c0nnor263.obfustringcore.ObfustringThis
+import io.github.c0nnor263.obfustringcore.annotations.ObfustringThis
 import kotlin.random.Random
 
 @ObfustringThis
@@ -64,7 +64,7 @@ class UserChecker {
             Log.i(
                 "TAG",
                 "\tisValidName: $name is $result\n" +
-                        "\tAll forbidden names: $forbiddenNames"
+                    "\tAll forbidden names: $forbiddenNames"
             )
         }
     }

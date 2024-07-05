@@ -21,30 +21,29 @@ import io.github.c0nnor263.obfustringcore.enums.AlphabeticCase
 
 internal class Crypto {
     companion object {
-        private const val ENCRYPT_INT = 90
-        private const val DECRYPT_INT = 26
-        private const val UPPER_CASE_DECRYPT = 38
+        private const val CHAR_ENCRYPT_INT = 90
+        private const val CHAR_DECRYPT_INT = 26
+        private const val CHAR_UPPER_CASE_DECRYPT = 38
 
         fun Int.crypto(
             case: AlphabeticCase,
             keyData: KeyData,
             mode: Int
         ): Char {
-            val encryptInt = ENCRYPT_INT
             val decryptInt =
-                DECRYPT_INT +
+                CHAR_DECRYPT_INT +
                     when (case) {
-                        AlphabeticCase.UPPER_CASE -> UPPER_CASE_DECRYPT
+                        AlphabeticCase.UPPER_CASE -> CHAR_UPPER_CASE_DECRYPT
                         else -> 0
                     }
 
             val keyCharCode = keyData.getCode()
             val processedCode =
                 if (mode == ObfustringCryptoMode.ENCRYPT) {
-                    this + keyCharCode - encryptInt
+                    this + keyCharCode - CHAR_ENCRYPT_INT
                 } else {
                     this - keyCharCode + decryptInt
-                } % DECRYPT_INT
+                } % CHAR_DECRYPT_INT
             val processedChar = (processedCode + case.startFromCharCode).toChar()
 
             keyData.increase()

@@ -16,6 +16,7 @@
 
 @file:Suppress("UnstableApiUsage")
 
+
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.pluginPublish)
@@ -23,22 +24,21 @@ plugins {
 }
 
 group = ObfustringData.groupId
-version = libs.versions.obfustring.plugin.get()
+version = ObfustringData.plugin.version
 
 kotlin {
     jvmToolchain(ObfustringData.exampleapp.jvmTarget)
 }
 
 dependencies {
-    implementation(project(":obfustring-core"))
+    implementation(projects.obfustringCore)
     implementation(libs.bundles.obfustring.plugin)
 
     testImplementation(libs.bundles.test.core)
     testImplementation(gradleTestKit())
-    testRuntimeOnly(libs.junit.platform.launcher)
 }
 
-tasks.named<Test>("test") {
+tasks.test {
     val javaToolchains = project.extensions.getByType<JavaToolchainService>()
     javaLauncher.set(
         javaToolchains.launcherFor {
@@ -46,12 +46,6 @@ tasks.named<Test>("test") {
         }
     )
     useJUnitPlatform()
-
-    maxHeapSize = "1G"
-
-    testLogging {
-        showStandardStreams = true
-    }
 }
 
 gradlePlugin {

@@ -14,7 +14,24 @@
  * limitations under the License.
  */
 
-package io.github.c0nnor263.obfustringcore
+@file:Suppress("UnstableApiUsage")
 
-@Target(AnnotationTarget.CLASS)
-annotation class ObfustringThis
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        google()
+        mavenCentral()
+        mavenLocal()
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        gradlePluginPortal()
+        google()
+        mavenCentral()
+        mavenLocal()
+    }
+}
+
+rootProject.name = "ObfustringTest"

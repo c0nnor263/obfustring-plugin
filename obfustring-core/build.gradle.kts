@@ -21,7 +21,7 @@ plugins {
 }
 
 group = ObfustringData.groupId
-version = libs.versions.obfustring.core.get()
+version = ObfustringData.core.version
 
 kotlin {
     jvmToolchain(ObfustringData.exampleapp.jvmTarget)
@@ -36,17 +36,10 @@ java {
 
 dependencies {
     testImplementation(libs.bundles.test.core)
-    testRuntimeOnly(libs.junit.platform.launcher)
 }
 
-tasks.named<Test>("test") {
+tasks.test {
     useJUnitPlatform()
-
-    maxHeapSize = "1G"
-
-    testLogging {
-        events("passed")
-    }
 }
 
 afterEvaluate {
@@ -55,7 +48,7 @@ afterEvaluate {
             create<MavenPublication>("obfustring-core-release") {
                 groupId = ObfustringData.groupId
                 artifactId = ObfustringData.core.common.artifactId
-                version = libs.versions.obfustring.core.get()
+                version = ObfustringData.core.version
 
                 if (plugins.hasPlugin("com.android.library")) {
                     from(components["release"])

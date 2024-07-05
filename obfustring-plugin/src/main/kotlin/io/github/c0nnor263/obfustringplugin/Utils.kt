@@ -16,6 +16,7 @@
 
 package io.github.c0nnor263.obfustringplugin
 
+import io.github.c0nnor263.obfustringcore.CommonObfustring
 import kotlin.random.Random
 
 internal val rangeSymbols = ('A'..'Z') + ('a'..'z') + ('0'..'9')
@@ -31,4 +32,11 @@ internal fun verifyKey(key: String): String {
     return key
         .replace('.', rangeSymbols.random())
         .replace(' ', rangeSymbols.random())
+}
+
+internal fun checkCustomObfustring(custom: CommonObfustring): CommonObfustring {
+    require(custom::class.java.kotlin.objectInstance != null) {
+        ObfustringPlugin.EXCEPTION_INVALID_CUSTOM_OBFUSTRING
+    }
+    return custom
 }

@@ -20,12 +20,17 @@ You have to apply the Obfustring plugin to the project.
 ```kotlin
 buildscript {
     repositories {
+        google()
         mavenCentral()
         gradlePluginPortal()
     }
     dependencies {
         classpath("io.github.c0nnor263:obfustring-plugin:$version")
     }
+}
+
+plugins {
+    id("com.android.application") version *** apply false
 }
 ```
 
@@ -57,23 +62,60 @@ obfustring {
      * Set JVM argument -Xstring-concat using [StringConcatStrategy]
      */
     stringConcatStrategy = StringConcatStrategy.INDY
+
+    /**
+     * List of classes that should be excluded from obfuscation
+     */
+    excludeClasses: List<ExcludedClassInfo> = emptyList()
+
+    /**
+     * Custom Obfustring implementation
+     */
+    customObfustring: CommonObfustring = Obfustring
 }
 ```
 
-> [!TIP]
+> [!NOTE]
 > For more information check source code of `ObfustringExtension`
 
 ## Usage
 
-Annotation `@ObfustringThis` is used to mark classes and fields that should be obfuscated
+- Annotation `@ObfustringThis` is used to mark classes that should be obfuscated
 
 ```kotlin
 @ObfustringThis
 class MyApplication
 ```
 
-> [!NOTE]
-> If you want to obfuscate all classes you can edit the plugin configuration and
+- Annotation `@ObfustringExclude` is used to mark classes that should not be obfuscated. This is useful when `ObfustringExtension.mode` is set to `ObfustringMode.FORCE` 
+
+```kotlin
+@ObfustringExclude
+class MyApplication
+```
+
+- To exclude some classes by their annotations, prefix, suffix, or whole name, you can configure `ObfustringExtension.excludeClasses`
+
+```kotlin
+obfustring {
+    excludeClasses = listOf(
+        ExcludedClassInfo(
+            name = "com.example.exampleapp.AwesomeExampleClass",
+            prefixName = "Awesome",
+            suffixName = "Class",
+            annotations = listOf(
+                ExcludedClassInfo(
+                    name = "com.example.exampleapp.ExampleAnnotation",
+                    // ...
+                )
+            )
+        )
+    )
+}
+```
+
+> [!TIP]
+> If you want to obfuscate all classes, you can edit the plugin configuration and
 > set `mode = Obfustring.FORCE`
 
 ## Example:
@@ -189,11 +231,18 @@ public final class UserChecker {
 }
 ```
 
+### Custom Obfustring
+
+If you want to write your own implementation of Obfustring encoding and decoding logic, you should open [this guide](docs/CUSTOM_OBFUSTRING.md)
+
 ### Feedback
 
 If you have any questions or suggestions, please feel free
 to [open an issue](https://github.com/c0nnor263/obfustring-plugin/issues/new).
 I will be happy to make your using of the plugin more comfortable and enjoyable.
+
+### Contributing
+We welcome contributions to this project! To get started, please read our [Contribution guidelines](docs/CONTRIBUTING.md)
 
 ### License
 

@@ -90,21 +90,22 @@ class ExcludedClassInfoTest {
         }
     }
 
-
     @Nested
     inner class Annotation {
-
         @Test
         fun checkIfExcluded_annotationExcluded_returnsTrue() {
             val excludedClassAnnotation = "com.example.ExcludedAnnotation"
-            val excludedInfo = ExcludedClassInfo(
-                annotations = listOf(
-                    ExcludedClassInfo(excludedClassAnnotation)
+            val excludedInfo =
+                ExcludedClassInfo(
+                    annotations =
+                        listOf(
+                            ExcludedClassInfo(excludedClassAnnotation)
+                        )
                 )
-            )
-            val classData = createEmptyClassData().copy(
-                classAnnotations = listOf(excludedClassAnnotation)
-            )
+            val classData =
+                createEmptyClassData().copy(
+                    classAnnotations = listOf(excludedClassAnnotation)
+                )
 
             val result = excludedInfo.checkIfExcluded(classData)
             assert(result)
@@ -113,14 +114,17 @@ class ExcludedClassInfoTest {
         @Test
         fun checkIfExcluded_annotationNotExcluded_returnsFalse() {
             val excludedClassAnnotation = "com.example.ExcludedAnnotation"
-            val excludedInfo = ExcludedClassInfo(
-                annotations = listOf(
-                    ExcludedClassInfo(excludedClassAnnotation)
+            val excludedInfo =
+                ExcludedClassInfo(
+                    annotations =
+                        listOf(
+                            ExcludedClassInfo(excludedClassAnnotation)
+                        )
                 )
-            )
-            val classData = createEmptyClassData().copy(
-                classAnnotations = listOf("com.example.NotExcludedAnnotation")
-            )
+            val classData =
+                createEmptyClassData().copy(
+                    classAnnotations = listOf("com.example.NotExcludedAnnotation")
+                )
 
             val result = excludedInfo.checkIfExcluded(classData)
             assert(!result)
@@ -130,19 +134,23 @@ class ExcludedClassInfoTest {
         fun checkIfExcluded_multipleAnnotationsExcluded_returnsTrue() {
             val excludedFirstAnnotation = "com.example.ExcludedAnnotation1"
             val excludedSecondAnnotation = "com.example.ExcludedAnnotation2"
-            val excludedInfo = ExcludedClassInfo(
-                annotations = listOf(
-                    ExcludedClassInfo(excludedFirstAnnotation),
-                    ExcludedClassInfo(excludedSecondAnnotation)
+            val excludedInfo =
+                ExcludedClassInfo(
+                    annotations =
+                        listOf(
+                            ExcludedClassInfo(excludedFirstAnnotation),
+                            ExcludedClassInfo(excludedSecondAnnotation)
+                        )
                 )
-            )
-            val classData = createEmptyClassData().copy(
-                classAnnotations = listOf(
-                    excludedFirstAnnotation,
-                    excludedSecondAnnotation,
-                    "com.example.NotExcludedAnnotation"
+            val classData =
+                createEmptyClassData().copy(
+                    classAnnotations =
+                        listOf(
+                            excludedFirstAnnotation,
+                            excludedSecondAnnotation,
+                            "com.example.NotExcludedAnnotation"
+                        )
                 )
-            )
             val result = excludedInfo.checkIfExcluded(classData)
             assert(result)
         }
@@ -150,14 +158,17 @@ class ExcludedClassInfoTest {
         @Test
         fun checkIfExcluded_withoutAnnotations_returnsFalse() {
             val excludedClassAnnotation = "com.example.ExcludedAnnotation"
-            val excludedInfo = ExcludedClassInfo(
-                annotations = listOf(
-                    ExcludedClassInfo(excludedClassAnnotation)
+            val excludedInfo =
+                ExcludedClassInfo(
+                    annotations =
+                        listOf(
+                            ExcludedClassInfo(excludedClassAnnotation)
+                        )
                 )
-            )
-            val classData = createEmptyClassData().copy(
-                classAnnotations = emptyList()
-            )
+            val classData =
+                createEmptyClassData().copy(
+                    classAnnotations = emptyList()
+                )
 
             val result = excludedInfo.checkIfExcluded(classData)
             assert(!result)
@@ -165,9 +176,11 @@ class ExcludedClassInfoTest {
     }
 }
 
-
 fun createEmptyClassData(): ClassDataImpl {
     return ClassDataImpl(
-        "", emptyList(), emptyList(), emptyList()
+        "",
+        emptyList(),
+        emptyList(),
+        emptyList()
     )
 }

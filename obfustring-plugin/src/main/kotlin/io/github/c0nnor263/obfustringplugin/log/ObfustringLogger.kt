@@ -18,7 +18,6 @@ package io.github.c0nnor263.obfustringplugin.log
 
 import org.gradle.api.logging.Logger
 
-
 internal class ObfustringLogger(
     private val loggingEnabled: Boolean,
     private val defaultLogger: Logger

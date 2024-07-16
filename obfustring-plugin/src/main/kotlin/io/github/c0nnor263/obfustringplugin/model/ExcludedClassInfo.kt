@@ -25,9 +25,10 @@ data class ExcludedClassInfo(
     val annotations: List<ExcludedClassInfo>? = null
 ) {
     fun checkIfExcluded(classData: ClassData): Boolean {
-        return checkIfExcludedByName(classData.className) || classData.classAnnotations.any { annotation ->
-            checkIfExcludedByAnnotation(annotation)
-        }
+        return checkIfExcludedByName(classData.className) ||
+            classData.classAnnotations.any { annotation ->
+                checkIfExcludedByAnnotation(annotation)
+            }
     }
 
     private fun checkIfExcludedByAnnotation(annotation: String): Boolean {

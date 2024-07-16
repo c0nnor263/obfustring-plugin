@@ -51,11 +51,12 @@ class CryptoTest {
 
     @Test
     fun crypto_decryptValue_equalOriginal() {
-        val encrypted = charCode.crypto(
-            case = charCase,
-            keyData = KeyData(TEST_KEY),
-            mode = ObfustringCryptoMode.ENCRYPT
-        )
+        val encrypted =
+            charCode.crypto(
+                case = charCase,
+                keyData = KeyData(TEST_KEY),
+                mode = ObfustringCryptoMode.ENCRYPT
+            )
 
         val encryptedCharCode = encrypted.code
         val encryptedCharCase = encrypted.alphabeticCase() ?: throw Exception("Case not found")

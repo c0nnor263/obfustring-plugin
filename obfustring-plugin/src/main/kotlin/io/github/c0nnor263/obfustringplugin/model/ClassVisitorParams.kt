@@ -21,14 +21,13 @@ import io.github.c0nnor263.obfustringplugin.visitor.ObfustringVisitorFactory
 
 internal data class ClassVisitorParams(
     val key: String,
-    val mode: ObfustringMode
+    val mode: ObfustringMode,
+    var isInstrumentable: Boolean = false
 ) {
-    companion object {
-        fun fromInstrumentationParams(params: ObfustringVisitorFactory.InstrumentationParams): ClassVisitorParams {
-            return ClassVisitorParams(
-                key = params.key.get(),
-                mode = params.mode.get()
-            )
-        }
-    }
+    constructor(
+        params: ObfustringVisitorFactory.InstrumentationParams
+    ) : this(
+        key = params.key.get(),
+        mode = params.mode.get()
+    )
 }

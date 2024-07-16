@@ -21,7 +21,6 @@ import io.github.c0nnor263.obfustringcore.model.KeyData
 import org.junit.jupiter.api.Test
 
 class UtilsTest {
-
     @Test
     fun tryProcess_encryptAndDecryptChar_encryptAndDecryptEquals() {
         val char = 'A'

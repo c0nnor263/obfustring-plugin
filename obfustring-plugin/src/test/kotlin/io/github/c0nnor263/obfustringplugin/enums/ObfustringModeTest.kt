@@ -21,7 +21,6 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class ObfustringModeTest {
-
     @Test
     fun isEnabled_passDisabled_returnsFalse() {
         val result = ObfustringMode.DISABLED.isEnabled()

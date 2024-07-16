@@ -47,10 +47,11 @@ class ObfustringPlugin : Plugin<Project> {
     }
 
     private fun initPlugin() {
-        pluginExtension = project.extensions.create(
-            ObfustringExtension.CONFIGURATION_NAME,
-            ObfustringExtension::class.java
-        )
+        pluginExtension =
+            project.extensions.create(
+                ObfustringExtension.CONFIGURATION_NAME,
+                ObfustringExtension::class.java
+            )
         project.dependencies.add(
             JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME,
             "io.github.c0nnor263:obfustring-core:$VERSION"

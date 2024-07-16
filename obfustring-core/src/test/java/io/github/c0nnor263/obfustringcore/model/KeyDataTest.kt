@@ -19,7 +19,6 @@ package io.github.c0nnor263.obfustringcore.model
 import org.junit.jupiter.api.Test
 
 class KeyDataTest {
-
     @Test
     fun increase_increaseKeyData_indexIncreased() {
         val keyData = KeyData(TEST_KEY)

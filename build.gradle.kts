@@ -63,6 +63,7 @@ allprojects {
     }
     afterEvaluate {
         tasks.findByName("preBuild")?.dependsOn("ktlintFormat")
+        tasks.findByName("checkKotlinGradlePluginConfigurationErrors")?.dependsOn("ktlintFormat")
     }
 
     // Never mind about this, it's just a helper function to check newest versions of dependencies

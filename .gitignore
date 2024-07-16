@@ -20,12 +20,12 @@ local.properties
 # Project exclude paths
 /obfustring-plugin/build/
 /obfustring-core/obfustring-core-publish-scripts/
-/app/
 /.idea/
 /buildSrc/build/
 /exampleapp/com.conboi.examplekeystore
 /gradle/wrapper/
 /.gitattributes
 /gradlew
+/app
 /gradlew.bat
 /.kotlin/

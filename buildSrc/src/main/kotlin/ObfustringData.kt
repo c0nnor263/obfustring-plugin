@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-@file:Suppress("ClassName", "SpellCheckingInspection", "ktlint:standard:filename")
+// Const
+@file:Suppress("ClassName", "SpellCheckingInspection", "Unused", "ConstPropertyName")
 
 import org.gradle.api.JavaVersion
 
-@Suppress("ktlint:standard:property-naming")
 object ObfustringData {
     private const val repositoryUrl = "github.com/c0nnor263/obfustring-plugin"
     const val groupId = "io.github.c0nnor263"
@@ -59,7 +59,7 @@ object ObfustringData {
     }
 
     object plugin {
-        const val version = "12.0.2"
+        const val version = "12.0.3"
         const val artifactId = "$groupId.obfustring-plugin"
         const val website = "https://$repositoryUrl"
 

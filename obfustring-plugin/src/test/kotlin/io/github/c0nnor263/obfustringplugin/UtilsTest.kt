@@ -22,7 +22,6 @@ import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 
 class UtilsTest {
-
     @Test
     fun generateRandomKey_generateKey_returnsUniqueKey() {
         val firstResult = generateRandomKey()
@@ -40,31 +39,39 @@ class UtilsTest {
 
     @Test
     fun checkCustomObfustring_passObfustringClass_throwsIllegalStateException() {
-        val exception = assertThrows<IllegalArgumentException> {
-            checkCustomObfustring(MockClassObfustringTest())
-        }
+        val exception =
+            assertThrows<IllegalArgumentException> {
+                checkCustomObfustring(MockClassObfustringTest())
+            }
         assert(exception.message == ObfustringPlugin.EXCEPTION_INVALID_CUSTOM_OBFUSTRING)
     }
 
     @Test
     fun checkCustomObfustring_passObfustringObject_returnObfustring() {
-        val result = assertDoesNotThrow {
-            checkCustomObfustring(MockObjectObfustringTest)
-        }
+        val result =
+            assertDoesNotThrow {
+                checkCustomObfustring(MockObjectObfustringTest)
+            }
         assert(result is MockObjectObfustringTest)
-
     }
 }
 
-
 class MockClassObfustringTest : CommonObfustring {
-    override fun process(key: String, stringValue: String, mode: Int): String {
+    override fun process(
+        key: String,
+        stringValue: String,
+        mode: Int
+    ): String {
         return ""
     }
 }
 
 object MockObjectObfustringTest : CommonObfustring {
-    override fun process(key: String, stringValue: String, mode: Int): String {
+    override fun process(
+        key: String,
+        stringValue: String,
+        mode: Int
+    ): String {
         return ""
     }
 }

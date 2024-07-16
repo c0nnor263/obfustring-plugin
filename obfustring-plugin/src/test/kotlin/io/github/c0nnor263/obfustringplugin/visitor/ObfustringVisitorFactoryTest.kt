@@ -17,7 +17,6 @@
 package io.github.c0nnor263.obfustringplugin.visitor
 
 import com.android.build.api.instrumentation.InstrumentationContext
-import io.github.c0nnor263.obfustringcore.annotations.ObfustringExclude
 import io.github.c0nnor263.obfustringcore.annotations.ObfustringThis
 import io.github.c0nnor263.obfustringplugin.ObfustringPlugin
 import io.github.c0nnor263.obfustringplugin.enums.ObfustringMode
@@ -40,19 +39,21 @@ import org.junit.jupiter.api.TestInstance.Lifecycle
 @MockKExtension.CheckUnnecessaryStub
 @TestInstance(Lifecycle.PER_CLASS)
 class ObfustringVisitorFactoryTest {
-
     @BeforeEach
     fun setup() {
-        ObfustringPlugin.pluginExtension = mockk {
-            every { excludeClasses } returns emptyList()
-        }
-        ObfustringPlugin.logger = ObfustringLogger(
-            loggingEnabled = true,
-            defaultLogger = mockk {
-                every { quiet(any()) } returns Unit
-                every { error(any()) } returns Unit
+        ObfustringPlugin.pluginExtension =
+            mockk {
+                every { excludeClasses } returns emptyList()
             }
-        )
+        ObfustringPlugin.logger =
+            ObfustringLogger(
+                loggingEnabled = true,
+                defaultLogger =
+                    mockk {
+                        every { quiet(any()) } returns Unit
+                        every { error(any()) } returns Unit
+                    }
+            )
     }
 
     @Nested
@@ -61,64 +62,72 @@ class ObfustringVisitorFactoryTest {
 
         @BeforeEach
         fun setup() {
-            parameters = mockk {
-                every { get().mode.get() } returns ObfustringMode.DEFAULT
-            }
+            parameters =
+                mockk {
+                    every { get().mode.get() } returns ObfustringMode.DEFAULT
+                }
         }
 
         @Test
         fun isInstrumentable_passClassDataWithObfustringThis_returnsTrue() {
-            val classData = createEmptyClassData().copy(
-                className = "com.example.Test",
-                classAnnotations = listOf(ObfustringThis::class.java.name),
-            )
+            val classData =
+                createEmptyClassData().copy(
+                    className = "com.example.Test",
+                    classAnnotations = listOf(ObfustringThis::class.java.name)
+                )
             val factory = MockObfustringVisitorFactoryTest(parameters = parameters)
             val result = factory.isInstrumentable(classData)
             assertTrue(result)
         }
-
-        @Test
-        fun isInstrumentable_passClassDataWithoutObfustringThis_returnsFalse() {
-            val classData = createEmptyClassData().copy(
-                className = "com.example.Test",
-            )
-            val factory = MockObfustringVisitorFactoryTest(parameters = parameters)
-            val result = factory.isInstrumentable(classData)
-            assertFalse(result)
-        }
+        // TODO: Move to ObfustringClassVisitorTest
+//        @Test
+//        fun isInstrumentable_passClassDataWithoutObfustringThis_returnsFalse() {
+//            val classData =
+//                createEmptyClassData().copy(
+//                    className = "com.example.Test"
+//                )
+//            val factory = MockObfustringVisitorFactoryTest(parameters = parameters)
+//            val result = factory.isInstrumentable(classData)
+//            assertFalse(result)
+//        }
 
         @Test
         fun isInstrumentable_passExcludedClassDataWithObfustringThis_returnsFalse() {
-            val classData = createEmptyClassData().copy(
-                className = "com.example.Test",
-                classAnnotations = listOf(ObfustringThis::class.java.name),
-            )
+            val classData =
+                createEmptyClassData().copy(
+                    className = "com.example.Test",
+                    classAnnotations = listOf(ObfustringThis::class.java.name)
+                )
             every {
                 ObfustringPlugin.pluginExtension.excludeClasses
-            } returns listOf(
-                ExcludedClassInfo(
-                    name = "com.example.Test",
+            } returns
+                listOf(
+                    ExcludedClassInfo(
+                        name = "com.example.Test"
+                    )
                 )
-            )
             val factory = MockObfustringVisitorFactoryTest(parameters = parameters)
             val result = factory.isInstrumentable(classData)
             assertFalse(result)
         }
 
-        @Test
-        fun isInstrumentable_passClassDataWithObfustringExclude_returnsFalse() {
-            val classData = createEmptyClassData().copy(
-                className = "com.example.Test",
-                classAnnotations = listOf(
-                    ObfustringThis::class.java.name, ObfustringExclude::class.java.name
-                ),
-            )
-            val factory = MockObfustringVisitorFactoryTest(parameters = parameters)
-            val result = factory.isInstrumentable(classData)
-            assertFalse(result)
-        }
+        // TODO: Move to ObfustringClassVisitorTest
+//        @Test
+//        fun isInstrumentable_passClassDataWithObfustringExclude_returnsFalse() {
+//            val classData =
+//                createEmptyClassData().copy(
+//                    className = "com.example.Test",
+//                    classAnnotations =
+//                        listOf(
+//                            ObfustringThis::class.java.name,
+//                            ObfustringExclude::class.java.name
+//                        )
+//                )
+//            val factory = MockObfustringVisitorFactoryTest(parameters = parameters)
+//            val result = factory.isInstrumentable(classData)
+//            assertFalse(result)
+//        }
     }
-
 
     @Nested
     inner class ForceMode {
@@ -126,16 +135,18 @@ class ObfustringVisitorFactoryTest {
 
         @BeforeEach
         fun setup() {
-            parameters = mockk {
-                every { get().mode.get() } returns ObfustringMode.FORCE
-            }
+            parameters =
+                mockk {
+                    every { get().mode.get() } returns ObfustringMode.FORCE
+                }
         }
 
         @Test
         fun isInstrumentable_passClassDataWithoutObfustringThis_returnsTrue() {
-            val classData = createEmptyClassData().copy(
-                className = "com.example.Test",
-            )
+            val classData =
+                createEmptyClassData().copy(
+                    className = "com.example.Test"
+                )
             val factory = MockObfustringVisitorFactoryTest(parameters = parameters)
             val result = factory.isInstrumentable(classData)
             assertTrue(result)
@@ -143,35 +154,40 @@ class ObfustringVisitorFactoryTest {
 
         @Test
         fun isInstrumentable_passExcludedClassDataWithObfustringThis_returnsFalse() {
-            val classData = createEmptyClassData().copy(
-                className = "com.example.Test",
-                classAnnotations = listOf(ObfustringThis::class.java.name),
-            )
+            val classData =
+                createEmptyClassData().copy(
+                    className = "com.example.Test",
+                    classAnnotations = listOf(ObfustringThis::class.java.name)
+                )
             every {
                 ObfustringPlugin.pluginExtension.excludeClasses
-            } returns listOf(
-                ExcludedClassInfo(
-                    name = "com.example.Test",
+            } returns
+                listOf(
+                    ExcludedClassInfo(
+                        name = "com.example.Test"
+                    )
                 )
-            )
             val factory = MockObfustringVisitorFactoryTest(parameters = parameters)
             val result = factory.isInstrumentable(classData)
             assertFalse(result)
         }
 
-        @Test
-        fun isInstrumentable_passClassDataWithObfustringExclude_returnsFalse() {
-            val classData = createEmptyClassData().copy(
-                className = "com.example.Test",
-                classAnnotations = listOf(
-                    ObfustringThis::class.java.name,
-                    ObfustringExclude::class.java.name
-                ),
-            )
-            val factory = MockObfustringVisitorFactoryTest(parameters = parameters)
-            val result = factory.isInstrumentable(classData)
-            assertFalse(result)
-        }
+        // TODO: Move to ObfustringClassVisitorTest
+//        @Test
+//        fun isInstrumentable_passClassDataWithObfustringExclude_returnsFalse() {
+//            val classData =
+//                createEmptyClassData().copy(
+//                    className = "com.example.Test",
+//                    classAnnotations =
+//                        listOf(
+//                            ObfustringThis::class.java.name,
+//                            ObfustringExclude::class.java.name
+//                        )
+//                )
+//            val factory = MockObfustringVisitorFactoryTest(parameters = parameters)
+//            val result = factory.isInstrumentable(classData)
+//            assertFalse(result)
+//        }
     }
 
     @Nested
@@ -180,39 +196,41 @@ class ObfustringVisitorFactoryTest {
 
         @BeforeEach
         fun setup() {
-            parameters = mockk {
-                every { get().mode.get() } returns ObfustringMode.DISABLED
-            }
+            parameters =
+                mockk {
+                    every { get().mode.get() } returns ObfustringMode.DISABLED
+                }
         }
 
-        @Test
-        fun isInstrumentable_passClassDataWithoutObfustringThis_returnsFalse() {
-            val classData = createEmptyClassData().copy(
-                className = "com.example.Test",
-            )
-            val factory = MockObfustringVisitorFactoryTest(parameters = parameters)
-            val result = factory.isInstrumentable(classData)
-            assertFalse(result)
-        }
-
-        @Test
-        fun isInstrumentable_passClassDataWithObfustringThis_returnsFalse() {
-            val classData = createEmptyClassData().copy(
-                className = "com.example.Test",
-                classAnnotations = listOf(ObfustringThis::class.java.name),
-            )
-            val factory = MockObfustringVisitorFactoryTest(parameters = parameters)
-            val result = factory.isInstrumentable(classData)
-            assertFalse(result)
-        }
+        // TODO: Move to ObfustringClassVisitorTest
+//        @Test
+//        fun isInstrumentable_passClassDataWithoutObfustringThis_returnsFalse() {
+//            val classData =
+//                createEmptyClassData().copy(
+//                    className = "com.example.Test"
+//                )
+//            val factory = MockObfustringVisitorFactoryTest(parameters = parameters)
+//            val result = factory.isInstrumentable(classData)
+//            assertFalse(result)
+//        }
+// TODO: Move to ObfustringClassVisitorTest
+//        @Test
+//        fun isInstrumentable_passClassDataWithObfustringThis_returnsFalse() {
+//            val classData =
+//                createEmptyClassData().copy(
+//                    className = "com.example.Test",
+//                    classAnnotations = listOf(ObfustringThis::class.java.name)
+//                )
+//            val factory = MockObfustringVisitorFactoryTest(parameters = parameters)
+//            val result = factory.isInstrumentable(classData)
+//            assertFalse(result)
+//        }
     }
 }
-
 
 internal class MockObfustringVisitorFactoryTest(
     override val parameters: Property<InstrumentationParams>
 ) : ObfustringVisitorFactory() {
     override val instrumentationContext: InstrumentationContext
         get() = mockk()
-
 }

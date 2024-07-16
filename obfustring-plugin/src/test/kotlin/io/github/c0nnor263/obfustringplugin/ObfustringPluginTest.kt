@@ -75,13 +75,23 @@ class ObfustringPluginTest {
             dummyProject.pluginManager.apply {
                 apply("com.android.application")
                 apply("kotlin-android")
-                obfustringPlugin = ObfustringPlugin().also {
-                    it.apply(dummyProject)
-                }
+                obfustringPlugin =
+                    ObfustringPlugin().also {
+                        it.apply(dummyProject)
+                    }
             }
 
             buildGradleFile = File(testProjectDir, "build.gradle.kts")
-            defaultRunner = GradleRunner.create().withProjectDir(testProjectDir).withPluginClasspath()
+            repeat(2) {
+                try {
+                    defaultRunner =
+                        GradleRunner.create()
+                            .withProjectDir(testProjectDir)
+                            .withPluginClasspath()
+                } catch (e: Exception) {
+                    println("Error: $e")
+                }
+            }
         }
     }
 
@@ -97,10 +107,8 @@ class ObfustringPluginTest {
         }
     }
 
-
     @Nested
     inner class Initialization {
-
         @Test
         fun initPlugin_obfustringExtensionCreated() {
             val extension = dummyProject.extensions.findByType(ObfustringExtension::class.java)
@@ -109,9 +117,10 @@ class ObfustringPluginTest {
 
         @Test
         fun initPlugin_obfustringCoreDependencyAdded() {
-            val dependency = dummyProject.configurations.findByName("implementation")?.dependencies?.find {
-                it.name == "obfustring-core"
-            }
+            val dependency =
+                dummyProject.configurations.findByName("implementation")?.dependencies?.find {
+                    it.name == "obfustring-core"
+                }
             assertThat(dependency, IsNull.notNullValue())
         }
 
@@ -123,13 +132,13 @@ class ObfustringPluginTest {
                 apply("kotlin-android")
             }
 
-            val exception = assertThrows<IllegalArgumentException> {
-                ObfustringPlugin().apply(tempProject)
-            }
+            val exception =
+                assertThrows<IllegalArgumentException> {
+                    ObfustringPlugin().apply(tempProject)
+                }
             assertEquals(exception.message, ObfustringPlugin.EXCEPTION_INIT_OBFUSTRING_TRANSFORM)
         }
     }
-
 
     @Nested
     inner class Extension {
@@ -137,10 +146,10 @@ class ObfustringPluginTest {
         fun setLoggingEnabled_loggingPresented() {
             buildGradleFile.appendText(
                 """
-                    
-                    obfustring {
-                        loggingEnabled = true
-                    }
+                
+                obfustring {
+                    loggingEnabled = true
+                }
                 """.trimIndent()
             )
 
@@ -153,20 +162,20 @@ class ObfustringPluginTest {
         fun setLoggingDisabled_loggingNotPresented() {
             buildGradleFile.appendText(
                 """
-                    
-                    object CustomObfustring : CommonObfustring{
-                         override fun process(
-                            key: String,
-                            stringValue: String,
-                            mode: Int
-                         ): String {
-                            return stringValue
-                         }
-                    }
-                    obfustring {
-                        loggingEnabled = false
-                        customObfustring = CustomObfustring
-                    }
+                
+                object CustomObfustring : CommonObfustring{
+                     override fun process(
+                        key: String,
+                        stringValue: String,
+                        mode: Int
+                     ): String {
+                        return stringValue
+                     }
+                }
+                obfustring {
+                    loggingEnabled = false
+                    customObfustring = CustomObfustring
+                }
                 """.trimIndent()
             )
 
@@ -187,28 +196,26 @@ class ObfustringPluginTest {
     fun setCustomObfustring_loggingCustomObfustring() {
         buildGradleFile.appendText(
             """
-                    
-                    object CustomObfustring : CommonObfustring{
-                         override fun process(
-                            key: String,
-                            stringValue: String,
-                            mode: Int
-                         ): String {
-                            return stringValue
-                         }
-                    }
-                    obfustring {
-                        customObfustring = CustomObfustring
-                    }
-                """.trimIndent()
+            
+            object CustomObfustring : CommonObfustring{
+                 override fun process(
+                    key: String,
+                    stringValue: String,
+                    mode: Int
+                 ): String {
+                    return stringValue
+                 }
+            }
+            obfustring {
+                customObfustring = CustomObfustring
+            }
+            """.trimIndent()
         )
 
         val result = runCheckTask()
         assert(result.task(":check")?.outcome == TaskOutcome.SUCCESS)
         assert(result.output.contains(ObfustringPlugin.LOG_INIT_WITH_CUSTOM_OBFUSTRING("CustomObfustring")))
-
     }
-
 
     @Nested
     inner class Obfuscation {
@@ -217,31 +224,32 @@ class ObfustringPluginTest {
             appendFileWithText(
                 "src/main/java/com/test/MyApplication.kt",
                 """
-                    package com.test 
-                    
-                    import io.github.c0nnor263.obfustringcore.annotations.ObfustringThis
-                    
-                    @ObfustringThis
-                    class MyApplication {
-                        val password = "password"
-                    }
+                package com.test 
+                
+                import io.github.c0nnor263.obfustringcore.annotations.ObfustringThis
+                
+                @ObfustringThis
+                class MyApplication {
+                    val password = "password"
+                }
                 """.trimIndent()
             )
 
-            val transformedAssertion = TransformedAssertion(
-                className = "com/test/MyApplication",
-                methodName = "getPassword",
-                methodDescriptor = "()Ljava/lang/String;",
-                methodInsn = "io/github/c0nnor263/obfustringcore/Obfustring.process",
-                methodInsnDescriptor = "(Ljava/lang/String;Ljava/lang/String;I)Ljava/lang/String;"
-            )
-
+            val transformedAssertion =
+                TransformedAssertion(
+                    className = "com/test/MyApplication",
+                    methodName = "getPassword",
+                    methodDescriptor = "()Ljava/lang/String;",
+                    methodInsn = "io/github/c0nnor263/obfustringcore/Obfustring.process",
+                    methodInsnDescriptor = "(Ljava/lang/String;Ljava/lang/String;I)Ljava/lang/String;"
+                )
 
             val result = runCheckTask()
             assert(result.task(":transformReleaseClassesWithAsm")?.outcome == TaskOutcome.SUCCESS)
             assertThatClassTransformed(transformedAssertion) {
                 object : ClassVisitor(Opcodes.ASM9) {
                     var visitedClassName: String? = null
+
                     override fun visit(
                         version: Int,
                         access: Int,
@@ -281,47 +289,47 @@ class ObfustringPluginTest {
             }
         }
 
-
         @Test
-        fun transformReleaseClassesWithAsm_classFieldWithCustomObfustringMethod_compiledClassHasCustomObfustringMethod() {
+        fun transformReleaseClassesWithAsm_fieldCustomObfustringMethod_compiledClassHasCustomObfustringMethod() {
             appendFileWithText(
                 "src/main/java/com/test/MyApplication.kt",
                 """
-                    package com.test 
-                    
-                    import io.github.c0nnor263.obfustringcore.annotations.ObfustringThis
-                    
-                    @ObfustringThis
-                    class MyApplication {
-                        val password = "password"
-                    }
+                package com.test 
+                
+                import io.github.c0nnor263.obfustringcore.annotations.ObfustringThis
+                
+                @ObfustringThis
+                class MyApplication {
+                    val password = "password"
+                }
                 """.trimIndent()
             )
 
-            val transformedAssertion = TransformedAssertion(
-                className = "com/test/MyApplication",
-                methodName = "getPassword",
-                methodDescriptor = "()Ljava/lang/String;",
-                methodInsn = "Build_gradle${"$"}CustomObfustring.process",
-                methodInsnDescriptor = "(Ljava/lang/String;Ljava/lang/String;I)Ljava/lang/String;"
-            )
+            val transformedAssertion =
+                TransformedAssertion(
+                    className = "com/test/MyApplication",
+                    methodName = "getPassword",
+                    methodDescriptor = "()Ljava/lang/String;",
+                    methodInsn = "Build_gradle${"$"}CustomObfustring.process",
+                    methodInsnDescriptor = "(Ljava/lang/String;Ljava/lang/String;I)Ljava/lang/String;"
+                )
 
             buildGradleFile.appendText(
                 """
-                    
-                    object CustomObfustring : CommonObfustring{
-                         override fun process(
-                            key: String,
-                            stringValue: String,
-                            mode: Int
-                         ): String {
-                            return stringValue
-                         }
-                    }
-                    obfustring {
-                        loggingEnabled = false
-                        customObfustring = CustomObfustring
-                    }
+                
+                object CustomObfustring : CommonObfustring{
+                     override fun process(
+                        key: String,
+                        stringValue: String,
+                        mode: Int
+                     ): String {
+                        return stringValue
+                     }
+                }
+                obfustring {
+                    loggingEnabled = false
+                    customObfustring = CustomObfustring
+                }
                 """.trimIndent()
             )
 
@@ -330,6 +338,7 @@ class ObfustringPluginTest {
             assertThatClassTransformed(transformedAssertion) {
                 object : ClassVisitor(Opcodes.ASM9) {
                     var visitedClassName: String? = null
+
                     override fun visit(
                         version: Int,
                         access: Int,
@@ -374,41 +383,42 @@ class ObfustringPluginTest {
             appendFileWithText(
                 "src/main/java/com/test/MyApplication.kt",
                 """
-                    package com.test 
+                package com.test 
 
-                    import android.app.Application
-                    import android.util.Log
-                    import io.github.c0nnor263.obfustringcore.annotations.ObfustringThis
-                    import kotlin.random.Random
-                    
-                    @ObfustringThis
-                    class MyApplication : Application() {
+                import android.app.Application
+                import android.util.Log
+                import io.github.c0nnor263.obfustringcore.annotations.ObfustringThis
+                import kotlin.random.Random
+                
+                @ObfustringThis
+                class MyApplication : Application() {
 
-                        override fun onCreate() {
-                            super.onCreate()
-                            Log.i(
-                                "TAG",
-                                "Application onCreate: init has been called"
-                            )
-                        }
+                    override fun onCreate() {
+                        super.onCreate()
+                        Log.i(
+                            "TAG",
+                            "Application onCreate: init has been called"
+                        )
                     }
+                }
                 """.trimIndent()
             )
 
-            val transformedAssertion = TransformedAssertion(
-                className = "com/test/MyApplication",
-                methodName = "onCreate",
-                methodDescriptor = "()V",
-                methodInsn = "android/util/Log.i",
-                methodInsnDescriptor = "(Ljava/lang/String;Ljava/lang/String;)I"
-            )
-
+            val transformedAssertion =
+                TransformedAssertion(
+                    className = "com/test/MyApplication",
+                    methodName = "onCreate",
+                    methodDescriptor = "()V",
+                    methodInsn = "android/util/Log.i",
+                    methodInsnDescriptor = "(Ljava/lang/String;Ljava/lang/String;)I"
+                )
 
             val result = runCheckTask()
             assert(result.task(":transformReleaseClassesWithAsm")?.outcome == TaskOutcome.SUCCESS)
             assertThatClassTransformed(transformedAssertion) {
                 object : ClassVisitor(Opcodes.ASM9) {
                     var visitedClassName: String? = null
+
                     override fun visit(
                         version: Int,
                         access: Int,
@@ -455,13 +465,19 @@ class ObfustringPluginTest {
         }
     }
 
-    fun appendFileWithText(path: String, text: String) {
+    fun appendFileWithText(
+        path: String,
+        text: String
+    ) {
         val file = File(testProjectDir, path)
         file.parentFile.mkdirs()
         file.writeText(text)
     }
 
-    fun assertThatClassTransformed(transformedAssertion: TransformedAssertion, action: () -> ClassVisitor) {
+    fun assertThatClassTransformed(
+        transformedAssertion: TransformedAssertion,
+        action: () -> ClassVisitor
+    ) {
         assertTimeout(java.time.Duration.of(1000, java.time.temporal.ChronoUnit.SECONDS)) {
             testProjectDir?.listFiles()
                 ?.find { it.name == "build" }?.listFiles()

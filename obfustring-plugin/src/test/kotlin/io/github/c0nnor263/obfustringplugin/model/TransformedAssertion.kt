@@ -34,14 +34,23 @@ data class TransformedAssertion(
         nameAsserted = visitedClassName == className
     }
 
-    fun assertMethodNameAtClass(className: String?, methodName: String?, descriptor: String?) {
+    fun assertMethodNameAtClass(
+        className: String?,
+        methodName: String?,
+        descriptor: String?
+    ) {
         if (methodNameAsserted) return
         if (className == this.className) {
             methodNameAsserted = "$methodName" == this.methodName && descriptor == this.methodDescriptor
         }
     }
 
-    fun assertMethodInsnAtClass(className: String?, owner: String?, methodName: String?, descriptor: String?) {
+    fun assertMethodInsnAtClass(
+        className: String?,
+        owner: String?,
+        methodName: String?,
+        descriptor: String?
+    ) {
         if (methodInsnAsserted) return
         if (className == this.className) {
             methodInsnAsserted =

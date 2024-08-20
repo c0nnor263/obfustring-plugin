@@ -16,22 +16,71 @@
 
 package io.github.c0nnor263.obfustringplugin.visitor
 
-import com.joom.grip.mirrors.getObjectType
-import com.joom.grip.mirrors.toAsmType
-import io.github.c0nnor263.obfustringcore.ObfustringCryptoMode
 import io.github.c0nnor263.obfustringplugin.ObfustringPlugin
+import io.github.c0nnor263.obfustringplugin.model.ClassDataHandler
 import io.github.c0nnor263.obfustringplugin.model.ClassVisitorParams
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes
-import org.objectweb.asm.Type
-import org.objectweb.asm.commons.GeneratorAdapter
-import org.objectweb.asm.commons.Method
 
 internal class ObfustringClassVisitor(
-    private val params: ClassVisitorParams,
+    private val visitorParams: ClassVisitorParams,
+    private val classDataHandler: ClassDataHandler,
+    private val ownerClassSet: MutableSet<String>,
+    private val onCreateClassDataHandler: (String) -> ClassDataHandler?,
     nextClassVisitor: ClassVisitor
 ) : ClassVisitor(Opcodes.ASM9, nextClassVisitor) {
+    override fun visit(
+        version: Int,
+        access: Int,
+        name: String?,
+        signature: String?,
+        superName: String?,
+        interfaces: Array<out String>?
+    ) {
+        super.visit(version, access, name, signature, superName, interfaces)
+        classDataHandler.checkIfInstrumentable(visitorParams)
+        if (visitorParams.isInstrumentable) {
+            ObfustringPlugin.logger.quiet(LOG_INFO_INSTRUMENTABLE(classDataHandler.name))
+        }
+    }
+
+    override fun visitInnerClass(
+        name: String?,
+        outerName: String?,
+        innerName: String?,
+        access: Int
+    ) {
+        super.visitInnerClass(name, outerName, innerName, access)
+        if (visitorParams.isInstrumentable) {
+            val className = classDataHandler.getQualifiedName()
+            ownerClassSet.add(className)
+        }
+    }
+
+    override fun visitOuterClass(
+        owner: String?,
+        name: String?,
+        descriptor: String?
+    ) {
+        super.visitOuterClass(owner, name, descriptor)
+        if (owner == null) {
+            return
+        }
+
+        if (ownerClassSet.contains(owner)) {
+            visitorParams.isInstrumentable = true
+            ObfustringPlugin.logger.quiet(LOG_INFO_INSTRUMENTABLE_INNER(owner, classDataHandler.name))
+        } else {
+            val ownerQualifiedName = owner.replace("/", ".")
+            val ownerClassDataHandler = onCreateClassDataHandler(ownerQualifiedName)
+            ownerClassDataHandler?.checkIfInstrumentable(visitorParams)
+            if (visitorParams.isInstrumentable) {
+                ObfustringPlugin.logger.quiet(LOG_INFO_INSTRUMENTABLE_INNER(owner, classDataHandler.name))
+            }
+        }
+    }
+
     override fun visitMethod(
         access: Int,
         name: String,
@@ -40,8 +89,11 @@ internal class ObfustringClassVisitor(
         exceptions: Array<out String>?
     ): MethodVisitor {
         val visitor = super.visitMethod(access, name, descriptor, signature, exceptions)
+        if (!visitorParams.isInstrumentable) {
+            return visitor
+        }
         return ObfustringGeneratorAdapter(
-            params = params,
+            params = visitorParams,
             api = api,
             methodVisitor = visitor,
             access = access,
@@ -49,62 +101,13 @@ internal class ObfustringClassVisitor(
             descriptor = descriptor
         )
     }
-}
-
-internal class ObfustringGeneratorAdapter(
-    private val params: ClassVisitorParams,
-    api: Int,
-    methodVisitor: MethodVisitor,
-    access: Int,
-    name: String,
-    descriptor: String
-) : GeneratorAdapter(api, methodVisitor, access, name, descriptor) {
-    private val customObfustring = ObfustringPlugin.pluginExtension.customObfustring
-    private val stringType = Type.getType(String::class.java)
-    private val obfustringType = getObjectType(customObfustring::class.java)
-    private val processMethod =
-        Method(
-            "process",
-            Type.getType(String::class.java),
-            arrayOf(stringType, stringType, Type.INT_TYPE)
-        )
-
-    override fun visitLdcInsn(constant: Any) {
-        if (constant is String && constant.isNotBlank()) {
-            replaceStringWithDeobfuscationMethod(constant)
-        } else {
-            super.visitLdcInsn(constant)
-        }
-    }
-
-    private fun replaceStringWithDeobfuscationMethod(string: String) {
-        // TODO: Move to obfustring realization
-        val key = params.key
-        val encodedString = customObfustring.process(key, string, ObfustringCryptoMode.ENCRYPT)
-        val decodedString = customObfustring.process(key, encodedString, ObfustringCryptoMode.DECRYPT)
-        require(decodedString == string) {
-            EXCEPTION_MISMATCHED_STRING
-        }
-
-        getStatic(obfustringType.toAsmType(), "INSTANCE", obfustringType.toAsmType())
-        push(key)
-        push(encodedString)
-        push(ObfustringCryptoMode.DECRYPT)
-        invokeVirtual(obfustringType.toAsmType(), processMethod)
-
-        ObfustringPlugin.logger.quiet(
-            LOG_INFO_OBFUSCATED_RESULT(string, encodedString, decodedString)
-        )
-    }
 
     companion object {
-        val EXCEPTION_MISMATCHED_STRING: (String, String) -> String = { string, decodedString ->
-            "Obfustring | Error: Decoded string [$decodedString] does not match input string [$string]"
+        val LOG_INFO_INSTRUMENTABLE: (String) -> String = { className ->
+            "\n\t- CLASS: $className"
         }
-        val LOG_INFO_OBFUSCATED_RESULT: (String, String, String) -> String = { string, encodedString, decodedString ->
-            "\t\t- FOUND: [$string]\n" +
-                    "\t\t\tENCODED: [$encodedString]\n" +
-                    "\t\t\tORIGINAL: [$decodedString]"
+        val LOG_INFO_INSTRUMENTABLE_INNER: (String, String) -> String = { ownerClassName, innerClassName ->
+            "\n\t- CLASS: $innerClassName\n\t  OWNER CLASS: $ownerClassName"
         }
     }
 }

@@ -33,7 +33,7 @@ object ObfustringData {
     }
 
     object core {
-        const val version = "12.0.2"
+        const val version = "12.0.3"
         object common {
             const val artifactId = "obfustring-core"
             const val description = "Required core dependency for obfustring-plugin"

@@ -217,241 +217,372 @@ class ObfustringPluginTest {
         assert(result.output.contains(ObfustringPlugin.LOG_INIT_WITH_CUSTOM_OBFUSTRING("CustomObfustring")))
     }
 
-    @Nested
-    inner class Obfuscation {
-        @Test
-        fun transformReleaseClassesWithAsm_classFieldWithObfustringMethod_compiledClassHasObfustringMethod() {
-            appendFileWithText(
-                "src/main/java/com/test/MyApplication.kt",
-                """
-                package com.test 
-                
-                import io.github.c0nnor263.obfustringcore.annotations.ObfustringThis
-                
-                @ObfustringThis
-                class MyApplication {
-                    val password = "password"
-                }
-                """.trimIndent()
+    @Test
+    fun transformReleaseClassesWithAsm_classFieldWithObfustringMethod_compiledClassHasObfustringMethod() {
+        appendFileWithText(
+            "src/main/java/com/test/MyApplication.kt",
+            """
+            package com.test 
+            
+            import io.github.c0nnor263.obfustringcore.annotations.ObfustringThis
+            
+            @ObfustringThis
+            class MyApplication {
+                val password = "password"
+            }
+            """.trimIndent()
+        )
+
+        val transformedAssertion =
+            TransformedAssertion(
+                className = "com/test/MyApplication",
+                methodName = "getPassword",
+                methodDescriptor = "()Ljava/lang/String;",
+                methodInsn = "io/github/c0nnor263/obfustringcore/Obfustring.process",
+                methodInsnDescriptor = "(Ljava/lang/String;Ljava/lang/String;I)Ljava/lang/String;"
             )
 
-            val transformedAssertion =
-                TransformedAssertion(
-                    className = "com/test/MyApplication",
-                    methodName = "getPassword",
-                    methodDescriptor = "()Ljava/lang/String;",
-                    methodInsn = "io/github/c0nnor263/obfustringcore/Obfustring.process",
-                    methodInsnDescriptor = "(Ljava/lang/String;Ljava/lang/String;I)Ljava/lang/String;"
-                )
+        val result = runCheckTask()
+        assert(result.task(":transformReleaseClassesWithAsm")?.outcome == TaskOutcome.SUCCESS)
+        assertThatClassTransformed(transformedAssertion) {
+            object : ClassVisitor(Opcodes.ASM9) {
+                var visitedClassName: String? = null
 
-            val result = runCheckTask()
-            assert(result.task(":transformReleaseClassesWithAsm")?.outcome == TaskOutcome.SUCCESS)
-            assertThatClassTransformed(transformedAssertion) {
-                object : ClassVisitor(Opcodes.ASM9) {
-                    var visitedClassName: String? = null
+                override fun visit(
+                    version: Int,
+                    access: Int,
+                    name: String?,
+                    signature: String?,
+                    superName: String?,
+                    interfaces: Array<out String>?
+                ) {
+                    super.visit(version, access, name, signature, superName, interfaces)
+                    visitedClassName = name
+                    transformedAssertion.assertNameAtClass(visitedClassName)
+                }
 
-                    override fun visit(
-                        version: Int,
-                        access: Int,
-                        name: String?,
-                        signature: String?,
-                        superName: String?,
-                        interfaces: Array<out String>?
-                    ) {
-                        super.visit(version, access, name, signature, superName, interfaces)
-                        visitedClassName = name
-                        transformedAssertion.assertNameAtClass(visitedClassName)
-                    }
-
-                    override fun visitMethod(
-                        access: Int,
-                        name: String?,
-                        descriptor: String?,
-                        signature: String?,
-                        exceptions: Array<out String>?
-                    ): MethodVisitor {
-                        transformedAssertion.assertMethodNameAtClass(visitedClassName, name, descriptor)
-                        val visitor = super.visitMethod(access, name, descriptor, signature, exceptions)
-                        return object : MethodVisitor(Opcodes.ASM9, visitor) {
-                            override fun visitMethodInsn(
-                                opcode: Int,
-                                owner: String?,
-                                name: String?,
-                                descriptor: String?,
-                                isInterface: Boolean
-                            ) {
-                                super.visitMethodInsn(opcode, owner, name, descriptor, isInterface)
-                                transformedAssertion.assertMethodInsnAtClass(visitedClassName, owner, name, descriptor)
-                            }
+                override fun visitMethod(
+                    access: Int,
+                    name: String?,
+                    descriptor: String?,
+                    signature: String?,
+                    exceptions: Array<out String>?
+                ): MethodVisitor {
+                    transformedAssertion.assertMethodNameAtClass(visitedClassName, name, descriptor)
+                    val visitor = super.visitMethod(access, name, descriptor, signature, exceptions)
+                    return object : MethodVisitor(Opcodes.ASM9, visitor) {
+                        override fun visitMethodInsn(
+                            opcode: Int,
+                            owner: String?,
+                            name: String?,
+                            descriptor: String?,
+                            isInterface: Boolean
+                        ) {
+                            super.visitMethodInsn(opcode, owner, name, descriptor, isInterface)
+                            transformedAssertion.assertMethodInsnAtClass(visitedClassName, owner, name, descriptor)
                         }
                     }
                 }
             }
         }
+    }
 
-        @Test
-        fun transformReleaseClassesWithAsm_fieldCustomObfustringMethod_compiledClassHasCustomObfustringMethod() {
-            appendFileWithText(
-                "src/main/java/com/test/MyApplication.kt",
-                """
-                package com.test 
-                
-                import io.github.c0nnor263.obfustringcore.annotations.ObfustringThis
-                
-                @ObfustringThis
-                class MyApplication {
-                    val password = "password"
-                }
-                """.trimIndent()
+    @Test
+    fun transformReleaseClassesWithAsm_fieldCustomObfustringMethod_compiledClassHasCustomObfustringMethod() {
+        appendFileWithText(
+            "src/main/java/com/test/MyApplication.kt",
+            """
+            package com.test 
+            
+            import io.github.c0nnor263.obfustringcore.annotations.ObfustringThis
+            
+            @ObfustringThis
+            class MyApplication {
+                val password = "password"
+            }
+            """.trimIndent()
+        )
+
+        val transformedAssertion =
+            TransformedAssertion(
+                className = "com/test/MyApplication",
+                methodName = "getPassword",
+                methodDescriptor = "()Ljava/lang/String;",
+                methodInsn = "Build_gradle${"$"}CustomObfustring.process",
+                methodInsnDescriptor = "(Ljava/lang/String;Ljava/lang/String;I)Ljava/lang/String;"
             )
 
-            val transformedAssertion =
-                TransformedAssertion(
-                    className = "com/test/MyApplication",
-                    methodName = "getPassword",
-                    methodDescriptor = "()Ljava/lang/String;",
-                    methodInsn = "Build_gradle${"$"}CustomObfustring.process",
-                    methodInsnDescriptor = "(Ljava/lang/String;Ljava/lang/String;I)Ljava/lang/String;"
-                )
+        buildGradleFile.appendText(
+            """
+            
+            object CustomObfustring : CommonObfustring{
+                 override fun process(
+                    key: String,
+                    stringValue: String,
+                    mode: Int
+                 ): String {
+                    return stringValue
+                 }
+            }
+            obfustring {
+                loggingEnabled = false
+                customObfustring = CustomObfustring
+            }
+            """.trimIndent()
+        )
 
-            buildGradleFile.appendText(
-                """
-                
-                object CustomObfustring : CommonObfustring{
-                     override fun process(
-                        key: String,
-                        stringValue: String,
-                        mode: Int
-                     ): String {
-                        return stringValue
-                     }
+        val result = runCheckTask()
+        assert(result.task(":transformReleaseClassesWithAsm")?.outcome == TaskOutcome.SUCCESS)
+        assertThatClassTransformed(transformedAssertion) {
+            object : ClassVisitor(Opcodes.ASM9) {
+                var visitedClassName: String? = null
+
+                override fun visit(
+                    version: Int,
+                    access: Int,
+                    name: String?,
+                    signature: String?,
+                    superName: String?,
+                    interfaces: Array<out String>?
+                ) {
+                    super.visit(version, access, name, signature, superName, interfaces)
+                    visitedClassName = name
+                    transformedAssertion.assertNameAtClass(visitedClassName)
                 }
-                obfustring {
-                    loggingEnabled = false
-                    customObfustring = CustomObfustring
-                }
-                """.trimIndent()
-            )
 
-            val result = runCheckTask()
-            assert(result.task(":transformReleaseClassesWithAsm")?.outcome == TaskOutcome.SUCCESS)
-            assertThatClassTransformed(transformedAssertion) {
-                object : ClassVisitor(Opcodes.ASM9) {
-                    var visitedClassName: String? = null
-
-                    override fun visit(
-                        version: Int,
-                        access: Int,
-                        name: String?,
-                        signature: String?,
-                        superName: String?,
-                        interfaces: Array<out String>?
-                    ) {
-                        super.visit(version, access, name, signature, superName, interfaces)
-                        visitedClassName = name
-                        transformedAssertion.assertNameAtClass(visitedClassName)
-                    }
-
-                    override fun visitMethod(
-                        access: Int,
-                        name: String?,
-                        descriptor: String?,
-                        signature: String?,
-                        exceptions: Array<out String>?
-                    ): MethodVisitor {
-                        transformedAssertion.assertMethodNameAtClass(visitedClassName, name, descriptor)
-                        val visitor = super.visitMethod(access, name, descriptor, signature, exceptions)
-                        return object : MethodVisitor(Opcodes.ASM9, visitor) {
-                            override fun visitMethodInsn(
-                                opcode: Int,
-                                owner: String?,
-                                name: String?,
-                                descriptor: String?,
-                                isInterface: Boolean
-                            ) {
-                                super.visitMethodInsn(opcode, owner, name, descriptor, isInterface)
-                                transformedAssertion.assertMethodInsnAtClass(visitedClassName, owner, name, descriptor)
-                            }
+                override fun visitMethod(
+                    access: Int,
+                    name: String?,
+                    descriptor: String?,
+                    signature: String?,
+                    exceptions: Array<out String>?
+                ): MethodVisitor {
+                    transformedAssertion.assertMethodNameAtClass(visitedClassName, name, descriptor)
+                    val visitor = super.visitMethod(access, name, descriptor, signature, exceptions)
+                    return object : MethodVisitor(Opcodes.ASM9, visitor) {
+                        override fun visitMethodInsn(
+                            opcode: Int,
+                            owner: String?,
+                            name: String?,
+                            descriptor: String?,
+                            isInterface: Boolean
+                        ) {
+                            super.visitMethodInsn(opcode, owner, name, descriptor, isInterface)
+                            transformedAssertion.assertMethodInsnAtClass(visitedClassName, owner, name, descriptor)
                         }
                     }
                 }
             }
         }
+    }
 
-        @Test
-        fun transformReleaseClassesWithAsm_classStringWithObfustringMethod_compiledClassHasObfustringMethod() {
-            appendFileWithText(
-                "src/main/java/com/test/MyApplication.kt",
-                """
-                package com.test 
+    @Test
+    fun transformReleaseClassesWithAsm_classStringWithObfustringMethod_compiledClassHasObfustringMethod() {
+        appendFileWithText(
+            "src/main/java/com/test/MyApplication.kt",
+            """
+            package com.test 
 
-                import android.app.Application
-                import android.util.Log
-                import io.github.c0nnor263.obfustringcore.annotations.ObfustringThis
-                import kotlin.random.Random
-                
-                @ObfustringThis
-                class MyApplication : Application() {
+            import android.app.Application
+            import android.util.Log
+            import io.github.c0nnor263.obfustringcore.annotations.ObfustringThis
+            import kotlin.random.Random
+            
+            @ObfustringThis
+            class MyApplication : Application() {
 
-                    override fun onCreate() {
-                        super.onCreate()
-                        Log.i(
-                            "TAG",
-                            "Application onCreate: init has been called"
-                        )
-                    }
+                override fun onCreate() {
+                    super.onCreate()
+                    Log.i(
+                        "TAG",
+                        "Application onCreate: init has been called"
+                    )
                 }
-                """.trimIndent()
+            }
+            """.trimIndent()
+        )
+
+        val transformedAssertion =
+            TransformedAssertion(
+                className = "com/test/MyApplication",
+                methodName = "onCreate",
+                methodDescriptor = "()V",
+                methodInsn = "android/util/Log.i",
+                methodInsnDescriptor = "(Ljava/lang/String;Ljava/lang/String;)I"
             )
 
-            val transformedAssertion =
-                TransformedAssertion(
-                    className = "com/test/MyApplication",
-                    methodName = "onCreate",
-                    methodDescriptor = "()V",
-                    methodInsn = "android/util/Log.i",
-                    methodInsnDescriptor = "(Ljava/lang/String;Ljava/lang/String;)I"
-                )
+        val result = runCheckTask()
+        assert(result.task(":transformReleaseClassesWithAsm")?.outcome == TaskOutcome.SUCCESS)
+        assertThatClassTransformed(transformedAssertion) {
+            object : ClassVisitor(Opcodes.ASM9) {
+                var visitedClassName: String? = null
 
-            val result = runCheckTask()
-            assert(result.task(":transformReleaseClassesWithAsm")?.outcome == TaskOutcome.SUCCESS)
-            assertThatClassTransformed(transformedAssertion) {
-                object : ClassVisitor(Opcodes.ASM9) {
-                    var visitedClassName: String? = null
+                override fun visit(
+                    version: Int,
+                    access: Int,
+                    name: String?,
+                    signature: String?,
+                    superName: String?,
+                    interfaces: Array<out String>?
+                ) {
+                    super.visit(version, access, name, signature, superName, interfaces)
+                    visitedClassName = name
+                    transformedAssertion.assertNameAtClass(visitedClassName)
+                }
 
-                    override fun visit(
-                        version: Int,
-                        access: Int,
-                        name: String?,
-                        signature: String?,
-                        superName: String?,
-                        interfaces: Array<out String>?
-                    ) {
-                        super.visit(version, access, name, signature, superName, interfaces)
-                        visitedClassName = name
-                        transformedAssertion.assertNameAtClass(visitedClassName)
+                override fun visitMethod(
+                    access: Int,
+                    name: String?,
+                    descriptor: String?,
+                    signature: String?,
+                    exceptions: Array<out String>?
+                ): MethodVisitor {
+                    transformedAssertion.assertMethodNameAtClass(visitedClassName, name, descriptor)
+                    val visitor = super.visitMethod(access, name, descriptor, signature, exceptions)
+                    return object : MethodVisitor(Opcodes.ASM9, visitor) {
+                        override fun visitMethodInsn(
+                            opcode: Int,
+                            owner: String?,
+                            name: String?,
+                            descriptor: String?,
+                            isInterface: Boolean
+                        ) {
+                            super.visitMethodInsn(opcode, owner, name, descriptor, isInterface)
+                            transformedAssertion.assertMethodInsnAtClass(visitedClassName, owner, name, descriptor)
+                        }
                     }
+                }
+            }
+        }
+    }
 
-                    override fun visitMethod(
-                        access: Int,
-                        name: String?,
-                        descriptor: String?,
-                        signature: String?,
-                        exceptions: Array<out String>?
-                    ): MethodVisitor {
-                        transformedAssertion.assertMethodNameAtClass(visitedClassName, name, descriptor)
-                        val visitor = super.visitMethod(access, name, descriptor, signature, exceptions)
-                        return object : MethodVisitor(Opcodes.ASM9, visitor) {
-                            override fun visitMethodInsn(
-                                opcode: Int,
-                                owner: String?,
-                                name: String?,
-                                descriptor: String?,
-                                isInterface: Boolean
-                            ) {
-                                super.visitMethodInsn(opcode, owner, name, descriptor, isInterface)
-                                transformedAssertion.assertMethodInsnAtClass(visitedClassName, owner, name, descriptor)
-                            }
+    @Test
+    fun transformReleaseClassesWithAsm_classFieldWithObfustringMethodAndInnerClass_compiledClassAndInnerClassHasObfustringMethod() {
+        appendFileWithText(
+            "src/main/java/com/test/MyApplication.kt",
+            """
+            package com.test 
+            
+            import io.github.c0nnor263.obfustringcore.annotations.ObfustringThis
+            import kotlinx.coroutines.delay
+            
+            @ObfustringThis
+            class MyApplication {
+                val password = "password"
+                
+                suspend fun getDelayPassword() : String {
+                    delay(1000)
+                    println("Password delayed")
+                    return password
+                }
+            }
+            """.trimIndent()
+        )
+
+        val transformedAssertion =
+            TransformedAssertion(
+                className = "com/test/MyApplication",
+                methodName = "getPassword",
+                methodDescriptor = "()Ljava/lang/String;",
+                methodInsn = "io/github/c0nnor263/obfustringcore/Obfustring.process",
+                methodInsnDescriptor = "(Ljava/lang/String;Ljava/lang/String;I)Ljava/lang/String;"
+            )
+        val transformedAssertionInnerClass =
+            TransformedAssertion(
+                className = "com/test/MyApplication${'$'}getDelayPassword$1",
+                methodName = "invokeSuspend",
+                methodDescriptor = "(Ljava/lang/Object;)Ljava/lang/Object;",
+                methodInsn = "io/github/c0nnor263/obfustringcore/Obfustring.process",
+                methodInsnDescriptor = "(Ljava/lang/String;Ljava/lang/String;I)Ljava/lang/String;"
+            )
+
+        val result = runCheckTask()
+        assert(result.task(":transformReleaseClassesWithAsm")?.outcome == TaskOutcome.SUCCESS)
+        assertThatClassTransformed(transformedAssertion) {
+            object : ClassVisitor(Opcodes.ASM9) {
+                var visitedClassName: String? = null
+
+                override fun visit(
+                    version: Int,
+                    access: Int,
+                    name: String?,
+                    signature: String?,
+                    superName: String?,
+                    interfaces: Array<out String>?
+                ) {
+                    super.visit(version, access, name, signature, superName, interfaces)
+                    visitedClassName = name
+                    transformedAssertion.assertNameAtClass(visitedClassName)
+                }
+
+                override fun visitMethod(
+                    access: Int,
+                    name: String?,
+                    descriptor: String?,
+                    signature: String?,
+                    exceptions: Array<out String>?
+                ): MethodVisitor {
+                    transformedAssertion.assertMethodNameAtClass(visitedClassName, name, descriptor)
+                    val visitor = super.visitMethod(access, name, descriptor, signature, exceptions)
+                    return object : MethodVisitor(Opcodes.ASM9, visitor) {
+                        override fun visitMethodInsn(
+                            opcode: Int,
+                            owner: String?,
+                            name: String?,
+                            descriptor: String?,
+                            isInterface: Boolean
+                        ) {
+                            super.visitMethodInsn(opcode, owner, name, descriptor, isInterface)
+                            transformedAssertion.assertMethodInsnAtClass(visitedClassName, owner, name, descriptor)
+                        }
+                    }
+                }
+            }
+        }
+        assertThatClassTransformed(transformedAssertionInnerClass) {
+            object : ClassVisitor(Opcodes.ASM9) {
+                var visitedClassName: String? = null
+
+                override fun visit(
+                    version: Int,
+                    access: Int,
+                    name: String?,
+                    signature: String?,
+                    superName: String?,
+                    interfaces: Array<out String>?
+                ) {
+                    super.visit(version, access, name, signature, superName, interfaces)
+                    visitedClassName = name
+                    transformedAssertionInnerClass.assertNameAtClass(visitedClassName)
+                }
+
+                override fun visitMethod(
+                    access: Int,
+                    name: String?,
+                    descriptor: String?,
+                    signature: String?,
+                    exceptions: Array<out String>?
+                ): MethodVisitor {
+                    transformedAssertionInnerClass.assertMethodNameAtClass(visitedClassName, name, descriptor)
+                    val visitor = super.visitMethod(access, name, descriptor, signature, exceptions)
+                    return object : MethodVisitor(Opcodes.ASM9, visitor) {
+                        override fun visitMethodInsn(
+                            opcode: Int,
+                            owner: String?,
+                            name: String?,
+                            descriptor: String?,
+                            isInterface: Boolean
+                        ) {
+                            super.visitMethodInsn(opcode, owner, name, descriptor, isInterface)
+                            // There is no nested Obfustring method in the inner class's method
+                            transformedAssertionInnerClass.methodInsnAsserted = true
+
+//                            transformedAssertionInnerClass.assertMethodInsnAtClass(
+//                                visitedClassName,
+//                                owner,
+//                                name,
+//                                descriptor
+//                            )
                         }
                     }
                 }

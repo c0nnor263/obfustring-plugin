@@ -20,58 +20,43 @@ import com.android.build.api.instrumentation.AsmClassVisitorFactory
 import com.android.build.api.instrumentation.ClassContext
 import com.android.build.api.instrumentation.ClassData
 import com.android.build.api.instrumentation.InstrumentationParameters
-import io.github.c0nnor263.obfustringcore.annotations.ObfustringExclude
-import io.github.c0nnor263.obfustringcore.annotations.ObfustringThis
 import io.github.c0nnor263.obfustringplugin.ObfustringPlugin
 import io.github.c0nnor263.obfustringplugin.enums.ObfustringMode
+import io.github.c0nnor263.obfustringplugin.model.ClassDataHandler
 import io.github.c0nnor263.obfustringplugin.model.ClassVisitorParams
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.objectweb.asm.ClassVisitor
 
-abstract class ObfustringVisitorFactory :
+private val ownerClassSet = hashSetOf<String>()
+
+internal abstract class ObfustringVisitorFactory :
     AsmClassVisitorFactory<ObfustringVisitorFactory.InstrumentationParams> {
     override fun createClassVisitor(
         classContext: ClassContext,
         nextClassVisitor: ClassVisitor
     ): ClassVisitor {
-        val params = ClassVisitorParams.fromInstrumentationParams(parameters.get())
+        val visitorParams = ClassVisitorParams(parameters.get())
+        val classDataHandler = ClassDataHandler(classContext.currentClassData)
         val verifyClassAdapter = VerifyClassAdapter(nextClassVisitor)
         return ObfustringClassVisitor(
-            params = params,
-            nextClassVisitor = verifyClassAdapter
+            visitorParams = visitorParams,
+            classDataHandler = classDataHandler,
+            nextClassVisitor = verifyClassAdapter,
+            ownerClassSet = ownerClassSet,
+            onCreateClassDataHandler = { className ->
+                val data = classContext.loadClassData(className)
+                data?.let { ClassDataHandler(it) }
+            }
         )
     }
 
     override fun isInstrumentable(classData: ClassData): Boolean {
-        val parameters = parameters.get()
-        val mode = parameters.mode.get()
-        val modeAvailable = when (mode) {
-            ObfustringMode.DEFAULT -> {
-                classData.classAnnotations.any {
-                    it == ObfustringThis::class.java.name
-                } && classData.classAnnotations.none {
-                    it == ObfustringExclude::class.java.name
-                }
+        val isExcluded =
+            ObfustringPlugin.pluginExtension.excludeClasses.any { excludedClassInfo ->
+                excludedClassInfo.checkIfExcluded(classData)
             }
-
-            ObfustringMode.FORCE -> {
-                classData.classAnnotations.none {
-                    it == ObfustringExclude::class.java.name
-                }
-            }
-
-            ObfustringMode.DISABLED -> return false
-        }
-
-        val isExcluded = ObfustringPlugin.pluginExtension.excludeClasses.any { excludedClassInfo ->
-            excludedClassInfo.checkIfExcluded(classData)
-        }
-        return (modeAvailable && !isExcluded).also { isInstrumental ->
-            if (isInstrumental) {
-                ObfustringPlugin.logger.quiet(LOG_INFO_INSTRUMENTABLE(classData.className))
-            }
-        }
+        return !isExcluded
     }
 
     internal interface InstrumentationParams : InstrumentationParameters {
@@ -86,11 +71,5 @@ abstract class ObfustringVisitorFactory :
          */
         @get:Input
         val mode: Property<ObfustringMode>
-    }
-
-    companion object {
-        val LOG_INFO_INSTRUMENTABLE: (String) -> String = { className ->
-            "\n\t- CLASS: $className"
-        }
     }
 }

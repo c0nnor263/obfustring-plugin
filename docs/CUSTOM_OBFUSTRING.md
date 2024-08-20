@@ -22,9 +22,8 @@ dependencies {
 }
 ```
 
-> ![NOTE]
-> If you want to know more about setup the `buildSrc` project, you can read the official
-> documentation [here](https://docs.gradle.org/current/userguide/organizing_gradle_projects.html#sec:build_sources)
+> [!NOTE]
+> If you want to know more about setup the `buildSrc` project, you can read the official documentation [here](https://docs.gradle.org/current/userguide/organizing_gradle_projects.html#sec:build_sources)
 
 ### 2. Creating the obfustring implementation
 
@@ -58,8 +57,7 @@ object CustomObfustring : CommonObfustring {
 ```
 
 > [!WARNING]
-> - The custom implementation must be an object that implements the CommonObfustring interface. This ensures it can be
-    used wherever obfustring logic is required in your project.
+> - The custom implementation must be an object that implements the `CommonObfustring` interface. This ensures it can be used wherever obfustring logic is required in your project.
 > - Make sure you handle edge cases, such as null or empty strings, in your custom obfuscation logic.
 
 ### 3. Apply the custom obfustring implementation
@@ -78,7 +76,7 @@ plugins {
 }
 
 android {
-
+    // ...
 }
 
 obfustring {

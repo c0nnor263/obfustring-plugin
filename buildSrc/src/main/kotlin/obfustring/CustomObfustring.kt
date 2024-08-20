@@ -17,8 +17,18 @@
 package obfustring
 
 import io.github.c0nnor263.obfustringcore.CommonObfustring
+import io.github.c0nnor263.obfustringcore.ObfustringCryptoMode
 
 object CustomObfustring : CommonObfustring {
+
+    /**
+     * Process the string
+     *
+     * @param key the key for obfuscation
+     * @param stringValue the string value to be processed
+     * @param mode the mode of obfuscation. [ObfustringCryptoMode.ENCRYPT] or [ObfustringCryptoMode.DECRYPT]
+     * @return the processed string
+     */
     override fun process(
         key: String,
         stringValue: String,

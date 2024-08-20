@@ -105,7 +105,7 @@ class ObfustringPlugin : Plugin<Project> {
     companion object {
         lateinit var pluginExtension: ObfustringExtension
         lateinit var logger: Logger
-        const val VERSION: String = "12.0.2"
+        const val VERSION: String = "12.0.3"
 
         const val EXCEPTION_INIT_OBFUSTRING_TRANSFORM = "Obfustring | Project is not an Android project"
         const val EXCEPTION_INVALID_CUSTOM_OBFUSTRING =

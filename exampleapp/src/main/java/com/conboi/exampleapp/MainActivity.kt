@@ -18,9 +18,17 @@ package com.conboi.exampleapp
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import io.github.c0nnor263.obfustringcore.annotations.ObfustringThis
+import kotlinx.coroutines.delay
 
+@ObfustringThis
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+    }
+
+    suspend fun test() {
+        delay(1000)
+        println("Hello World")
     }
 }

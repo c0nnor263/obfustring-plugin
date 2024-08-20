@@ -16,7 +16,18 @@
 
 package io.github.c0nnor263.obfustringcore
 
+/**
+ * Common obfustring interface
+ */
 fun interface CommonObfustring {
+    /**
+     * Process the string
+     *
+     * @param key the key for obfuscation
+     * @param stringValue the string value to be processed
+     * @param mode the mode of obfuscation. [ObfustringCryptoMode.ENCRYPT] or [ObfustringCryptoMode.DECRYPT]
+     * @return the processed string
+     */
     fun process(
         key: String,
         stringValue: String,

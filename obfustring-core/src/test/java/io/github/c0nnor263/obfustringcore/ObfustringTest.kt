@@ -81,9 +81,9 @@ class ObfustringTest {
                 " ¡Chinese characters: 你好世界 (Hello World), 愛 (Love), 福 (Luck)",
                 "¥Japanese characters: こんにちは (Konnichiwa), ありがとう (Arigatou), さようなら (Sayonara)",
                 "@Russian charact\r\r\r\r\n\ters: Привет мир (Privet Mir - Hello World), Любовь (Love), " +
-                        "Счастье (Happiness)",
+                    "Счастье (Happiness)",
                 "&Arabic characters: السلام عليكم (As-salamu alaykum - Peace be upon you), حب (Love), " +
-                        "سعادة (Happiness)",
+                    "سعادة (Happiness)",
                 "#Symbols from different cultures: ☯ 卍 ☪",
                 "%Astrological symbols: ♈ ♉ ♊ ♋ ♌ ♍ ♎ ♏ ♐ ♑ ♒ ♓",
                 "&Weather symbols: ☀ ☁ ⚡ ☔ ❄",

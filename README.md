@@ -1,6 +1,8 @@
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/J3J61TEZDO)
+
 # Obfustring
 
-This is a Android Gradle plugin that obfuscates strings in Kotlin classes
+An Android Gradle plugin for obfuscating string constants in Kotlin bytecode
 
 ## Setup
 
